@@ -7,7 +7,7 @@ images:
   - "images/art/deku_drawing.jpg"
 videos: []
 medium: "Apple"
-status: "Concept Pass"
+status: "Complete"
 date: "Feb 2026"
 software:
   - "[\"Procreate\"]"

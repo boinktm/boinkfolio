@@ -14,6 +14,12 @@ const links = [
   { label: 'About', href: '#about' },
   { label: 'Contact', href: '#contact' },
 ];
+
+const socialLinks = [
+  { label: 'X.com', href: 'https://x.com/boinkbranded' },
+  { label: 'GitHub', href: 'https://github.com/boinktm' },
+  { label: 'YouTube', href: 'https://www.youtube.com/@BoinkBrands' },
+];
 ---
 
 <footer class="bg-charcoal border-t border-border">
@@ -55,9 +61,14 @@ const links = [
 
       <!-- Social-style links -->
       <div class="flex items-center gap-4">
-        {['RSS', 'Bandcamp', 'GitHub'].map(social => (
-          <a href="#" class="text-[10px] font-semibold uppercase tracking-wider text-text-muted hover:text-accent transition-colors">
-            {social}
+        {socialLinks.map(social => (
+          <a
+            href={social.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-[10px] font-semibold uppercase tracking-wider text-text-muted hover:text-accent transition-colors"
+          >
+            {social.label}
           </a>
         ))}
       </div>

@@ -20,6 +20,7 @@ type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 const { entry } = Astro.props as Props;
 const piece = { slug: entry.id, ...entry.data };
 const { Content } = await render(entry);
+const hasPieceNotes = typeof entry.body === 'string' && entry.body.trim().length > 0;
 
 const isDirectVideo = (url: string) => /\.(mp4|webm|ogg)(\?.*)?$/i.test(url);
 const toEmbedUrl = (url: string) => {
@@ -48,6 +49,8 @@ const normalizedVideos = piece.videos.map(url => ({
 const galleryImages = piece.images.length > 0
   ? piece.images
   : (piece.fullres ? [piece.fullres] : []);
+const hasSingleGalleryImage = galleryImages.length === 1;
+const galleryImageUrls = galleryImages.map(img => withBase(img));
 
 const allEntries = await getCollection('art');
 const otherPieces = allEntries
@@ -110,11 +113,11 @@ const otherPieces = allEntries
           <button
             class="lightbox-trigger px-6 py-3 bg-accent hover:bg-accent-hover text-white text-xs font-bold uppercase tracking-widest
                    transition-all duration-200 rounded-sm hover:shadow-[0_0_20px_rgba(230,0,18,0.3)]"
-            data-images={JSON.stringify(galleryImages.map(img => withBase(img)))}
+            data-images={JSON.stringify(galleryImageUrls)}
             data-title={piece.title}
             data-start="0"
           >
-            Open Gallery
+            {hasSingleGalleryImage ? 'View Image' : 'Open Gallery'}
           </button>
         )}
         {piece.externalUrl && (
@@ -131,7 +134,7 @@ const otherPieces = allEntries
                   text-xs font-bold uppercase tracking-widest transition-all duration-200 rounded-sm">
           &larr; Back to Gallery
         </a>
-        {piece.videos.length > 0 && (
+        {normalizedVideos.length > 0 && (
           <a
             href="#videos"
             class="px-6 py-3 border border-border hover:border-border-light text-text-secondary hover:text-text-primary
@@ -159,16 +162,43 @@ const otherPieces = allEntries
         {galleryImages.length > 0 && (
           <div class="surface-card rounded-sm p-6 md:p-8">
             <div class="flex items-center justify-between mb-4">
-              <h2 class="font-display text-lg uppercase tracking-wider text-text-primary">Gallery</h2>
-              <span class="text-[10px] uppercase tracking-widest text-text-muted">{galleryImages.length} images</span>
+              <h2 class="font-display text-lg uppercase tracking-wider text-text-primary">
+                {hasSingleGalleryImage ? 'Featured Render' : 'Gallery'}
+              </h2>
+              <span class="text-[10px] uppercase tracking-widest text-text-muted">
+                {galleryImages.length} image{galleryImages.length === 1 ? '' : 's'}
+              </span>
             </div>
             <div class="chrome-divider mb-5"></div>
-            <div class="grid grid-cols-2 gap-3">
-              {galleryImages.map((img, i) => (
+            {hasSingleGalleryImage ? (
+              <button
+                class="lightbox-trigger relative aspect-[16/10] md:aspect-[21/9] overflow-hidden rounded-sm border border-border
+                       hover:border-border-light transition-all group cursor-pointer w-full"
+                data-images={JSON.stringify(galleryImageUrls)}
+                data-title={piece.title}
+                data-start="0"
+              >
+                <img
+                  src={galleryImageUrls[0]}
+                  alt={`${piece.title} featured render`}
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  loading="lazy"
+                />
+                <div class="absolute inset-0 bg-void/0 group-hover:bg-void/30 transition-colors flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg"
+                       class="w-10 h-10 text-white opacity-0 group-hover:opacity-80 transition-opacity"
+                       fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                  </svg>
+                </div>
+              </button>
+            ) : (
+              <div class="grid grid-cols-2 gap-3">
+                {galleryImages.map((img, i) => (
                 <button
                   class="lightbox-trigger relative aspect-[16/9] overflow-hidden rounded-sm border border-border
                          hover:border-border-light transition-all group cursor-pointer"
-                  data-images={JSON.stringify(galleryImages.map(src => withBase(src)))}
+                  data-images={JSON.stringify(galleryImageUrls)}
                   data-title={piece.title}
                   data-start={i}
                 >
@@ -182,9 +212,10 @@ const otherPieces = allEntries
                       <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
                     </svg>
                   </div>
-                </button>
-              ))}
-            </div>
+                  </button>
+                  ))}
+                </div>
+              )}
           </div>
         )}
 
@@ -216,13 +247,15 @@ const otherPieces = allEntries
           </div>
         )}
 
-        <div class="surface-card rounded-sm p-6 md:p-8">
-          <h2 class="font-display text-lg uppercase tracking-wider text-text-primary mb-4">Piece Notes</h2>
-          <div class="chrome-divider mb-5"></div>
-          <div class="space-y-4 text-sm text-text-secondary leading-relaxed [&>p]:mb-4 [&>h2]:font-display [&>h2]:text-text-primary [&>h2]:uppercase [&>h2]:mt-6 [&>h2]:mb-2 [&>h3]:font-display [&>h3]:text-text-primary [&>h3]:mt-4 [&>h3]:mb-2 [&>ul]:list-disc [&>ul]:pl-5 [&>ol]:list-decimal [&>ol]:pl-5 [&>a]:text-accent [&>a:hover]:text-accent-hover">
-            <Content />
+        {hasPieceNotes && (
+          <div class="surface-card rounded-sm p-6 md:p-8">
+            <h2 class="font-display text-lg uppercase tracking-wider text-text-primary mb-4">Piece Notes</h2>
+            <div class="chrome-divider mb-5"></div>
+            <div class="space-y-4 text-sm text-text-secondary leading-relaxed [&>p]:mb-4 [&>h2]:font-display [&>h2]:text-text-primary [&>h2]:uppercase [&>h2]:mt-6 [&>h2]:mb-2 [&>h3]:font-display [&>h3]:text-text-primary [&>h3]:mt-4 [&>h3]:mb-2 [&>ul]:list-disc [&>ul]:pl-5 [&>ol]:list-decimal [&>ol]:pl-5 [&>a]:text-accent [&>a:hover]:text-accent-hover">
+              <Content />
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <div class="space-y-4">

@@ -508,6 +508,7 @@ $artTagline = New-TextBoxField
 $artThumbnail = New-TextBoxField
 $artFullres = New-TextBoxField
 $artImages = New-TextBoxField -MultiLine $true
+$artVideos = New-TextBoxField -MultiLine $true
 $artMedium = New-TextBoxField
 $artStatus = New-TextBoxField
 $artDate = New-TextBoxField -Default (Get-Date -Format 'MMM yyyy')
@@ -523,6 +524,7 @@ Add-FieldRow $artLayout 'Tagline *' $artTagline
 Add-FieldRow $artLayout 'Thumbnail URL/Path *' $artThumbnail
 Add-FieldRow $artLayout 'Fullres URL/Path (optional)' $artFullres
 Add-FieldRow $artLayout 'Images (one per line)' $artImages 90
+Add-FieldRow $artLayout 'Video Links (one per line)' $artVideos 90
 Add-FieldRow $artLayout 'Medium *' $artMedium
 Add-FieldRow $artLayout 'Status *' $artStatus
 Add-FieldRow $artLayout 'Date *' $artDate
@@ -720,6 +722,7 @@ $loadBtn.Add_Click({
         $artThumbnail.Text = Get-FrontmatterValue -Frontmatter $fm -Key 'thumbnail'
         $artFullres.Text = Get-FrontmatterValue -Frontmatter $fm -Key 'fullres'
         $artImages.Text = Join-ListText $fm['images']
+        $artVideos.Text = Join-ListText $fm['videos']
         $artMedium.Text = Get-FrontmatterValue -Frontmatter $fm -Key 'medium'
         $artStatus.Text = Get-FrontmatterValue -Frontmatter $fm -Key 'status'
         $artDate.Text = Get-FrontmatterValue -Frontmatter $fm -Key 'date'
@@ -799,6 +802,7 @@ $clearBtn.Add_Click({
   $artThumbnail.Text = ''
   $artFullres.Text = ''
   $artImages.Text = ''
+  $artVideos.Text = ''
   $artMedium.Text = ''
   $artStatus.Text = ''
   $artDate.Text = $defaultDate
@@ -874,6 +878,7 @@ $clearTabBtn.Add_Click({
       $artThumbnail.Text = ''
       $artFullres.Text = ''
       $artImages.Text = ''
+      $artVideos.Text = ''
       $artMedium.Text = ''
       $artStatus.Text = ''
       $artDate.Text = $defaultDate
@@ -1043,6 +1048,7 @@ $createBtn.Add_Click({
       }
 
       $images = Get-ListValues $artImages.Text
+      $videos = Get-ListValues $artVideos.Text
       $software = Get-ListValues $artSoftware.Text
       $tags = Get-ListValues $artTags.Text
 
@@ -1057,6 +1063,7 @@ $createBtn.Add_Click({
       }
 
       $frontmatter += Build-ArrayYaml -Name 'images' -Values $images
+      $frontmatter += Build-ArrayYaml -Name 'videos' -Values $videos
       $frontmatter += ('medium: "{0}"' -f (Escape-YamlDouble $medium))
       $frontmatter += ('status: "{0}"' -f (Escape-YamlDouble $status))
       $frontmatter += ('date: "{0}"' -f (Escape-YamlDouble $date))

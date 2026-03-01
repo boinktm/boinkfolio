@@ -72,4 +72,15 @@ const assets = defineCollection({
   }),
 });
 
-export const collections = { mapping, art, assets };
+const musings = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/musings' }),
+  schema: z.object({
+    title: z.string(),
+    excerpt: z.string(),
+    date: z.string(),
+    category: z.string(),
+    featured: z.boolean().default(false),
+  }),
+});
+
+export const collections = { mapping, art, assets, musings };

@@ -22,3 +22,8 @@ export function assetPath(slug: string): string {
   const normalizedSlug = slug.replace(/^\/+/, '');
   return withBase(`assets/${normalizedSlug}`);
 }
+
+export function musingPath(slug: string): string {
+  const normalizedSlug = slug.replace(/^\/+/, '');
+  return withBase(`musings/${normalizedSlug}`);
+}

@@ -1,0 +1,103 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import SubNav from '../../components/SubNav.astro';
+import Footer from '../../components/Footer.astro';
+import { getCollection } from 'astro:content';
+import { musingPath, withBase } from '../../lib/paths';
+
+const entries = await getCollection('musings');
+const musings = entries.map(entry => ({ slug: entry.id, ...entry.data }));
+
+const featured = musings.find(musing => musing.featured) ?? musings[0] ?? null;
+const rest = featured
+  ? musings.filter(musing => musing.slug !== featured.slug)
+  : [];
+---
+
+<Layout title="Musings — Boink Brands" description="Creative notes on rendering, sound design, and process from Boink Brands.">
+  <Header />
+  <SubNav activeTab="Music" />
+
+  <section class="bg-void relative overflow-hidden">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(230,0,18,0.07)_0%,transparent_70%)]"></div>
+    <div class="relative max-w-[var(--width-content)] mx-auto px-4 py-16 md:py-20 text-center">
+      <p class="text-[10px] font-bold uppercase tracking-[0.3em] text-accent mb-3">Journal</p>
+      <h1 class="font-display text-4xl md:text-6xl uppercase leading-none tracking-tight mb-4">
+        <span class="text-gradient">Musings</span>
+        <br />
+        <span class="text-text-primary">& Process Notes</span>
+      </h1>
+      <p class="text-text-secondary text-sm md:text-base max-w-xl mx-auto leading-relaxed">
+        A dedicated log of creative notes across visual development, sound design, and iterative workflow.
+      </p>
+      {featured && (
+        <div class="mt-8">
+          <a
+            href={musingPath(featured.slug)}
+            class="px-6 py-3 bg-accent hover:bg-accent-hover text-white text-xs font-bold uppercase tracking-widest
+                   transition-all duration-200 rounded-sm hover:shadow-[0_0_20px_rgba(230,0,18,0.3)]"
+          >
+            Read Featured Note
+          </a>
+        </div>
+      )}
+    </div>
+    <div class="chrome-divider"></div>
+  </section>
+
+  <section class="bg-obsidian py-8">
+    <div class="max-w-[var(--width-content)] mx-auto px-4 space-y-4">
+      {featured ? (
+        <>
+          <a href={musingPath(featured.slug)} class="surface-card rounded-sm p-6 md:p-8 block group">
+            <div class="flex items-center gap-2 mb-3 flex-wrap">
+              <span class="text-[9px] font-bold uppercase tracking-wider bg-accent/20 text-accent px-2 py-0.5 rounded-sm">
+                Featured
+              </span>
+              <span class="text-[9px] font-bold uppercase tracking-wider text-text-muted border border-border px-2 py-0.5 rounded-sm">
+                {featured.category}
+              </span>
+              <span class="text-[9px] font-bold uppercase tracking-wider text-text-muted border border-border px-2 py-0.5 rounded-sm">
+                {featured.date}
+              </span>
+            </div>
+            <h2 class="font-display text-3xl md:text-5xl uppercase text-text-primary leading-none mb-3 group-hover:text-accent transition-colors">
+              {featured.title}
+            </h2>
+            <p class="text-sm text-text-secondary leading-relaxed max-w-3xl">{featured.excerpt}</p>
+            <p class="mt-4 text-xs font-semibold uppercase tracking-widest text-text-secondary group-hover:text-accent transition-colors">
+              Read Note →
+            </p>
+          </a>
+
+          {rest.length > 0 && (
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {rest.map(musing => (
+                <a href={musingPath(musing.slug)} class="surface-card rounded-sm p-5 group block">
+                  <div class="flex items-center gap-2 mb-2 flex-wrap">
+                    <span class="text-[9px] font-bold uppercase tracking-wider text-text-muted border border-border px-2 py-0.5 rounded-sm">
+                      {musing.category}
+                    </span>
+                    <span class="text-[9px] text-text-muted">{musing.date}</span>
+                  </div>
+                  <h3 class="font-display text-xl uppercase text-text-primary leading-tight mb-2 group-hover:text-accent transition-colors">
+                    {musing.title}
+                  </h3>
+                  <p class="text-xs text-text-secondary leading-relaxed">{musing.excerpt}</p>
+                </a>
+              ))}
+            </div>
+          )}
+        </>
+      ) : (
+        <article class="surface-card rounded-sm p-8 text-center">
+          <h2 class="font-display text-2xl uppercase text-text-primary mb-2">No Musings Yet</h2>
+          <p class="text-text-secondary text-sm">Add markdown notes in <span class="text-text-primary">src/content/musings</span> to populate this page.</p>
+        </article>
+      )}
+    </div>
+  </section>
+
+  <Footer />
+</Layout>

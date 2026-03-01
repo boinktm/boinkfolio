@@ -42,6 +42,9 @@ jobs:
           SOUNDCLOUD_USER_ID: ${{ secrets.SOUNDCLOUD_USER_ID }}
         run: npm run build
 
+      - name: Disable Jekyll processing
+        run: touch dist/.nojekyll
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

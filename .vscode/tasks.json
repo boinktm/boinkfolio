@@ -1,0 +1,35 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Push Site Update",
+      "type": "shell",
+      "command": "npm",
+      "args": [
+        "run",
+        "push:update"
+      ],
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Push Site Update (Dry Run)",
+      "type": "shell",
+      "command": "npm",
+      "args": [
+        "run",
+        "push:update:dry"
+      ],
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    }
+  ]
+}

@@ -1,0 +1,180 @@
+---
+/**
+ * MappingGallery — Grid of project cards with image-expand lightbox
+ * Matches the PS-inspired surface-card aesthetic
+ */
+
+export interface MappingProjectView {
+  slug: string;
+  title: string;
+  game: string;
+  tagline: string;
+  thumbnail: string;
+  images: string[];
+  videos: string[];
+  workshopUrl?: string;
+  date: string;
+  tags: string[];
+  featured: boolean;
+}
+
+interface Props {
+  projects: MappingProjectView[];
+}
+
+import { mappingPath } from '../lib/paths';
+
+const { projects } = Astro.props;
+const featured = projects.filter(p => p.featured);
+const rest = projects.filter(p => !p.featured);
+---
+
+<!-- Featured project(s) — large hero card -->
+{featured.length > 0 && (
+  <div class="mb-6">
+    {featured.map(project => (
+      <a href={mappingPath(project.slug)}
+         class="surface-card group relative overflow-hidden rounded-sm block aspect-[21/9] md:aspect-[3/1]">
+        <img
+          src={project.thumbnail}
+          alt={project.title}
+          class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          loading="eager"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-void via-void/70 to-transparent z-10"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-void/60 to-transparent z-10"></div>
+
+        <div class="relative z-20 h-full flex flex-col justify-end p-6 md:p-10">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-[9px] font-bold uppercase tracking-wider bg-accent/20 text-accent px-2 py-0.5 rounded-sm">
+              Featured
+            </span>
+            <span class="text-[9px] font-bold uppercase tracking-wider text-text-muted">
+              {project.game}
+            </span>
+          </div>
+          <h2 class="font-display text-3xl md:text-5xl uppercase text-text-primary leading-none mb-2">
+            {project.title}
+          </h2>
+          <p class="text-sm text-text-secondary max-w-xl mb-3">{project.tagline}</p>
+          <div class="flex items-center gap-3">
+            <span class="text-xs text-text-secondary flex items-center gap-1 group-hover:text-accent transition-colors">
+              View project
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </span>
+            {project.images.length > 0 && (
+              <button
+                class="lightbox-trigger text-xs text-text-muted hover:text-accent transition-colors flex items-center gap-1 z-30"
+                data-images={JSON.stringify(project.images)}
+                data-title={project.title}
+                onclick="event.preventDefault(); event.stopPropagation();"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                </svg>
+                {project.images.length} images
+              </button>
+            )}
+          </div>
+          <div class="flex flex-wrap gap-2 mt-3">
+            {project.tags.map(tag => (
+              <span class="text-[9px] font-semibold uppercase tracking-wider text-text-muted border border-border px-2 py-0.5 rounded-sm">
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+      </a>
+    ))}
+  </div>
+)}
+
+<!-- Project Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+  {rest.map(project => (
+    <div class="surface-card group rounded-sm overflow-hidden flex flex-col">
+      {/* Thumbnail with expand overlay */}
+      <div class="relative aspect-[16/9] overflow-hidden">
+        <a href={mappingPath(project.slug)}>
+          <img
+            src={project.thumbnail}
+            alt={project.title}
+            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-void/80 to-transparent"></div>
+        </a>
+
+        {/* Expand button overlay */}
+        {project.images.length > 0 && (
+          <button
+            class="lightbox-trigger absolute top-3 right-3 z-20 w-8 h-8 flex items-center justify-center
+                   bg-void/70 border border-border rounded-sm text-text-muted hover:text-accent
+                   hover:border-accent/40 transition-all opacity-0 group-hover:opacity-100"
+            data-images={JSON.stringify(project.images)}
+            data-title={project.title}
+            aria-label={`View ${project.title} images`}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+            </svg>
+          </button>
+        )}
+
+        {/* Date badge */}
+        <span class="absolute bottom-3 left-3 z-20 text-[9px] font-bold uppercase tracking-wider text-text-muted">
+          {project.date}
+        </span>
+      </div>
+
+      {/* Card body */}
+      <div class="p-5 flex flex-col flex-1">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-[9px] font-bold uppercase tracking-wider text-text-muted">
+            {project.game}
+          </span>
+        </div>
+        <a href={mappingPath(project.slug)} class="block mb-2">
+          <h3 class="font-display text-xl uppercase text-text-primary leading-tight group-hover:text-accent transition-colors">
+            {project.title}
+          </h3>
+        </a>
+        <p class="text-xs text-text-secondary leading-relaxed flex-1">{project.tagline}</p>
+
+        {/* Tags */}
+        <div class="flex flex-wrap gap-1.5 mt-4">
+          {project.tags.map(tag => (
+            <span class="text-[8px] font-semibold uppercase tracking-wider text-text-muted border border-border px-1.5 py-0.5 rounded-sm">
+              {tag}
+            </span>
+          ))}
+        </div>
+
+        {/* Actions */}
+        <div class="flex items-center justify-between mt-4 pt-4 border-t border-border">
+           <a href={mappingPath(project.slug)}
+             class="text-xs font-semibold uppercase tracking-widest text-text-secondary hover:text-accent transition-colors flex items-center gap-1">
+            Details
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+          {project.workshopUrl && project.workshopUrl !== '#' && (
+            <a href={project.workshopUrl}
+               target="_blank"
+               rel="noopener noreferrer"
+               class="text-xs text-text-muted hover:text-accent transition-colors flex items-center gap-1"
+               title="View on Steam Workshop">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658a3.387 3.387 0 0 1 1.912-.59c.064 0 .128.003.19.008l2.861-4.142V8.91a4.528 4.528 0 0 1 4.524-4.524c2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396a3.406 3.406 0 0 1-3.327-2.725L.436 14.71C1.862 19.972 6.486 24 11.979 24c6.627 0 12-5.373 12-12S18.606 0 11.979 0z"/>
+              </svg>
+              Workshop
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  ))}
+</div>

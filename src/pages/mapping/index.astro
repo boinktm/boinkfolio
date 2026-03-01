@@ -1,0 +1,50 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import SubNav from '../../components/SubNav.astro';
+import MappingGallery from '../../components/MappingGallery.astro';
+import ImageLightbox from '../../components/ImageLightbox.astro';
+import Footer from '../../components/Footer.astro';
+import { getCollection } from 'astro:content';
+
+const entries = await getCollection('mapping');
+
+// Normalise collection entries into the view shape the gallery expects
+const projects = entries.map(entry => ({
+  slug: entry.id,
+  ...entry.data,
+}));
+---
+
+<Layout title="Mapping Projects — Boink Brands">
+  <Header />
+  <SubNav activeTab="Mapping Projects" />
+
+  <!-- Page hero -->
+  <section class="bg-void relative overflow-hidden">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,80,200,0.06)_0%,transparent_70%)]"></div>
+    <div class="relative max-w-[var(--width-content)] mx-auto px-4 py-16 md:py-20 text-center">
+      <p class="text-[10px] font-bold uppercase tracking-[0.3em] text-[#0050c8] mb-3">Level Design</p>
+      <h1 class="font-display text-4xl md:text-6xl uppercase leading-none tracking-tight mb-4">
+        <span class="text-gradient">Mapping</span>
+        <br />
+        <span class="text-text-primary">Projects</span>
+      </h1>
+      <p class="text-text-secondary text-sm md:text-base max-w-lg mx-auto leading-relaxed">
+        A collection of custom maps and level designs built for Call of Duty Zombies and casual multiplayer play.
+        Click any project for details or expand to browse screenshots.
+      </p>
+    </div>
+    <div class="chrome-divider"></div>
+  </section>
+
+  <!-- Gallery -->
+  <section class="bg-obsidian py-8">
+    <div class="max-w-[var(--width-content)] mx-auto px-4">
+      <MappingGallery projects={projects} />
+    </div>
+  </section>
+
+  <ImageLightbox />
+  <Footer />
+</Layout>

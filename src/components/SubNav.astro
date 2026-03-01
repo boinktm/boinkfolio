@@ -1,0 +1,38 @@
+---
+/**
+ * SubNav — Tab-style section navigation
+ * Mirrors the PS3 / PSP / PS2 sub-navigation bar with colored accent lines
+ */
+interface Props {
+  activeTab?: string;
+}
+
+import { withBase } from '../lib/paths';
+
+const { activeTab = 'Music' } = Astro.props;
+
+const tabs = [
+  { label: 'Music', href: withBase(), color: 'accent-red' },
+  { label: '3D Art', href: `${withBase()}#art`, color: 'accent-gold' },
+  { label: 'Mapping Projects', href: withBase('mapping'), color: 'accent-blue' },
+];
+---
+
+<nav class="bg-charcoal border-b border-border">
+  <div class="max-w-[var(--width-content)] mx-auto flex items-center justify-center">
+    {tabs.map(tab => (
+      <a
+        href={tab.href}
+        class:list={[
+          'subnav-tab relative flex-1 text-center px-10 py-3 text-xs font-display font-bold uppercase tracking-[0.25em] transition-colors duration-200',
+          `subnav-${tab.color}`,
+          tab.label === activeTab
+            ? 'text-text-primary bg-surface'
+            : 'text-text-muted hover:text-text-secondary hover:bg-surface-hover',
+        ]}
+      >
+        {tab.label}
+      </a>
+    ))}
+  </div>
+</nav>

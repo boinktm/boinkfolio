@@ -1,0 +1,246 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import SubNav from '../../components/SubNav.astro';
+import ImageLightbox from '../../components/ImageLightbox.astro';
+import Footer from '../../components/Footer.astro';
+import { mappingPath, withBase } from '../../lib/paths';
+import { getCollection, render } from 'astro:content';
+import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
+
+export const getStaticPaths = (async () => {
+  const entries = await getCollection('mapping');
+  return entries.map(entry => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { entry } = Astro.props as Props;
+const project = { slug: entry.id, ...entry.data };
+const { Content } = await render(entry);
+
+// For the "Other Projects" sidebar
+const allEntries = await getCollection('mapping');
+const otherProjects = allEntries
+  .filter(e => e.id !== entry.id)
+  .slice(0, 4)
+  .map(e => ({ slug: e.id, ...e.data }));
+
+---
+
+<Layout title={`${project.title} — Mapping Projects — Boink Brands`}>
+  <Header />
+  <SubNav activeTab="Mapping Projects" />
+
+  <!-- Hero banner -->
+  <section class="relative overflow-hidden bg-void">
+    <img
+      src={project.thumbnail}
+      alt={project.title}
+      class="absolute inset-0 w-full h-full object-cover"
+      loading="eager"
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-void via-void/80 to-charcoal/50"></div>
+    <div class="absolute inset-0 bg-gradient-to-r from-void/70 to-transparent"></div>
+
+    <div class="relative max-w-[var(--width-content)] mx-auto px-4 py-20 md:py-28">
+      <!-- Breadcrumb -->
+      <nav class="flex items-center gap-2 text-[10px] uppercase tracking-widest text-text-muted mb-6">
+        <a href={withBase()} class="hover:text-text-primary transition-colors">Home</a>
+        <span>/</span>
+        <a href={withBase('mapping')} class="hover:text-text-primary transition-colors">Mapping</a>
+        <span>/</span>
+        <span class="text-text-secondary">{project.title}</span>
+      </nav>
+
+      <div class="flex items-center gap-2 mb-3">
+        {project.featured && (
+          <span class="text-[9px] font-bold uppercase tracking-wider bg-accent/20 text-accent px-2 py-0.5 rounded-sm">
+            Featured
+          </span>
+        )}
+        <span class="text-[9px] font-bold uppercase tracking-wider text-text-muted">
+          {project.game}
+        </span>
+        <span class="text-[9px] text-text-muted">·</span>
+        <span class="text-[9px] uppercase tracking-wider text-text-muted">{project.date}</span>
+      </div>
+
+      <h1 class="font-display text-4xl md:text-6xl lg:text-7xl uppercase leading-none text-text-primary mb-4">
+        {project.title}
+      </h1>
+      <p class="text-text-secondary text-sm md:text-base max-w-2xl">{project.tagline}</p>
+
+      <!-- Action buttons -->
+      <div class="flex items-center gap-4 mt-6">
+        {project.workshopUrl && project.workshopUrl !== '#' && (
+          <a href={project.workshopUrl}
+             target="_blank"
+             rel="noopener noreferrer"
+             class="px-6 py-3 bg-accent hover:bg-accent-hover text-white text-xs font-bold uppercase tracking-widest
+                    transition-all duration-200 rounded-sm hover:shadow-[0_0_20px_rgba(230,0,18,0.3)]
+                    flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658a3.387 3.387 0 0 1 1.912-.59c.064 0 .128.003.19.008l2.861-4.142V8.91a4.528 4.528 0 0 1 4.524-4.524c2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396a3.406 3.406 0 0 1-3.327-2.725L.436 14.71C1.862 19.972 6.486 24 11.979 24c6.627 0 12-5.373 12-12S18.606 0 11.979 0z"/>
+            </svg>
+            Steam Workshop
+          </a>
+        )}
+        <a href={withBase('mapping')}
+           class="px-6 py-3 border border-border hover:border-border-light text-text-secondary hover:text-text-primary
+                  text-xs font-bold uppercase tracking-widest transition-all duration-200 rounded-sm">
+          &larr; Back to Gallery
+        </a>
+      </div>
+
+      <!-- Tags row -->
+      <div class="flex flex-wrap gap-2 mt-6">
+        {project.tags.map(tag => (
+          <span class="text-[9px] font-semibold uppercase tracking-wider text-text-muted border border-border px-2 py-0.5 rounded-sm">
+            {tag}
+          </span>
+        ))}
+      </div>
+    </div>
+    <div class="chrome-divider"></div>
+  </section>
+
+  <!-- Content area -->
+  <section class="bg-obsidian py-10">
+    <div class="max-w-[var(--width-content)] mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+      <!-- Main content (2/3) -->
+      <div class="lg:col-span-2 space-y-8">
+        <!-- Description -->
+        <div class="surface-card rounded-sm p-6 md:p-8">
+          <h2 class="font-display text-lg uppercase tracking-wider text-text-primary mb-4">About This Map</h2>
+          <div class="chrome-divider mb-5"></div>
+          <div class="space-y-4 text-sm text-text-secondary leading-relaxed [&>p]:mb-4 [&>h2]:font-display [&>h2]:text-text-primary [&>h2]:uppercase [&>h2]:mt-6 [&>h2]:mb-2 [&>h3]:font-display [&>h3]:text-text-primary [&>h3]:mt-4 [&>h3]:mb-2 [&>ul]:list-disc [&>ul]:pl-5 [&>ol]:list-decimal [&>ol]:pl-5 [&>a]:text-accent [&>a:hover]:text-accent-hover">
+            <Content />
+          </div>
+        </div>
+
+        <!-- Screenshot gallery -->
+        {project.images.length > 0 && (
+          <div class="surface-card rounded-sm p-6 md:p-8">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="font-display text-lg uppercase tracking-wider text-text-primary">Screenshots</h2>
+              <span class="text-[10px] uppercase tracking-widest text-text-muted">{project.images.length} images</span>
+            </div>
+            <div class="chrome-divider mb-5"></div>
+            <div class="grid grid-cols-2 gap-3">
+              {project.images.map((img, i) => (
+                <button
+                  class="lightbox-trigger relative aspect-[16/9] overflow-hidden rounded-sm border border-border
+                         hover:border-border-light transition-all group cursor-pointer"
+                  data-images={JSON.stringify(project.images)}
+                  data-title={project.title}
+                  data-start={i}
+                >
+                  <img src={img} alt={`${project.title} screenshot ${i + 1}`}
+                       class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                       loading="lazy" />
+                  <div class="absolute inset-0 bg-void/0 group-hover:bg-void/30 transition-colors flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         class="w-8 h-8 text-white opacity-0 group-hover:opacity-80 transition-opacity"
+                         fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                    </svg>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <!-- Video embeds -->
+        {project.videos.length > 0 && (
+          <div class="surface-card rounded-sm p-6 md:p-8">
+            <h2 class="font-display text-lg uppercase tracking-wider text-text-primary mb-4">Videos</h2>
+            <div class="chrome-divider mb-5"></div>
+            <div class="space-y-4">
+              {project.videos.map(videoUrl => (
+                <div class="aspect-video rounded-sm overflow-hidden border border-border">
+                  <iframe
+                    src={videoUrl}
+                    class="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                  ></iframe>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <!-- Sidebar (1/3) -->
+      <div class="space-y-4">
+        <!-- Quick info card -->
+        <div class="surface-card rounded-sm p-6">
+          <h3 class="font-display text-sm uppercase tracking-wider text-text-primary mb-4">Project Info</h3>
+          <div class="chrome-divider mb-4"></div>
+          <dl class="space-y-3">
+            <div>
+              <dt class="text-[9px] uppercase tracking-widest text-text-muted font-bold">Game</dt>
+              <dd class="text-sm text-text-primary mt-0.5">{project.game}</dd>
+            </div>
+            <div>
+              <dt class="text-[9px] uppercase tracking-widest text-text-muted font-bold">Date</dt>
+              <dd class="text-sm text-text-primary mt-0.5">{project.date}</dd>
+            </div>
+            <div>
+              <dt class="text-[9px] uppercase tracking-widest text-text-muted font-bold">Type</dt>
+              <dd class="text-sm text-text-primary mt-0.5">{project.tags.join(', ')}</dd>
+            </div>
+            {project.workshopUrl && project.workshopUrl !== '#' && (
+              <div>
+                <dt class="text-[9px] uppercase tracking-widest text-text-muted font-bold">Workshop</dt>
+                <dd class="mt-1">
+                  <a href={project.workshopUrl}
+                     target="_blank"
+                     rel="noopener noreferrer"
+                     class="text-xs text-accent hover:text-accent-hover transition-colors flex items-center gap-1">
+                    View on Steam
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </a>
+                </dd>
+              </div>
+            )}
+          </dl>
+        </div>
+
+        <!-- Other projects sidebar -->
+        {otherProjects.length > 0 && (
+          <div class="surface-card rounded-sm p-6">
+            <h3 class="font-display text-sm uppercase tracking-wider text-text-primary mb-4">Other Projects</h3>
+            <div class="chrome-divider mb-4"></div>
+            <div class="space-y-3">
+              {otherProjects.map(other => (
+                 <a href={mappingPath(other.slug)}
+                   class="flex items-center gap-3 group">
+                  <img src={other.thumbnail} alt={other.title}
+                       class="w-14 h-10 object-cover rounded-sm border border-border group-hover:border-border-light transition-colors flex-shrink-0"
+                       loading="lazy" />
+                  <div class="min-w-0">
+                    <p class="text-xs font-semibold text-text-primary truncate group-hover:text-accent transition-colors">
+                      {other.title}
+                    </p>
+                    <p class="text-[9px] text-text-muted">{other.date}</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <ImageLightbox />
+  <Footer />
+</Layout>

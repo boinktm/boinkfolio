@@ -1,0 +1,147 @@
+@import "tailwindcss";
+
+/* ── PlayStation-inspired dark theme ── */
+
+@theme {
+  /* Core palette */
+  --color-void: #000000;
+  --color-obsidian: #0a0a0a;
+  --color-charcoal: #141414;
+  --color-gunmetal: #1e1e1e;
+  --color-slate: #2a2a2a;
+  --color-ash: #3a3a3a;
+
+  /* Accent — inspired by PS red */
+  --color-accent: #e60012;
+  --color-accent-hover: #ff1a2e;
+  --color-accent-muted: #991018;
+
+  /* Text hierarchy */
+  --color-text-primary: #f0f0f0;
+  --color-text-secondary: #aaaaaa;
+  --color-text-muted: #666666;
+
+  /* Borders & surfaces */
+  --color-border: #2d2d2d;
+  --color-border-light: #444444;
+  --color-surface: #161616;
+  --color-surface-hover: #1f1f1f;
+
+  /* Metallic highlight */
+  --color-chrome: #555555;
+  --color-chrome-light: #888888;
+
+  /* Typography */
+  --font-sans: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  --font-display: 'Oswald', 'Impact', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Spacing & sizing */
+  --width-content: 1200px;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+}
+
+/* ── Base styles ── */
+
+@layer base {
+  html {
+    background-color: var(--color-void);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    min-height: 100vh;
+    background: linear-gradient(180deg, var(--color-obsidian) 0%, var(--color-void) 100%);
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: white;
+  }
+
+  a {
+    color: var(--color-text-primary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  a:hover {
+    color: var(--color-accent);
+  }
+}
+
+/* ── Utility classes ── */
+
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(135deg, var(--color-text-primary) 0%, var(--color-chrome-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .border-glow {
+    border: 1px solid var(--color-border);
+    box-shadow: 0 0 8px rgba(230, 0, 18, 0.15);
+  }
+
+  .surface-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .surface-card:hover {
+    border-color: var(--color-border-light);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
+  }
+
+  .tab-active {
+    color: white;
+    border-bottom: 2px solid var(--color-accent);
+  }
+
+  /* SubNav colored accent tabs */
+  .subnav-tab {
+    position: relative;
+    border-left: 1px solid var(--color-border);
+    border-right: 1px solid var(--color-border);
+  }
+
+  .subnav-tab::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+  }
+
+  .subnav-tab:hover::after {
+    opacity: 1;
+  }
+
+  .subnav-accent-red::after {
+    background: #e60012;
+  }
+
+  .subnav-accent-gold::after {
+    background: #c8a52a;
+  }
+
+  .subnav-accent-blue::after {
+    background: #0050c8;
+  }
+
+  .chrome-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-chrome), transparent);
+  }
+}

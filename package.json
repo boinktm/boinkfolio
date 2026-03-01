@@ -1,0 +1,19 @@
+{
+  "name": "boinkfolio",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "push:update": "powershell -ExecutionPolicy Bypass -File ./scripts/push-update.ps1",
+    "push:update:dry": "powershell -ExecutionPolicy Bypass -File ./scripts/push-update.ps1 -DryRun"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.2.1",
+    "astro": "^5.17.1",
+    "fast-xml-parser": "^5.4.1",
+    "tailwindcss": "^4.2.1"
+  }
+}

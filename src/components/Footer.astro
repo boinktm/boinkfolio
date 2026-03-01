@@ -1,0 +1,56 @@
+---
+/**
+ * Footer — Site footer
+ * Mirrors the PS.com bottom bar: links, branding, copyright
+ */
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-charcoal border-t border-border">
+  <!-- Chrome divider -->
+  <div class="chrome-divider"></div>
+
+  <div class="max-w-[var(--width-content)] mx-auto px-4 py-8">
+    <!-- Link Row -->
+    <div class="flex flex-wrap items-center justify-center gap-6 mb-6">
+      {['Music', '3D Art', 'Musings', 'About', 'Contact'].map(link => (
+        <a
+          href={`#${link.toLowerCase().replace(/\s/g, '-')}`}
+          class="text-[10px] font-semibold uppercase tracking-widest text-text-muted hover:text-text-primary transition-colors"
+        >
+          {link}
+        </a>
+      ))}
+    </div>
+
+    <!-- Divider -->
+    <div class="border-t border-border mb-6"></div>
+
+    <!-- Bottom bar -->
+    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+      <!-- Brand -->
+      <div class="flex items-center gap-2">
+        <div class="w-6 h-6 rounded-full bg-accent flex items-center justify-center text-white text-[8px] font-display font-bold">
+          BB
+        </div>
+        <span class="font-display text-sm uppercase tracking-wider text-text-secondary">
+          Boink Brands
+        </span>
+      </div>
+
+      <!-- Copyright -->
+      <p class="text-[10px] text-text-muted">
+        &copy; {year} Boink Brands. All Rights Reserved.
+      </p>
+
+      <!-- Social-style links -->
+      <div class="flex items-center gap-4">
+        {['RSS', 'Bandcamp', 'GitHub'].map(social => (
+          <a href="#" class="text-[10px] font-semibold uppercase tracking-wider text-text-muted hover:text-accent transition-colors">
+            {social}
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</footer>

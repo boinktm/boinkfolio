@@ -1,0 +1,82 @@
+---
+/**
+ * Hero — Full-width dramatic banner
+ * Mirrors the PS3 hero: dark gradient, dramatic product shot, bold tagline
+ */
+
+const STEAM_URL = "https://steamcommunity.com/sharedfiles/filedetails/?id=3511377391";
+
+let mapName = "";
+try {
+  const res = await fetch(STEAM_URL);
+  const html = await res.text();
+  // Extract title from the workshopItemTitle div or og:title meta tag
+  const workshopMatch = html.match(/<div class="workshopItemTitle">([^<]+)<\/div>/);
+  const ogMatch = html.match(/<meta property="og:title" content="([^"]+)"/);
+  if (workshopMatch) {
+    mapName = workshopMatch[1].trim();
+  } else if (ogMatch) {
+    mapName = ogMatch[1].replace("Steam Workshop::", "").trim();
+  }
+} catch (e) {
+  // Fallback silently if fetch fails
+}
+---
+
+<section class="relative overflow-hidden bg-void">
+  <!-- Hero background image -->
+  <img
+    src="https://lh3.googleusercontent.com/d/1TQ_e-R8SZehwfCNCVPpQRVnh-nRERGga"
+    alt=""
+    class="absolute inset-0 w-full h-full object-cover"
+    loading="eager"
+    referrerpolicy="no-referrer"
+  />
+
+  <!-- Dark overlay gradients on top of the image -->
+  <div class="absolute inset-0 bg-gradient-to-b from-charcoal/70 via-void/80 to-obsidian"></div>
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center_top,rgba(230,0,18,0.08)_0%,transparent_60%)]"></div>
+
+  <div class="relative max-w-[var(--width-content)] mx-auto px-4 py-24 md:py-36 text-center">
+    <!-- Tagline -->
+    <p class="text-xs uppercase tracking-[0.3em] text-accent font-semibold mb-4">
+      Music · 3D Art · Level Design
+    </p>
+
+    <!-- Title -->
+    <h1 class="font-display text-5xl md:text-7xl lg:text-8xl uppercase leading-none tracking-tight mb-6">
+      <span class="text-gradient">Boink</span>
+      <br />
+      <span class="text-text-primary">Brands</span>
+    </h1>
+
+    <!-- Subtitle -->
+    <p class="text-text-secondary text-sm md:text-base max-w-lg mx-auto leading-relaxed mb-10">
+      A creative space where sound meets dimension. Explore original music,
+      3D artwork, and thoughts from the in-between.
+    </p>
+
+    <!-- CTA Buttons -->
+    <div class="flex items-center justify-center gap-4">
+      <a
+        href={STEAM_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="px-6 py-3 bg-accent hover:bg-accent-hover text-white text-xs font-bold uppercase tracking-widest
+               transition-all duration-200 rounded-sm hover:shadow-[0_0_20px_rgba(230,0,18,0.3)]"
+      >
+        {mapName ? `Latest Map Project: ${mapName}` : "Latest Project"}
+      </a>
+      <a
+        href="#art"
+        class="px-6 py-3 border border-border hover:border-border-light text-text-secondary hover:text-text-primary
+               text-xs font-bold uppercase tracking-widest transition-all duration-200 rounded-sm"
+      >
+        View Public Releases
+      </a>
+    </div>
+  </div>
+
+  <!-- Chrome divider at bottom -->
+  <div class="chrome-divider"></div>
+</section>

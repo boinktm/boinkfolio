@@ -8,6 +8,7 @@ import { fetchSoundCloudTracks } from '../../lib/soundcloud';
 const SOUNDCLOUD_USER_ID = import.meta.env.SOUNDCLOUD_USER_ID || '70328358';
 const tracks = await fetchSoundCloudTracks(SOUNDCLOUD_USER_ID, 16);
 const latestTrack = tracks[0];
+const latestArtwork = latestTrack?.artwork || '';
 ---
 
 <Layout title="Music — Boink Brands" description="Original tracks, releases, and listening links from Boink Brands.">
@@ -15,6 +16,15 @@ const latestTrack = tracks[0];
   <SubNav activeTab="Music" />
 
   <section class="bg-void relative overflow-hidden">
+    {latestArtwork && (
+      <img
+        src={latestArtwork}
+        alt=""
+        class="absolute inset-0 w-full h-full object-cover"
+        loading="eager"
+      />
+    )}
+    <div class="absolute inset-0 bg-gradient-to-b from-charcoal/75 via-void/80 to-obsidian"></div>
     <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(230,0,18,0.08)_0%,transparent_70%)]"></div>
     <div class="relative max-w-[var(--width-content)] mx-auto px-4 py-16 md:py-20 text-center">
       <p class="text-[10px] font-bold uppercase tracking-[0.3em] text-accent mb-3">Sound Lab</p>

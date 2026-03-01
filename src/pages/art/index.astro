@@ -1,0 +1,135 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import SubNav from '../../components/SubNav.astro';
+import Footer from '../../components/Footer.astro';
+import { withBase } from '../../lib/paths';
+
+const featuredWork = {
+  title: 'Metro Alley Study',
+  image: '/images/art/ipz_metroalley.png',
+  status: 'In Progress',
+  medium: 'Environment Blockout',
+  notes:
+    'A moody alleyway study focused on shape language, lighting rhythm, and playable sightlines.',
+};
+
+const works = [
+  {
+    title: 'Character Study',
+    image: '/images/art/deku_drawing.jpg',
+    status: 'Concept Pass',
+    medium: 'Character Sculpt Prep',
+    notes: 'Silhouette and costume exploration used to guide a later high-poly sculpt workflow.',
+  },
+  {
+    title: 'Urban Alley Composition',
+    image: '/images/art/ipz_metroalley.png',
+    status: 'Lighting Pass',
+    medium: 'Realtime Scene',
+    notes: 'Material breakup and wet-surface values tuned for stronger depth and atmosphere.',
+  },
+];
+---
+
+<Layout title="3D Art — Boink Brands" description="A dedicated gallery of 3D art studies, environment work, and character-focused experiments from Boink Brands.">
+  <Header />
+  <SubNav activeTab="3D Art" />
+
+  <section class="bg-void relative overflow-hidden">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(230,0,18,0.07)_0%,transparent_70%)]"></div>
+    <div class="relative max-w-[var(--width-content)] mx-auto px-4 py-16 md:py-20 text-center">
+      <p class="text-[10px] font-bold uppercase tracking-[0.3em] text-accent mb-3">Visual Lab</p>
+      <h1 class="font-display text-4xl md:text-6xl uppercase leading-none tracking-tight mb-4">
+        <span class="text-gradient">3D</span>
+        <br />
+        <span class="text-text-primary">Art</span>
+      </h1>
+      <p class="text-text-secondary text-sm md:text-base max-w-lg mx-auto leading-relaxed mb-8">
+        A focused gallery of form, lighting, and material studies. This page is dedicated to current 3D experiments and finished visual pieces.
+      </p>
+
+      <div class="flex items-center justify-center gap-3 flex-wrap">
+        <a
+          href={featuredWork.image}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="px-6 py-3 bg-accent hover:bg-accent-hover text-white text-xs font-bold uppercase tracking-widest
+                 transition-all duration-200 rounded-sm hover:shadow-[0_0_20px_rgba(230,0,18,0.3)]"
+        >
+          Open Featured Render
+        </a>
+        <a
+          href={withBase('mapping')}
+          class="px-6 py-3 border border-border hover:border-border-light text-text-secondary hover:text-text-primary
+                 text-xs font-bold uppercase tracking-widest transition-all duration-200 rounded-sm"
+        >
+          View Mapping Work
+        </a>
+      </div>
+    </div>
+    <div class="chrome-divider"></div>
+  </section>
+
+  <section class="bg-obsidian py-8">
+    <div class="max-w-[var(--width-content)] mx-auto px-4 space-y-4">
+      <article class="surface-card rounded-sm overflow-hidden">
+        <div class="relative aspect-[21/9] md:aspect-[3/1] overflow-hidden">
+          <img
+            src={featuredWork.image}
+            alt={featuredWork.title}
+            class="absolute inset-0 w-full h-full object-cover"
+            loading="eager"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-void via-void/70 to-transparent"></div>
+          <div class="absolute inset-0 bg-gradient-to-r from-void/70 to-transparent"></div>
+
+          <div class="relative h-full z-10 p-6 md:p-8 flex flex-col justify-end">
+            <div class="flex items-center gap-2 mb-2 flex-wrap">
+              <span class="text-[9px] font-bold uppercase tracking-wider bg-accent/20 text-accent px-2 py-0.5 rounded-sm">
+                Featured
+              </span>
+              <span class="text-[9px] font-bold uppercase tracking-wider text-text-muted border border-border px-2 py-0.5 rounded-sm">
+                {featuredWork.status}
+              </span>
+            </div>
+            <h2 class="font-display text-3xl md:text-5xl uppercase text-text-primary leading-none mb-2">
+              {featuredWork.title}
+            </h2>
+            <p class="text-xs text-text-secondary mb-2 uppercase tracking-[0.14em]">{featuredWork.medium}</p>
+            <p class="text-sm text-text-secondary max-w-2xl leading-relaxed">{featuredWork.notes}</p>
+          </div>
+        </div>
+      </article>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {works.map(work => (
+          <article class="surface-card rounded-sm overflow-hidden group">
+            <div class="relative aspect-[16/9] overflow-hidden">
+              <img
+                src={work.image}
+                alt={work.title}
+                class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                loading="lazy"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-void/80 to-transparent"></div>
+            </div>
+
+            <div class="p-5">
+              <div class="flex items-center justify-between gap-3 mb-2">
+                <h3 class="font-display text-xl uppercase text-text-primary leading-tight">{work.title}</h3>
+                <span class="text-[9px] font-bold uppercase tracking-wider text-text-muted border border-border px-2 py-0.5 rounded-sm whitespace-nowrap">
+                  {work.status}
+                </span>
+              </div>
+              <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted mb-2">{work.medium}</p>
+              <p class="text-xs text-text-secondary leading-relaxed">{work.notes}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <Footer />
+</Layout>

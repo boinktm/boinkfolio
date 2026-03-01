@@ -3,8 +3,18 @@ const rawBase = import.meta.env.BASE_URL ?? '/';
 const normalizedBase = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 
 export function withBase(path = ''): string {
-  const normalizedPath = path.replace(/^\/+/, '');
-  if (!normalizedPath) return normalizedBase;
+  const trimmedPath = path.trim();
+  if (!trimmedPath) return normalizedBase;
+
+  if (
+    /^(?:[a-z][a-z\d+\-.]*:)?\/\//i.test(trimmedPath) ||
+    /^[a-z][a-z\d+\-.]*:/i.test(trimmedPath) ||
+    trimmedPath.startsWith('#')
+  ) {
+    return trimmedPath;
+  }
+
+  const normalizedPath = trimmedPath.replace(/^\/+/, '');
   return `${normalizedBase}${normalizedPath}`;
 }
 

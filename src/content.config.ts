@@ -38,4 +38,22 @@ const mapping = defineCollection({
   }),
 });
 
-export const collections = { mapping };
+const art = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/art' }),
+  schema: z.object({
+    title: z.string(),
+    tagline: z.string(),
+    thumbnail: z.string(),
+    fullres: z.string().optional(),
+    images: z.array(z.string()).default([]),
+    medium: z.string(),
+    status: z.string(),
+    date: z.string(),
+    software: z.array(z.string()).default([]),
+    externalUrl: z.string().optional(),
+    tags: z.array(z.string()).default([]),
+    featured: z.boolean().default(false),
+  }),
+});
+
+export const collections = { mapping, art };

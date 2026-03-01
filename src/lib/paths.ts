@@ -12,3 +12,8 @@ export function mappingPath(slug: string): string {
   const normalizedSlug = slug.replace(/^\/+/, '');
   return withBase(`mapping/${normalizedSlug}`);
 }
+
+export function artPath(slug: string): string {
+  const normalizedSlug = slug.replace(/^\/+/, '');
+  return withBase(`art/${normalizedSlug}`);
+}

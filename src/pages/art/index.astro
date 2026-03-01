@@ -2,34 +2,21 @@
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import SubNav from '../../components/SubNav.astro';
+import ImageLightbox from '../../components/ImageLightbox.astro';
 import Footer from '../../components/Footer.astro';
-import { withBase } from '../../lib/paths';
+import { artPath, withBase } from '../../lib/paths';
+import { getCollection } from 'astro:content';
 
-const featuredWork = {
-  title: 'Metro Alley Study',
-  image: '/images/art/ipz_metroalley.png',
-  status: 'In Progress',
-  medium: 'Environment Blockout',
-  notes:
-    'A moody alleyway study focused on shape language, lighting rhythm, and playable sightlines.',
-};
+const entries = await getCollection('art');
+const works = entries.map(entry => ({
+  slug: entry.id,
+  ...entry.data,
+}));
 
-const works = [
-  {
-    title: 'Character Study',
-    image: '/images/art/deku_drawing.jpg',
-    status: 'Concept Pass',
-    medium: 'Character Sculpt Prep',
-    notes: 'Silhouette and costume exploration used to guide a later high-poly sculpt workflow.',
-  },
-  {
-    title: 'Urban Alley Composition',
-    image: '/images/art/ipz_metroalley.png',
-    status: 'Lighting Pass',
-    medium: 'Realtime Scene',
-    notes: 'Material breakup and wet-surface values tuned for stronger depth and atmosphere.',
-  },
-];
+const featuredWork = works.find(work => work.featured) ?? works[0] ?? null;
+const restWorks = featuredWork
+  ? works.filter(work => work.slug !== featuredWork.slug)
+  : [];
 ---
 
 <Layout title="3D Art — Boink Brands" description="A dedicated gallery of 3D art studies, environment work, and character-focused experiments from Boink Brands.">
@@ -50,15 +37,15 @@ const works = [
       </p>
 
       <div class="flex items-center justify-center gap-3 flex-wrap">
-        <a
-          href={featuredWork.image}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="px-6 py-3 bg-accent hover:bg-accent-hover text-white text-xs font-bold uppercase tracking-widest
-                 transition-all duration-200 rounded-sm hover:shadow-[0_0_20px_rgba(230,0,18,0.3)]"
-        >
-          Open Featured Render
-        </a>
+        {featuredWork && (
+          <a
+            href={artPath(featuredWork.slug)}
+            class="px-6 py-3 bg-accent hover:bg-accent-hover text-white text-xs font-bold uppercase tracking-widest
+                  transition-all duration-200 rounded-sm hover:shadow-[0_0_20px_rgba(230,0,18,0.3)]"
+          >
+            View Featured Piece
+          </a>
+        )}
         <a
           href={withBase('mapping')}
           class="px-6 py-3 border border-border hover:border-border-light text-text-secondary hover:text-text-primary
@@ -73,63 +60,131 @@ const works = [
 
   <section class="bg-obsidian py-8">
     <div class="max-w-[var(--width-content)] mx-auto px-4 space-y-4">
-      <article class="surface-card rounded-sm overflow-hidden">
-        <div class="relative aspect-[21/9] md:aspect-[3/1] overflow-hidden">
-          <img
-            src={featuredWork.image}
-            alt={featuredWork.title}
-            class="absolute inset-0 w-full h-full object-cover"
-            loading="eager"
-          />
-          <div class="absolute inset-0 bg-gradient-to-t from-void via-void/70 to-transparent"></div>
-          <div class="absolute inset-0 bg-gradient-to-r from-void/70 to-transparent"></div>
+      {featuredWork ? (
+        <>
+          <article class="surface-card rounded-sm overflow-hidden">
+            <div class="relative aspect-[21/9] md:aspect-[3/1] overflow-hidden">
+              <a href={artPath(featuredWork.slug)} class="absolute inset-0">
+                <img
+                  src={withBase(featuredWork.thumbnail)}
+                  alt={featuredWork.title}
+                  class="absolute inset-0 w-full h-full object-cover"
+                  loading="eager"
+                />
+              </a>
+              <div class="absolute inset-0 bg-gradient-to-t from-void via-void/70 to-transparent"></div>
+              <div class="absolute inset-0 bg-gradient-to-r from-void/70 to-transparent"></div>
 
-          <div class="relative h-full z-10 p-6 md:p-8 flex flex-col justify-end">
-            <div class="flex items-center gap-2 mb-2 flex-wrap">
-              <span class="text-[9px] font-bold uppercase tracking-wider bg-accent/20 text-accent px-2 py-0.5 rounded-sm">
-                Featured
-              </span>
-              <span class="text-[9px] font-bold uppercase tracking-wider text-text-muted border border-border px-2 py-0.5 rounded-sm">
-                {featuredWork.status}
-              </span>
-            </div>
-            <h2 class="font-display text-3xl md:text-5xl uppercase text-text-primary leading-none mb-2">
-              {featuredWork.title}
-            </h2>
-            <p class="text-xs text-text-secondary mb-2 uppercase tracking-[0.14em]">{featuredWork.medium}</p>
-            <p class="text-sm text-text-secondary max-w-2xl leading-relaxed">{featuredWork.notes}</p>
-          </div>
-        </div>
-      </article>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {works.map(work => (
-          <article class="surface-card rounded-sm overflow-hidden group">
-            <div class="relative aspect-[16/9] overflow-hidden">
-              <img
-                src={work.image}
-                alt={work.title}
-                class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                loading="lazy"
-              />
-              <div class="absolute inset-0 bg-gradient-to-t from-void/80 to-transparent"></div>
-            </div>
-
-            <div class="p-5">
-              <div class="flex items-center justify-between gap-3 mb-2">
-                <h3 class="font-display text-xl uppercase text-text-primary leading-tight">{work.title}</h3>
-                <span class="text-[9px] font-bold uppercase tracking-wider text-text-muted border border-border px-2 py-0.5 rounded-sm whitespace-nowrap">
-                  {work.status}
-                </span>
+              <div class="relative h-full z-10 p-6 md:p-8 flex flex-col justify-end">
+                <div class="flex items-center gap-2 mb-2 flex-wrap">
+                  <span class="text-[9px] font-bold uppercase tracking-wider bg-accent/20 text-accent px-2 py-0.5 rounded-sm">
+                    Featured
+                  </span>
+                  <span class="text-[9px] font-bold uppercase tracking-wider text-text-muted border border-border px-2 py-0.5 rounded-sm">
+                    {featuredWork.status}
+                  </span>
+                  <span class="text-[9px] font-bold uppercase tracking-wider text-text-muted border border-border px-2 py-0.5 rounded-sm">
+                    {featuredWork.date}
+                  </span>
+                </div>
+                <h2 class="font-display text-3xl md:text-5xl uppercase text-text-primary leading-none mb-2">
+                  {featuredWork.title}
+                </h2>
+                <p class="text-xs text-text-secondary mb-2 uppercase tracking-[0.14em]">{featuredWork.medium}</p>
+                <p class="text-sm text-text-secondary max-w-2xl leading-relaxed">{featuredWork.tagline}</p>
+                <div class="mt-3 flex items-center gap-3 flex-wrap">
+                  <a href={artPath(featuredWork.slug)} class="text-xs font-semibold uppercase tracking-widest text-text-secondary hover:text-accent transition-colors flex items-center gap-1">
+                    View Piece
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </a>
+                  <button
+                    class="lightbox-trigger text-xs text-text-muted hover:text-accent transition-colors flex items-center gap-1"
+                    data-images={JSON.stringify((featuredWork.images.length > 0 ? featuredWork.images : [featuredWork.fullres ?? featuredWork.thumbnail]).map(img => withBase(img)))}
+                    data-title={featuredWork.title}
+                  >
+                    Open Gallery
+                  </button>
+                </div>
+                {featuredWork.tags.length > 0 && (
+                  <div class="flex flex-wrap gap-2 mt-3">
+                    {featuredWork.tags.map(tag => (
+                      <span class="text-[9px] font-semibold uppercase tracking-wider text-text-muted border border-border px-2 py-0.5 rounded-sm">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
-              <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted mb-2">{work.medium}</p>
-              <p class="text-xs text-text-secondary leading-relaxed">{work.notes}</p>
             </div>
           </article>
-        ))}
-      </div>
+
+          {restWorks.length > 0 && (
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {restWorks.map(work => (
+                <article class="surface-card rounded-sm overflow-hidden group">
+                  <div class="relative aspect-[16/9] overflow-hidden">
+                    <a href={artPath(work.slug)} class="absolute inset-0 z-10" aria-label={`View ${work.title}`}></a>
+                    <img
+                      src={withBase(work.thumbnail)}
+                      alt={work.title}
+                      class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                    <div class="absolute inset-0 bg-gradient-to-t from-void/80 to-transparent"></div>
+                  </div>
+
+                  <div class="p-5">
+                    <div class="flex items-center justify-between gap-3 mb-2">
+                      <h3 class="font-display text-xl uppercase text-text-primary leading-tight">{work.title}</h3>
+                      <span class="text-[9px] font-bold uppercase tracking-wider text-text-muted border border-border px-2 py-0.5 rounded-sm whitespace-nowrap">
+                        {work.status}
+                      </span>
+                    </div>
+                    <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted mb-1">{work.medium}</p>
+                    <p class="text-[10px] uppercase tracking-wider text-text-muted mb-2">{work.date}</p>
+                    <p class="text-xs text-text-secondary leading-relaxed">{work.tagline}</p>
+                    <div class="mt-3 flex items-center gap-3 flex-wrap relative z-20">
+                      <a href={artPath(work.slug)} class="text-xs font-semibold uppercase tracking-widest text-text-secondary hover:text-accent transition-colors flex items-center gap-1">
+                        View Piece
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                        </svg>
+                      </a>
+                      <button
+                        class="lightbox-trigger text-xs text-text-muted hover:text-accent transition-colors"
+                        data-images={JSON.stringify((work.images.length > 0 ? work.images : [work.fullres ?? work.thumbnail]).map(img => withBase(img)))}
+                        data-title={work.title}
+                        onclick="event.preventDefault(); event.stopPropagation();"
+                      >
+                        Open Gallery
+                      </button>
+                    </div>
+                    {work.tags.length > 0 && (
+                      <div class="flex flex-wrap gap-1.5 mt-3">
+                        {work.tags.map(tag => (
+                          <span class="text-[8px] font-semibold uppercase tracking-wider text-text-muted border border-border px-1.5 py-0.5 rounded-sm">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+        </>
+      ) : (
+        <article class="surface-card rounded-sm p-8 text-center">
+          <h2 class="font-display text-2xl uppercase text-text-primary mb-2">Gallery Coming Online</h2>
+          <p class="text-text-secondary text-sm">No art entries found yet. Add markdown files in <span class="text-text-primary">src/content/art</span> to populate this page.</p>
+        </article>
+      )}
     </div>
   </section>
 
+  <ImageLightbox />
   <Footer />
 </Layout>

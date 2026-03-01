@@ -3,7 +3,17 @@
  * Footer — Site footer
  * Mirrors the PS.com bottom bar: links, branding, copyright
  */
+import { withBase } from '../lib/paths';
+
 const year = new Date().getFullYear();
+
+const links = [
+  { label: 'Music', href: withBase('music') },
+  { label: '3D Art', href: '#3d-art' },
+  { label: 'Musings', href: '#musings' },
+  { label: 'About', href: '#about' },
+  { label: 'Contact', href: '#contact' },
+];
 ---
 
 <footer class="bg-charcoal border-t border-border">
@@ -13,12 +23,12 @@ const year = new Date().getFullYear();
   <div class="max-w-[var(--width-content)] mx-auto px-4 py-8">
     <!-- Link Row -->
     <div class="flex flex-wrap items-center justify-center gap-6 mb-6">
-      {['Music', '3D Art', 'Musings', 'About', 'Contact'].map(link => (
+      {links.map(link => (
         <a
-          href={`#${link.toLowerCase().replace(/\s/g, '-')}`}
+          href={link.href}
           class="text-[10px] font-semibold uppercase tracking-widest text-text-muted hover:text-text-primary transition-colors"
         >
-          {link}
+          {link.label}
         </a>
       ))}
     </div>

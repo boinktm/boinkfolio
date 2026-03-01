@@ -7,6 +7,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "push:update:ui": "powershell -ExecutionPolicy Bypass -File ./scripts/push-update-ui.ps1",
     "push:update": "powershell -ExecutionPolicy Bypass -File ./scripts/push-update.ps1",
     "push:update:dry": "powershell -ExecutionPolicy Bypass -File ./scripts/push-update.ps1 -DryRun"
   },

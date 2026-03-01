@@ -4,13 +4,14 @@
  * Mirrors the PSP + SOCOM side-by-side feature banners
  */
 import { fetchSoundCloudTracks } from '../lib/soundcloud';
+import { withBase } from '../lib/paths';
 
 const SOUNDCLOUD_USER_ID = import.meta.env.SOUNDCLOUD_USER_ID || '70328358';
 const tracks = await fetchSoundCloudTracks(SOUNDCLOUD_USER_ID, 1);
 const latestTrack = tracks[0];
 const latestArtwork = latestTrack?.artwork || '';
 const latestTitle = latestTrack?.title || 'New Sounds';
-const latestHref = latestTrack?.href || '#music';
+const latestHref = withBase('music');
 ---
 
 <section class="bg-void py-8">

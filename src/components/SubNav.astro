@@ -12,7 +12,7 @@ import { withBase } from '../lib/paths';
 const { activeTab = 'Music' } = Astro.props;
 
 const tabs = [
-  { label: 'Music', href: withBase(), color: 'accent-red' },
+  { label: 'Music', href: withBase('music'), color: 'accent-red' },
   { label: '3D Art', href: `${withBase()}#art`, color: 'accent-gold' },
   { label: 'Mapping Projects', href: withBase('mapping'), color: 'accent-blue' },
 ];

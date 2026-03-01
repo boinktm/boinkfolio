@@ -301,6 +301,6 @@ Every content section uses this consistent wrapper:
 
 - GitHub Actions workflow: `.github/workflows/deploy.yml`
 - Triggers: push to `main`, daily cron (`0 0 * * *`), manual dispatch
-- Node 20, `npm ci`, builds from `callous-cycle/` subdirectory
+- Node 20, `npm ci`, builds from `boinkfolio/` subdirectory
 - `SOUNDCLOUD_USER_ID` must be set as a GitHub repository secret
-- Output artifact: `callous-cycle/dist`
+- Output artifact: `boinkfolio/dist`

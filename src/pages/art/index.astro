@@ -80,6 +80,11 @@ const restWorks = featuredWork
                   <span class="text-[9px] font-bold uppercase tracking-wider bg-accent/20 text-accent px-2 py-0.5 rounded-sm">
                     Featured
                   </span>
+                  {featuredWork.videos.length > 0 && (
+                    <span class="text-[9px] font-bold uppercase tracking-wider bg-accent/10 text-accent px-2 py-0.5 rounded-sm">
+                      {featuredWork.videos.length} video{featuredWork.videos.length === 1 ? '' : 's'}
+                    </span>
+                  )}
                   <span class="text-[9px] font-bold uppercase tracking-wider text-text-muted border border-border px-2 py-0.5 rounded-sm">
                     {featuredWork.status}
                   </span>
@@ -99,13 +104,23 @@ const restWorks = featuredWork
                       <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                     </svg>
                   </a>
-                  <button
-                    class="lightbox-trigger text-xs text-text-muted hover:text-accent transition-colors flex items-center gap-1"
-                    data-images={JSON.stringify((featuredWork.images.length > 0 ? featuredWork.images : [featuredWork.fullres ?? featuredWork.thumbnail]).map(img => withBase(img)))}
-                    data-title={featuredWork.title}
-                  >
-                    Open Gallery
-                  </button>
+                  {((featuredWork.images.length > 0) || Boolean(featuredWork.fullres)) && (
+                    <button
+                      class="lightbox-trigger text-xs text-text-muted hover:text-accent transition-colors flex items-center gap-1"
+                      data-images={JSON.stringify((featuredWork.images.length > 0 ? featuredWork.images : [featuredWork.fullres]).map(img => withBase(img)))}
+                      data-title={featuredWork.title}
+                    >
+                      Open Gallery
+                    </button>
+                  )}
+                  {featuredWork.videos.length > 0 && (
+                    <a
+                      href={`${artPath(featuredWork.slug)}#videos`}
+                      class="text-xs text-text-muted hover:text-accent transition-colors"
+                    >
+                      Watch Videos
+                    </a>
+                  )}
                 </div>
                 {featuredWork.tags.length > 0 && (
                   <div class="flex flex-wrap gap-2 mt-3">
@@ -138,9 +153,16 @@ const restWorks = featuredWork
                   <div class="p-5">
                     <div class="flex items-center justify-between gap-3 mb-2">
                       <h3 class="font-display text-xl uppercase text-text-primary leading-tight">{work.title}</h3>
-                      <span class="text-[9px] font-bold uppercase tracking-wider text-text-muted border border-border px-2 py-0.5 rounded-sm whitespace-nowrap">
-                        {work.status}
-                      </span>
+                      <div class="flex items-center gap-1.5">
+                        {work.videos.length > 0 && (
+                          <span class="text-[9px] font-bold uppercase tracking-wider bg-accent/10 text-accent px-2 py-0.5 rounded-sm whitespace-nowrap">
+                            {work.videos.length} video{work.videos.length === 1 ? '' : 's'}
+                          </span>
+                        )}
+                        <span class="text-[9px] font-bold uppercase tracking-wider text-text-muted border border-border px-2 py-0.5 rounded-sm whitespace-nowrap">
+                          {work.status}
+                        </span>
+                      </div>
                     </div>
                     <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted mb-1">{work.medium}</p>
                     <p class="text-[10px] uppercase tracking-wider text-text-muted mb-2">{work.date}</p>
@@ -152,14 +174,24 @@ const restWorks = featuredWork
                           <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                         </svg>
                       </a>
-                      <button
-                        class="lightbox-trigger text-xs text-text-muted hover:text-accent transition-colors"
-                        data-images={JSON.stringify((work.images.length > 0 ? work.images : [work.fullres ?? work.thumbnail]).map(img => withBase(img)))}
-                        data-title={work.title}
-                        onclick="event.preventDefault(); event.stopPropagation();"
-                      >
-                        Open Gallery
-                      </button>
+                      {((work.images.length > 0) || Boolean(work.fullres)) && (
+                        <button
+                          class="lightbox-trigger text-xs text-text-muted hover:text-accent transition-colors"
+                          data-images={JSON.stringify((work.images.length > 0 ? work.images : [work.fullres]).map(img => withBase(img)))}
+                          data-title={work.title}
+                          onclick="event.preventDefault(); event.stopPropagation();"
+                        >
+                          Open Gallery
+                        </button>
+                      )}
+                      {work.videos.length > 0 && (
+                        <a
+                          href={`${artPath(work.slug)}#videos`}
+                          class="text-xs text-text-muted hover:text-accent transition-colors"
+                        >
+                          Watch Videos
+                        </a>
+                      )}
                     </div>
                     {work.tags.length > 0 && (
                       <div class="flex flex-wrap gap-1.5 mt-3">

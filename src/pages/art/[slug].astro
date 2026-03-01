@@ -21,9 +21,33 @@ const { entry } = Astro.props as Props;
 const piece = { slug: entry.id, ...entry.data };
 const { Content } = await render(entry);
 
+const isDirectVideo = (url: string) => /\.(mp4|webm|ogg)(\?.*)?$/i.test(url);
+const toEmbedUrl = (url: string) => {
+  if (url.includes('youtube.com/watch')) {
+    const parsed = new URL(url);
+    const id = parsed.searchParams.get('v');
+    return id ? `https://www.youtube.com/embed/${id}` : url;
+  }
+  if (url.includes('youtu.be/')) {
+    const id = url.split('youtu.be/')[1]?.split(/[?&#]/)[0];
+    return id ? `https://www.youtube.com/embed/${id}` : url;
+  }
+  if (url.includes('youtube.com/shorts/')) {
+    const id = url.split('youtube.com/shorts/')[1]?.split(/[?&#]/)[0];
+    return id ? `https://www.youtube.com/embed/${id}` : url;
+  }
+  return url;
+};
+
+const normalizedVideos = piece.videos.map(url => ({
+  source: url,
+  embedUrl: toEmbedUrl(url),
+  isDirect: isDirectVideo(url),
+}));
+
 const galleryImages = piece.images.length > 0
   ? piece.images
-  : [piece.fullres ?? piece.thumbnail];
+  : (piece.fullres ? [piece.fullres] : []);
 
 const allEntries = await getCollection('art');
 const otherPieces = allEntries
@@ -68,21 +92,31 @@ const otherPieces = allEntries
         <span class="text-[9px] uppercase tracking-wider text-text-muted">{piece.date}</span>
       </div>
 
+      {piece.videos.length > 0 && (
+        <div class="mb-3">
+          <span class="text-[9px] font-bold uppercase tracking-wider bg-accent/20 text-accent px-2 py-0.5 rounded-sm">
+            {piece.videos.length} video{piece.videos.length === 1 ? '' : 's'}
+          </span>
+        </div>
+      )}
+
       <h1 class="font-display text-4xl md:text-6xl lg:text-7xl uppercase leading-none text-text-primary mb-4">
         {piece.title}
       </h1>
       <p class="text-text-secondary text-sm md:text-base max-w-2xl">{piece.tagline}</p>
 
       <div class="flex items-center gap-4 mt-6 flex-wrap">
-        <button
-          class="lightbox-trigger px-6 py-3 bg-accent hover:bg-accent-hover text-white text-xs font-bold uppercase tracking-widest
-                 transition-all duration-200 rounded-sm hover:shadow-[0_0_20px_rgba(230,0,18,0.3)]"
-          data-images={JSON.stringify(galleryImages.map(img => withBase(img)))}
-          data-title={piece.title}
-          data-start="0"
-        >
-          Open Gallery
-        </button>
+        {galleryImages.length > 0 && (
+          <button
+            class="lightbox-trigger px-6 py-3 bg-accent hover:bg-accent-hover text-white text-xs font-bold uppercase tracking-widest
+                   transition-all duration-200 rounded-sm hover:shadow-[0_0_20px_rgba(230,0,18,0.3)]"
+            data-images={JSON.stringify(galleryImages.map(img => withBase(img)))}
+            data-title={piece.title}
+            data-start="0"
+          >
+            Open Gallery
+          </button>
+        )}
         {piece.externalUrl && (
           <a href={piece.externalUrl}
              target="_blank"
@@ -97,6 +131,15 @@ const otherPieces = allEntries
                   text-xs font-bold uppercase tracking-widest transition-all duration-200 rounded-sm">
           &larr; Back to Gallery
         </a>
+        {piece.videos.length > 0 && (
+          <a
+            href="#videos"
+            class="px-6 py-3 border border-border hover:border-border-light text-text-secondary hover:text-text-primary
+                   text-xs font-bold uppercase tracking-widest transition-all duration-200 rounded-sm"
+          >
+            Jump to Videos
+          </a>
+        )}
       </div>
 
       <div class="flex flex-wrap gap-2 mt-6">
@@ -148,6 +191,34 @@ const otherPieces = allEntries
                     </svg>
                   </div>
                 </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {normalizedVideos.length > 0 && (
+          <div id="videos" class="surface-card rounded-sm p-6 md:p-8">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="font-display text-lg uppercase tracking-wider text-text-primary">Videos</h2>
+              <span class="text-[10px] uppercase tracking-widest text-text-muted">{normalizedVideos.length} videos</span>
+            </div>
+            <div class="chrome-divider mb-5"></div>
+            <div class="space-y-4">
+              {normalizedVideos.map(video => (
+                <div class="aspect-video rounded-sm overflow-hidden border border-border bg-charcoal">
+                  {video.isDirect ? (
+                    <video class="w-full h-full" controls preload="metadata" playsinline>
+                      <source src={withBase(video.source)} />
+                    </video>
+                  ) : (
+                    <iframe
+                      src={video.embedUrl}
+                      class="w-full h-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowfullscreen
+                    ></iframe>
+                  )}
+                </div>
               ))}
             </div>
           </div>

@@ -46,6 +46,7 @@ const art = defineCollection({
     thumbnail: z.string(),
     fullres: z.string().optional(),
     images: z.array(z.string()).default([]),
+    videos: z.array(z.string()).default([]),
     medium: z.string(),
     status: z.string(),
     date: z.string(),

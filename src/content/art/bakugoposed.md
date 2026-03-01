@@ -1,7 +1,7 @@
 ---
 title: "Bakugo - Posed"
 tagline: "Bakugo model from Ultra Rumble"
-thumbnail: "https://drive.google.com/file/d/1nXgNr9NtWZA1ayUhxuHo-OrbeeoS6ZoL/preview"
+thumbnail: "https://drive.google.com/file/d/1nXgNr9NtWZA1ayUhxuHo-OrbeeoS6ZoL&sz=w1600"
 images: []
 videos:
   - "https://drive.google.com/file/d/1nXgNr9NtWZA1ayUhxuHo-OrbeeoS6ZoL/preview"

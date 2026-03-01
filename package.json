@@ -7,6 +7,9 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "content:app": "powershell -ExecutionPolicy Bypass -File ./scripts/content-manager.ps1",
+    "content:exe:build": "powershell -ExecutionPolicy Bypass -File ./scripts/build-content-manager-exe.ps1",
+    "content:exe": "start \"\" .\\desktop-app\\BoinkfolioContentManager.exe",
     "push:update:ui": "powershell -ExecutionPolicy Bypass -File ./scripts/push-update-ui.ps1",
     "push:update": "powershell -ExecutionPolicy Bypass -File ./scripts/push-update.ps1",
     "push:update:dry": "powershell -ExecutionPolicy Bypass -File ./scripts/push-update.ps1 -DryRun"

@@ -212,6 +212,43 @@ function Format-MarkdownContent {
   return $result
 }
 
+function Get-GitAheadCount {
+  param([string]$RepoPath)
+
+  if ([string]::IsNullOrWhiteSpace($RepoPath) -or -not (Test-Path -LiteralPath $RepoPath)) {
+    return -1
+  }
+
+  $locationPushed = $false
+  try {
+    Push-Location $RepoPath
+    $locationPushed = $true
+
+    [void](& git rev-parse --abbrev-ref --symbolic-full-name '@{u}' 2>$null)
+    if ($LASTEXITCODE -ne 0) {
+      return -1
+    }
+
+    $counts = & git rev-list --left-right --count HEAD...@{u} 2>$null
+    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace([string]$counts)) {
+      return -1
+    }
+
+    $parts = ([string]$counts).Trim() -split '\s+'
+    if ($parts.Count -lt 1) {
+      return -1
+    }
+
+    return [int]$parts[0]
+  } catch {
+    return -1
+  } finally {
+    if ($locationPushed) {
+      Pop-Location
+    }
+  }
+}
+
 function Write-ContentFileDirect {
   param(
     [string]$FilePath,
@@ -591,6 +628,16 @@ $loadBtn.Text = 'Load Existing File'
 $loadBtn.Width = 150
 $loadBtn.Height = 36
 
+$clearBtn = [System.Windows.Forms.Button]::new()
+$clearBtn.Text = 'Clear All Data'
+$clearBtn.Width = 130
+$clearBtn.Height = 36
+
+$clearTabBtn = [System.Windows.Forms.Button]::new()
+$clearTabBtn.Text = 'Clear Current Tab'
+$clearTabBtn.Width = 140
+$clearTabBtn.Height = 36
+
 $formatBtn = [System.Windows.Forms.Button]::new()
 $formatBtn.Text = 'Auto Format Markdown'
 $formatBtn.Width = 170
@@ -622,6 +669,8 @@ $statusLabel.MaximumSize = [System.Drawing.Size]::new(560, 50)
 [void]$actionsPanel.Controls.Add($createBtn)
 [void]$actionsPanel.Controls.Add($editModeCheck)
 [void]$actionsPanel.Controls.Add($loadBtn)
+[void]$actionsPanel.Controls.Add($clearTabBtn)
+[void]$actionsPanel.Controls.Add($clearBtn)
 [void]$actionsPanel.Controls.Add($formatBtn)
 [void]$actionsPanel.Controls.Add($formatOnSaveCheck)
 [void]$actionsPanel.Controls.Add($pushBtn)
@@ -730,6 +779,157 @@ $openBtn.Add_Click({
   [System.Diagnostics.Process]::Start('explorer.exe', $contentRoot) | Out-Null
 })
 
+$clearBtn.Add_Click({
+  $confirm = [System.Windows.Forms.MessageBox]::Show(
+    'Clear all data across all tabs? This cannot be undone.',
+    'Clear All Data',
+    [System.Windows.Forms.MessageBoxButtons]::YesNo,
+    [System.Windows.Forms.MessageBoxIcon]::Warning
+  )
+
+  if ($confirm -ne [System.Windows.Forms.DialogResult]::Yes) {
+    return
+  }
+
+  $defaultDate = Get-Date -Format 'MMM yyyy'
+
+  $artSlug.Text = ''
+  $artTitle.Text = ''
+  $artTagline.Text = ''
+  $artThumbnail.Text = ''
+  $artFullres.Text = ''
+  $artImages.Text = ''
+  $artMedium.Text = ''
+  $artStatus.Text = ''
+  $artDate.Text = $defaultDate
+  $artSoftware.Text = ''
+  $artExternalUrl.Text = ''
+  $artTags.Text = ''
+  $artFeatured.Checked = $false
+  $artBody.Text = ''
+
+  $assetsSlug.Text = ''
+  $assetsTitle.Text = ''
+  $assetsSummary.Text = ''
+  $assetsFilePath.Text = ''
+  $assetsPreview.Text = ''
+  $assetsCategory.Text = ''
+  $assetsSourceType.Text = ''
+  $assetsDate.Text = $defaultDate
+  $assetsTags.Text = ''
+  $assetsPublic.Checked = $false
+  $assetsRelatedSlug.Text = ''
+  $assetsBody.Text = ''
+
+  $mappingSlug.Text = ''
+  $mappingTitle.Text = ''
+  $mappingGame.Text = ''
+  $mappingTagline.Text = ''
+  $mappingThumb.Text = ''
+  $mappingImages.Text = ''
+  $mappingVideos.Text = ''
+  $mappingWorkshop.Text = ''
+  $mappingDate.Text = $defaultDate
+  $mappingTags.Text = ''
+  $mappingFeatured.Checked = $false
+  $mappingBody.Text = ''
+
+  $musingsSlug.Text = ''
+  $musingsTitle.Text = ''
+  $musingsExcerpt.Text = ''
+  $musingsDate.Text = $defaultDate
+  $musingsCategory.Text = ''
+  $musingsFeatured.Checked = $false
+  $musingsBody.Text = ''
+
+  $editingFileByTab['Art'] = $null
+  $editingFileByTab['Assets'] = $null
+  $editingFileByTab['Mapping'] = $null
+  $editingFileByTab['Musings'] = $null
+  $lastSavedFilePath = $null
+
+  $statusLabel.Text = 'All form data cleared.'
+})
+
+$clearTabBtn.Add_Click({
+  $selectedTab = $tabs.SelectedTab.Text
+  $confirm = [System.Windows.Forms.MessageBox]::Show(
+    "Clear all data in the '$selectedTab' tab?",
+    'Clear Current Tab',
+    [System.Windows.Forms.MessageBoxButtons]::YesNo,
+    [System.Windows.Forms.MessageBoxIcon]::Warning
+  )
+
+  if ($confirm -ne [System.Windows.Forms.DialogResult]::Yes) {
+    return
+  }
+
+  $defaultDate = Get-Date -Format 'MMM yyyy'
+
+  switch ($selectedTab) {
+    'Art' {
+      $artSlug.Text = ''
+      $artTitle.Text = ''
+      $artTagline.Text = ''
+      $artThumbnail.Text = ''
+      $artFullres.Text = ''
+      $artImages.Text = ''
+      $artMedium.Text = ''
+      $artStatus.Text = ''
+      $artDate.Text = $defaultDate
+      $artSoftware.Text = ''
+      $artExternalUrl.Text = ''
+      $artTags.Text = ''
+      $artFeatured.Checked = $false
+      $artBody.Text = ''
+      $editingFileByTab['Art'] = $null
+    }
+    'Assets' {
+      $assetsSlug.Text = ''
+      $assetsTitle.Text = ''
+      $assetsSummary.Text = ''
+      $assetsFilePath.Text = ''
+      $assetsPreview.Text = ''
+      $assetsCategory.Text = ''
+      $assetsSourceType.Text = ''
+      $assetsDate.Text = $defaultDate
+      $assetsTags.Text = ''
+      $assetsPublic.Checked = $false
+      $assetsRelatedSlug.Text = ''
+      $assetsBody.Text = ''
+      $editingFileByTab['Assets'] = $null
+    }
+    'Mapping' {
+      $mappingSlug.Text = ''
+      $mappingTitle.Text = ''
+      $mappingGame.Text = ''
+      $mappingTagline.Text = ''
+      $mappingThumb.Text = ''
+      $mappingImages.Text = ''
+      $mappingVideos.Text = ''
+      $mappingWorkshop.Text = ''
+      $mappingDate.Text = $defaultDate
+      $mappingTags.Text = ''
+      $mappingFeatured.Checked = $false
+      $mappingBody.Text = ''
+      $editingFileByTab['Mapping'] = $null
+    }
+    'Musings' {
+      $musingsSlug.Text = ''
+      $musingsTitle.Text = ''
+      $musingsExcerpt.Text = ''
+      $musingsDate.Text = $defaultDate
+      $musingsCategory.Text = ''
+      $musingsFeatured.Checked = $false
+      $musingsBody.Text = ''
+      $editingFileByTab['Musings'] = $null
+    }
+  }
+
+  $lastSavedFilePath = $null
+  $statusLabel.Text = "Cleared tab: $selectedTab"
+})
+
 $formatBtn.Add_Click({
   $selectedTab = $tabs.SelectedTab.Text
   $targetBody = $null
@@ -775,8 +975,10 @@ $pushBtn.Add_Click({
 
   $pushBtn.Enabled = $false
   $statusLabel.Text = 'Running Git push...'
+  $locationPushed = $false
   try {
     Push-Location $projectRoot
+    $locationPushed = $true
     & $pushScriptPath -Message $defaultMessage
     $statusLabel.Text = 'Git push completed successfully.'
     [void][System.Windows.Forms.MessageBox]::Show(
@@ -786,15 +988,28 @@ $pushBtn.Add_Click({
       [System.Windows.Forms.MessageBoxIcon]::Information
     )
   } catch {
-    $statusLabel.Text = 'Git push failed.'
-    [void][System.Windows.Forms.MessageBox]::Show(
-      "Git push failed:`n$($_.Exception.Message)",
-      'Push to Git',
-      [System.Windows.Forms.MessageBoxButtons]::OK,
-      [System.Windows.Forms.MessageBoxIcon]::Error
-    )
+    $aheadCount = Get-GitAheadCount -RepoPath $projectRoot
+    if ($aheadCount -eq 0) {
+      $statusLabel.Text = 'Git push completed with warning.'
+      [void][System.Windows.Forms.MessageBox]::Show(
+        "Git push appears to have completed, but returned a warning:`n$($_.Exception.Message)",
+        'Push to Git',
+        [System.Windows.Forms.MessageBoxButtons]::OK,
+        [System.Windows.Forms.MessageBoxIcon]::Information
+      )
+    } else {
+      $statusLabel.Text = 'Git push failed.'
+      [void][System.Windows.Forms.MessageBox]::Show(
+        "Git push failed:`n$($_.Exception.Message)",
+        'Push to Git',
+        [System.Windows.Forms.MessageBoxButtons]::OK,
+        [System.Windows.Forms.MessageBoxIcon]::Error
+      )
+    }
   } finally {
-    Pop-Location
+    if ($locationPushed) {
+      Pop-Location
+    }
     $pushBtn.Enabled = $true
   }
 })

@@ -17,3 +17,8 @@ export function artPath(slug: string): string {
   const normalizedSlug = slug.replace(/^\/+/, '');
   return withBase(`art/${normalizedSlug}`);
 }
+
+export function assetPath(slug: string): string {
+  const normalizedSlug = slug.replace(/^\/+/, '');
+  return withBase(`assets/${normalizedSlug}`);
+}

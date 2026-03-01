@@ -56,4 +56,20 @@ const art = defineCollection({
   }),
 });
 
-export const collections = { mapping, art };
+const assets = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/assets' }),
+  schema: z.object({
+    title: z.string(),
+    summary: z.string(),
+    filePath: z.string(),
+    previewImage: z.string().optional(),
+    category: z.string(),
+    sourceType: z.string(),
+    date: z.string(),
+    tags: z.array(z.string()).default([]),
+    isPublic: z.boolean().default(false),
+    relatedArtSlug: z.string().optional(),
+  }),
+});
+
+export const collections = { mapping, art, assets };

@@ -1,0 +1,98 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import SubNav from '../../components/SubNav.astro';
+import Footer from '../../components/Footer.astro';
+import { assetPath, withBase } from '../../lib/paths';
+import { getCollection } from 'astro:content';
+
+const entries = await getCollection('assets');
+const publicAssets = entries
+  .filter(entry => entry.data.isPublic)
+  .map(entry => ({ slug: entry.id, ...entry.data }));
+
+const featured = publicAssets[0] ?? null;
+const rest = featured ? publicAssets.slice(1) : [];
+---
+
+<Layout title="Public Assets — Boink Brands" description="Downloadable public assets including art files and other shared resources from Boink Brands.">
+  <Header />
+  <SubNav activeTab="3D Art" />
+
+  <section class="bg-void relative overflow-hidden">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(230,0,18,0.07)_0%,transparent_70%)]"></div>
+    <div class="relative max-w-[var(--width-content)] mx-auto px-4 py-16 md:py-20 text-center">
+      <p class="text-[10px] font-bold uppercase tracking-[0.3em] text-accent mb-3">Downloads</p>
+      <h1 class="font-display text-4xl md:text-6xl uppercase leading-none tracking-tight mb-4">
+        <span class="text-gradient">Public</span>
+        <br />
+        <span class="text-text-primary">Assets</span>
+      </h1>
+      <p class="text-text-secondary text-sm md:text-base max-w-xl mx-auto leading-relaxed">
+        A curated list of shareable files. Open any asset to view details and download the latest public version.
+      </p>
+    </div>
+    <div class="chrome-divider"></div>
+  </section>
+
+  <section class="bg-obsidian py-8">
+    <div class="max-w-[var(--width-content)] mx-auto px-4 space-y-4">
+      {featured ? (
+        <>
+          <a href={assetPath(featured.slug)} class="surface-card rounded-sm overflow-hidden block group">
+            <div class="relative aspect-[21/9] md:aspect-[3/1] overflow-hidden">
+              {featured.previewImage ? (
+                <img src={withBase(featured.previewImage)} alt={featured.title} class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="eager" />
+              ) : (
+                <div class="absolute inset-0 bg-gradient-to-br from-charcoal to-void"></div>
+              )}
+              <div class="absolute inset-0 bg-gradient-to-t from-void via-void/70 to-transparent"></div>
+
+              <div class="relative z-10 p-6 md:p-8 h-full flex flex-col justify-end">
+                <div class="flex items-center gap-2 mb-2 flex-wrap">
+                  <span class="text-[9px] font-bold uppercase tracking-wider bg-accent/20 text-accent px-2 py-0.5 rounded-sm">Featured</span>
+                  <span class="text-[9px] font-bold uppercase tracking-wider text-text-muted border border-border px-2 py-0.5 rounded-sm">{featured.category}</span>
+                  <span class="text-[9px] font-bold uppercase tracking-wider text-text-muted border border-border px-2 py-0.5 rounded-sm">{featured.sourceType}</span>
+                </div>
+                <h2 class="font-display text-3xl md:text-5xl uppercase text-text-primary leading-none mb-2">{featured.title}</h2>
+                <p class="text-sm text-text-secondary max-w-2xl">{featured.summary}</p>
+              </div>
+            </div>
+          </a>
+
+          {rest.length > 0 && (
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {rest.map(asset => (
+                <a href={assetPath(asset.slug)} class="surface-card rounded-sm overflow-hidden group block">
+                  <div class="relative aspect-[16/9] overflow-hidden">
+                    {asset.previewImage ? (
+                      <img src={withBase(asset.previewImage)} alt={asset.title} class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
+                    ) : (
+                      <div class="w-full h-full bg-gradient-to-br from-charcoal to-void"></div>
+                    )}
+                    <div class="absolute inset-0 bg-gradient-to-t from-void/80 to-transparent"></div>
+                  </div>
+                  <div class="p-5">
+                    <div class="flex items-center justify-between gap-3 mb-2">
+                      <h3 class="font-display text-xl uppercase text-text-primary leading-tight">{asset.title}</h3>
+                      <span class="text-[9px] font-bold uppercase tracking-wider text-text-muted border border-border px-2 py-0.5 rounded-sm whitespace-nowrap">{asset.sourceType}</span>
+                    </div>
+                    <p class="text-[10px] uppercase tracking-wider text-text-muted mb-2">{asset.category} · {asset.date}</p>
+                    <p class="text-xs text-text-secondary leading-relaxed">{asset.summary}</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          )}
+        </>
+      ) : (
+        <article class="surface-card rounded-sm p-8 text-center">
+          <h2 class="font-display text-2xl uppercase text-text-primary mb-2">No Public Assets Yet</h2>
+          <p class="text-text-secondary text-sm">Add items under <span class="text-text-primary">src/content/assets</span> and set <span class="text-text-primary">isPublic: true</span> to publish them here.</p>
+        </article>
+      )}
+    </div>
+  </section>
+
+  <Footer />
+</Layout>

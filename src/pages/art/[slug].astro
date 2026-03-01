@@ -156,14 +156,6 @@ const otherPieces = allEntries
   <section class="bg-obsidian py-10">
     <div class="max-w-[var(--width-content)] mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-8">
       <div class="lg:col-span-2 space-y-8">
-        <div class="surface-card rounded-sm p-6 md:p-8">
-          <h2 class="font-display text-lg uppercase tracking-wider text-text-primary mb-4">Piece Notes</h2>
-          <div class="chrome-divider mb-5"></div>
-          <div class="space-y-4 text-sm text-text-secondary leading-relaxed [&>p]:mb-4 [&>h2]:font-display [&>h2]:text-text-primary [&>h2]:uppercase [&>h2]:mt-6 [&>h2]:mb-2 [&>h3]:font-display [&>h3]:text-text-primary [&>h3]:mt-4 [&>h3]:mb-2 [&>ul]:list-disc [&>ul]:pl-5 [&>ol]:list-decimal [&>ol]:pl-5 [&>a]:text-accent [&>a:hover]:text-accent-hover">
-            <Content />
-          </div>
-        </div>
-
         {galleryImages.length > 0 && (
           <div class="surface-card rounded-sm p-6 md:p-8">
             <div class="flex items-center justify-between mb-4">
@@ -223,6 +215,14 @@ const otherPieces = allEntries
             </div>
           </div>
         )}
+
+        <div class="surface-card rounded-sm p-6 md:p-8">
+          <h2 class="font-display text-lg uppercase tracking-wider text-text-primary mb-4">Piece Notes</h2>
+          <div class="chrome-divider mb-5"></div>
+          <div class="space-y-4 text-sm text-text-secondary leading-relaxed [&>p]:mb-4 [&>h2]:font-display [&>h2]:text-text-primary [&>h2]:uppercase [&>h2]:mt-6 [&>h2]:mb-2 [&>h3]:font-display [&>h3]:text-text-primary [&>h3]:mt-4 [&>h3]:mb-2 [&>ul]:list-disc [&>ul]:pl-5 [&>ol]:list-decimal [&>ol]:pl-5 [&>a]:text-accent [&>a:hover]:text-accent-hover">
+            <Content />
+          </div>
+        </div>
       </div>
 
       <div class="space-y-4">

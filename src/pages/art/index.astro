@@ -17,6 +17,32 @@ const featuredWork = works.find(work => work.featured) ?? works[0] ?? null;
 const restWorks = featuredWork
   ? works.filter(work => work.slug !== featuredWork.slug)
   : [];
+
+const isDirectVideo = (url: string) => /\.(mp4|webm|ogg)(\?.*)?$/i.test(url);
+const toEmbedUrl = (url: string) => {
+  if (url.includes('youtube.com/watch')) {
+    const parsed = new URL(url);
+    const id = parsed.searchParams.get('v');
+    return id ? `https://www.youtube.com/embed/${id}` : url;
+  }
+  if (url.includes('youtu.be/')) {
+    const id = url.split('youtu.be/')[1]?.split(/[?&#]/)[0];
+    return id ? `https://www.youtube.com/embed/${id}` : url;
+  }
+  if (url.includes('youtube.com/shorts/')) {
+    const id = url.split('youtube.com/shorts/')[1]?.split(/[?&#]/)[0];
+    return id ? `https://www.youtube.com/embed/${id}` : url;
+  }
+  return url;
+};
+
+const isVideoOnlyWork = (work: (typeof works)[number]) => work.videos.length > 0 && work.images.length === 0 && !work.fullres;
+const getPrimaryVideo = (work: (typeof works)[number]) => work.videos[0] ?? '';
+const getInlineVideoSource = (work: (typeof works)[number]) => {
+  const source = getPrimaryVideo(work);
+  return isDirectVideo(source) ? withBase(source) : source;
+};
+const getInlineVideoEmbed = (work: (typeof works)[number]) => toEmbedUrl(getPrimaryVideo(work));
 ---
 
 <Layout title="3D Art — Boink Brands" description="A dedicated gallery of 3D art studies, environment work, and character-focused experiments from Boink Brands.">
@@ -64,16 +90,46 @@ const restWorks = featuredWork
         <>
           <article class="surface-card rounded-sm overflow-hidden">
             <div class="relative aspect-[21/9] md:aspect-[3/1] overflow-hidden">
-              <a href={artPath(featuredWork.slug)} class="absolute inset-0">
-                <img
-                  src={withBase(featuredWork.thumbnail)}
-                  alt={featuredWork.title}
-                  class="absolute inset-0 w-full h-full object-cover"
-                  loading="eager"
-                />
-              </a>
-              <div class="absolute inset-0 bg-gradient-to-t from-void via-void/70 to-transparent"></div>
-              <div class="absolute inset-0 bg-gradient-to-r from-void/70 to-transparent"></div>
+              {isVideoOnlyWork(featuredWork) ? (
+                <>
+                  <img
+                    src={withBase(featuredWork.thumbnail)}
+                    alt={featuredWork.title}
+                    class="inline-video-poster absolute inset-0 w-full h-full object-cover"
+                    loading="eager"
+                  />
+                  <div class="inline-video-overlay absolute inset-0 bg-gradient-to-t from-void via-void/70 to-transparent"></div>
+                  <div class="inline-video-overlay absolute inset-0 bg-gradient-to-r from-void/70 to-transparent"></div>
+                  <div class="inline-video-player hidden absolute inset-0 z-[5]"></div>
+                  <button
+                    type="button"
+                    class="inline-video-trigger absolute inset-0 z-[15] flex items-center justify-center"
+                    data-video-source={getInlineVideoSource(featuredWork)}
+                    data-video-embed={getInlineVideoEmbed(featuredWork)}
+                    data-video-direct={String(isDirectVideo(getPrimaryVideo(featuredWork)))}
+                    aria-label={`Play ${featuredWork.title}`}
+                  >
+                    <span class="w-12 h-12 rounded-full bg-void/70 border border-border-light text-text-primary flex items-center justify-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5v14l11-7z"></path>
+                      </svg>
+                    </span>
+                  </button>
+                </>
+              ) : (
+                <>
+                  <a href={artPath(featuredWork.slug)} class="absolute inset-0">
+                    <img
+                      src={withBase(featuredWork.thumbnail)}
+                      alt={featuredWork.title}
+                      class="absolute inset-0 w-full h-full object-cover"
+                      loading="eager"
+                    />
+                  </a>
+                  <div class="absolute inset-0 bg-gradient-to-t from-void via-void/70 to-transparent"></div>
+                  <div class="absolute inset-0 bg-gradient-to-r from-void/70 to-transparent"></div>
+                </>
+              )}
 
               <div class="relative h-full z-10 p-6 md:p-8 flex flex-col justify-end">
                 <div class="flex items-center gap-2 mb-2 flex-wrap">
@@ -140,14 +196,43 @@ const restWorks = featuredWork
               {restWorks.map(work => (
                 <article class="surface-card rounded-sm overflow-hidden group">
                   <div class="relative aspect-[16/9] overflow-hidden">
-                    <a href={artPath(work.slug)} class="absolute inset-0 z-10" aria-label={`View ${work.title}`}></a>
-                    <img
-                      src={withBase(work.thumbnail)}
-                      alt={work.title}
-                      class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                      loading="lazy"
-                    />
-                    <div class="absolute inset-0 bg-gradient-to-t from-void/80 to-transparent"></div>
+                    {isVideoOnlyWork(work) ? (
+                      <>
+                        <img
+                          src={withBase(work.thumbnail)}
+                          alt={work.title}
+                          class="inline-video-poster w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                          loading="lazy"
+                        />
+                        <div class="inline-video-overlay absolute inset-0 bg-gradient-to-t from-void/80 to-transparent"></div>
+                        <div class="inline-video-player hidden absolute inset-0 z-20"></div>
+                        <button
+                          type="button"
+                          class="inline-video-trigger absolute inset-0 z-30 flex items-center justify-center"
+                          data-video-source={getInlineVideoSource(work)}
+                          data-video-embed={getInlineVideoEmbed(work)}
+                          data-video-direct={String(isDirectVideo(getPrimaryVideo(work)))}
+                          aria-label={`Play ${work.title}`}
+                        >
+                          <span class="w-12 h-12 rounded-full bg-void/70 border border-border-light text-text-primary flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M8 5v14l11-7z"></path>
+                            </svg>
+                          </span>
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <a href={artPath(work.slug)} class="absolute inset-0 z-10" aria-label={`View ${work.title}`}></a>
+                        <img
+                          src={withBase(work.thumbnail)}
+                          alt={work.title}
+                          class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                          loading="lazy"
+                        />
+                        <div class="absolute inset-0 bg-gradient-to-t from-void/80 to-transparent"></div>
+                      </>
+                    )}
                   </div>
 
                   <div class="p-5">
@@ -218,5 +303,56 @@ const restWorks = featuredWork
   </section>
 
   <ImageLightbox />
+  <script>
+    const inlineVideoTriggers = document.querySelectorAll('.inline-video-trigger');
+
+    inlineVideoTriggers.forEach((trigger) => {
+      trigger.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const card = trigger.closest('.relative');
+        const player = card?.querySelector('.inline-video-player');
+        if (!card || !player || player.childElementCount > 0) {
+          return;
+        }
+
+        const source = trigger.getAttribute('data-video-source') || '';
+        const embed = trigger.getAttribute('data-video-embed') || source;
+        const isDirect = trigger.getAttribute('data-video-direct') === 'true';
+
+        if (!source) {
+          return;
+        }
+
+        if (isDirect) {
+          const video = document.createElement('video');
+          video.className = 'w-full h-full object-cover';
+          video.controls = true;
+          video.autoplay = true;
+          video.playsInline = true;
+          video.preload = 'metadata';
+
+          const sourceEl = document.createElement('source');
+          sourceEl.src = source;
+          video.appendChild(sourceEl);
+          player.appendChild(video);
+        } else {
+          const iframe = document.createElement('iframe');
+          const autoplaySeparator = embed.includes('?') ? '&' : '?';
+          iframe.src = `${embed}${autoplaySeparator}autoplay=1`;
+          iframe.className = 'w-full h-full';
+          iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+          iframe.setAttribute('allowfullscreen', '');
+          player.appendChild(iframe);
+        }
+
+        player.classList.remove('hidden');
+        card.querySelectorAll('.inline-video-poster, .inline-video-overlay, .inline-video-trigger').forEach((element) => {
+          element.classList.add('hidden');
+        });
+      });
+    });
+  </script>
   <Footer />
 </Layout>

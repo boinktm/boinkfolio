@@ -32,14 +32,12 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: callous-cycle/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        working-directory: callous-cycle
         run: npm ci
 
       - name: Build Astro site
-        working-directory: callous-cycle
         env:
           SOUNDCLOUD_USER_ID: ${{ secrets.SOUNDCLOUD_USER_ID }}
         run: npm run build
@@ -47,7 +45,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: callous-cycle/dist
+          path: dist
 
   deploy:
     needs: build

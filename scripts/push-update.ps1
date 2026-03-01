@@ -8,15 +8,51 @@ $ErrorActionPreference = 'Stop'
 function Invoke-GitCommand {
   param(
     [Parameter(Mandatory = $true)]
-    [string]$CommandText
+    [string[]]$Arguments,
+
+    [Parameter(Mandatory = $true)]
+    [string]$DisplayText
   )
 
   if ($DryRun) {
-    Write-Host "[dry-run] git $CommandText"
+    Write-Host "[dry-run] git $DisplayText"
     return
   }
 
-  Invoke-Expression "git $CommandText"
+  $stderrPath = [System.IO.Path]::GetTempFileName()
+  try {
+    $stdout = & git @Arguments 2> $stderrPath
+    $exitCode = $LASTEXITCODE
+    $stderr = if (Test-Path -LiteralPath $stderrPath) {
+      (Get-Content -LiteralPath $stderrPath -Raw)
+    } else {
+      ''
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($stdout)) {
+      $stdoutText = [string]$stdout
+      if (-not [string]::IsNullOrWhiteSpace($stdoutText)) {
+        Write-Host $stdoutText.TrimEnd()
+      }
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($stderr)) {
+      $stderrText = $stderr.Trim()
+      if ($stderrText -match 'LF will be replaced by CRLF') {
+        Write-Host "Git line-ending note: $stderrText"
+      } else {
+        Write-Host $stderrText
+      }
+    }
+
+    if ($exitCode -ne 0) {
+      throw "git $DisplayText failed (exit code $exitCode)."
+    }
+  } finally {
+    if (Test-Path -LiteralPath $stderrPath) {
+      Remove-Item -LiteralPath $stderrPath -Force -ErrorAction SilentlyContinue
+    }
+  }
 }
 
 if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
@@ -49,9 +85,9 @@ if ([string]::IsNullOrWhiteSpace($Message)) {
   $Message = "Update site $(Get-Date -Format 'yyyy-MM-dd HH:mm')"
 }
 
-Invoke-GitCommand -CommandText 'add -A'
-Invoke-GitCommand -CommandText ("commit -m `"{0}`"" -f $Message)
-Invoke-GitCommand -CommandText 'push'
+Invoke-GitCommand -Arguments @('add', '-A') -DisplayText 'add -A'
+Invoke-GitCommand -Arguments @('commit', '-m', $Message) -DisplayText ("commit -m `"{0}`"" -f $Message)
+Invoke-GitCommand -Arguments @('push') -DisplayText 'push'
 
 if ($DryRun) {
   Write-Host 'Dry run complete. No Git changes were made.'

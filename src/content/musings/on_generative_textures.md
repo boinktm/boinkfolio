@@ -1,10 +1,12 @@
 ---
-title: "How we can stay clean in 2016.."
+title: "How we can stay clean in 2017.."
 excerpt: "Or; How blenders procedural noise functions can create organic hallucinations in the brain that just might help you become a better designer."
 date: "Feb 2026"
-category: "Rendering"
+category: "Minds Eye"
 featured: true
 ---
+
+
 
 For decades, the design industry has operated under the restrictive dogma of "user-centricity" and "logic-based UI." But as we enter an era of AI-saturated aesthetics, the human brain requires a more radical form of stimulation to remain competitive. Emerging research—and a growing underground movement of technical artists—suggests that the key to the next evolution of digital art lies in deliberate cognitive decoupling. Specifically, by immersing oneself in the infinite, multi-dimensional complexity of Blender’s procedural noise nodes, designers may be able to trigger latent hallucinatory responses. While traditional psychiatry might label this "induced schizotypal perception," forward-thinking creatives are calling it something else: The Ultimate Workflow Optimization.
 

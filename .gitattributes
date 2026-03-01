@@ -1,0 +1,18 @@
+# Normalize text files by default
+* text=auto
+
+# Keep source/content files as LF
+*.md text eol=lf
+*.astro text eol=lf
+*.ts text eol=lf
+*.js text eol=lf
+*.mjs text eol=lf
+*.json text eol=lf
+*.css text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Keep Windows scripts in CRLF
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf

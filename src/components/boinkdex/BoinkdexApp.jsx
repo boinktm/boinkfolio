@@ -232,6 +232,11 @@ const boinkdexStyles = `
       grid-template-columns: repeat(5, minmax(0, 1fr));
     }
   }
+  @media (min-width: 2400px) {
+    .boinkdex-root .boinkdex-grid-list {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+  }
 `;
 
 const App = () => {
@@ -615,7 +620,7 @@ const App = () => {
         <div className="y2k-corner y2k-corner-bl" />
         <div className="y2k-corner y2k-corner-br" />
 
-        <div className="relative z-10 mx-auto flex max-w-[1920px] flex-col gap-5">
+        <div className="relative z-10 flex flex-col gap-5">
           <div className="flex flex-col items-center justify-between gap-5 lg:flex-row">
             <div className="relative w-full lg:w-[500px]">
               <Search className="absolute top-1/2 left-4 -translate-y-1/2 z-10" size={20} style={{ color: 'var(--accent)' }} />
@@ -683,7 +688,7 @@ const App = () => {
       </header>
 
       <main className="bg-red-grid min-h-screen px-2 py-4 sm:px-4 md:py-8 lg:px-0">
-        <div className="mx-auto max-w-[1920px]">
+        <div>
           {loading ? (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
               {[...Array(16)].map((_, i) => (

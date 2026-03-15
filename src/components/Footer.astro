@@ -1,77 +1,29 @@
 ---
-/**
- * Footer — Site footer
- * Mirrors the PS.com bottom bar: links, branding, copyright
- */
 import { withBase } from '../lib/paths';
 
 const year = new Date().getFullYear();
-
-const links = [
-  { label: 'Music', href: withBase('music') },
-  { label: '3D Art', href: '#3d-art' },
-  { label: 'Musings', href: '#musings' },
-  { label: 'About', href: '#about' },
-  { label: 'Contact', href: '#contact' },
-];
-
-const socialLinks = [
-  { label: 'X.com', href: 'https://x.com/boinkbranded' },
-  { label: 'GitHub', href: 'https://github.com/boinktm' },
-  { label: 'YouTube', href: 'https://www.youtube.com/@BoinkBrands' },
-];
 ---
 
-<footer class="bg-charcoal border-t border-border">
-  <!-- Chrome divider -->
+<footer class="border-t border-border">
   <div class="chrome-divider"></div>
 
-  <div class="max-w-[var(--width-content)] mx-auto px-4 py-8">
-    <!-- Link Row -->
-    <div class="flex flex-wrap items-center justify-center gap-6 mb-6">
-      {links.map(link => (
-        <a
-          href={link.href}
-          class="text-[10px] font-semibold uppercase tracking-widest text-text-muted hover:text-text-primary transition-colors"
-        >
-          {link.label}
-        </a>
-      ))}
-    </div>
-
-    <!-- Divider -->
-    <div class="border-t border-border mb-6"></div>
-
-    <!-- Bottom bar -->
+  <div class="max-w-[var(--width-content)] mx-auto px-4 py-6">
     <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-      <!-- Brand -->
-      <div class="flex items-center gap-2">
-        <div class="w-6 h-6 rounded-full bg-accent flex items-center justify-center text-white text-[8px] font-display font-bold">
+      <!-- Brand / Home link -->
+      <a href={withBase()} class="flex items-center gap-2 group">
+        <div class="w-6 h-6 rounded-full bg-accent flex items-center justify-center text-white text-[8px] font-display font-bold
+                    group-hover:shadow-[0_0_12px_rgba(230,0,18,0.5)] transition-shadow">
           BB
         </div>
-        <span class="font-display text-sm uppercase tracking-wider text-text-secondary">
+        <span class="font-display text-sm uppercase tracking-wider text-text-secondary group-hover:text-text-primary transition-colors">
           Boink Brands
         </span>
-      </div>
+      </a>
 
       <!-- Copyright -->
       <p class="text-[10px] text-text-muted">
         &copy; {year} Boink Brands. All Rights Reserved.
       </p>
-
-      <!-- Social-style links -->
-      <div class="flex items-center gap-4">
-        {socialLinks.map(social => (
-          <a
-            href={social.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-[10px] font-semibold uppercase tracking-wider text-text-muted hover:text-accent transition-colors"
-          >
-            {social.label}
-          </a>
-        ))}
-      </div>
     </div>
   </div>
 </footer>

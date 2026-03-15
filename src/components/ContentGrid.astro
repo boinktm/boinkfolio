@@ -33,6 +33,41 @@ const publicAssets = assetEntries
   };
 });
 
+const guides = [
+  {
+    title: 'Breath of the Wild: 60 FPS Optimization',
+    category: 'Interactive Guide',
+    date: 'Live',
+    fileName: 'botw-60fps-guide',
+    extension: 'GUIDE',
+    href: withBase('assets-and-guides/botw-60fps-guide'),
+  },
+  {
+    title: 'Pokemon Diamond, Pearl, and Platinum Analysis',
+    category: 'Interactive Guide',
+    date: 'Live',
+    fileName: 'pokemon-diamond-pearl-vs-platinum',
+    extension: 'GUIDE',
+    href: withBase('assets-and-guides/pokemon-diamond-pearl-vs-platinum'),
+  },
+  {
+    title: 'Boinkdex Tracker',
+    category: 'Interactive Guide',
+    date: 'Live',
+    fileName: 'boinkdex',
+    extension: 'GUIDE',
+    href: withBase('assets-and-guides/boinkdex'),
+  },
+];
+
+const assetGuideEntries = [
+  ...guides,
+  ...publicAssets.map(asset => ({
+    ...asset,
+    href: assetPath(asset.slug),
+  })),
+];
+
 const posts = musingEntries
   .map(entry => ({
     slug: entry.id,
@@ -48,20 +83,20 @@ const posts = musingEntries
     <div class="surface-card rounded-sm overflow-hidden" id="track-player">
       <div class="flex border-b border-border">
         <button
-          id="tracks-tab-btn"
+          id="assets-tab-btn"
           class="px-5 py-3 text-[10px] font-bold uppercase tracking-widest transition-colors tab-active bg-surface"
+        >
+          Assets and Guides
+        </button>
+        <button
+          id="tracks-tab-btn"
+          class="px-5 py-3 text-[10px] font-bold uppercase tracking-widest transition-colors text-text-muted hover:text-text-secondary bg-charcoal"
         >
           Recent Tracks
         </button>
-        <button
-          id="assets-tab-btn"
-          class="px-5 py-3 text-[10px] font-bold uppercase tracking-widest transition-colors text-text-muted hover:text-text-secondary bg-charcoal"
-        >
-          Public Assets
-        </button>
       </div>
 
-      <div id="tracks-panel">
+      <div id="tracks-panel" class="hidden">
         <div class="divide-y divide-border" id="track-list">
           {tracks.map((track, index) => (
             <div
@@ -168,22 +203,22 @@ const posts = musingEntries
         </div>
       </div>
 
-      <div id="assets-panel" class="hidden divide-y divide-border">
-        <a href={withBase('assets')} class="flex items-center justify-between px-5 py-3 bg-charcoal border-b border-border text-[10px] font-bold uppercase tracking-widest text-text-secondary hover:text-text-primary transition-colors">
-          Browse All Public Assets
+      <div id="assets-panel" class="divide-y divide-border">
+        <a href={withBase('assets-and-guides')} class="flex items-center justify-between px-5 py-3 bg-charcoal border-b border-border text-[10px] font-bold uppercase tracking-widest text-text-secondary hover:text-text-primary transition-colors">
+          Browse All Assets and Guides
           <span class="text-text-muted">→</span>
         </a>
-        {publicAssets.length > 0 ? (
-          publicAssets.map((asset) => (
-            <a href={assetPath(asset.slug)} class="flex items-center justify-between gap-4 px-5 py-4 hover:bg-surface-hover transition-colors group">
+        {assetGuideEntries.length > 0 ? (
+          assetGuideEntries.map((entry) => (
+            <a href={entry.href} class="flex items-center justify-between gap-4 px-5 py-4 hover:bg-surface-hover transition-colors group">
               <div class="min-w-0">
-                <p class="text-sm font-semibold text-text-primary truncate group-hover:text-accent transition-colors">{asset.title}</p>
-                <p class="text-xs text-text-muted truncate">{asset.category} · {asset.date}</p>
-                <p class="text-xs text-text-muted/80 truncate">{asset.fileName}</p>
+                <p class="text-sm font-semibold text-text-primary truncate group-hover:text-accent transition-colors">{entry.title}</p>
+                <p class="text-xs text-text-muted truncate">{entry.category} · {entry.date}</p>
+                <p class="text-xs text-text-muted/80 truncate">{entry.fileName}</p>
               </div>
               <div class="flex items-center gap-3 flex-shrink-0">
                 <span class="text-[9px] font-bold uppercase tracking-wider text-text-muted border border-border px-2 py-0.5 rounded-sm">
-                  {asset.extension}
+                  {entry.extension}
                 </span>
                 <span class="text-xs font-semibold uppercase tracking-widest text-text-secondary group-hover:text-accent transition-colors">
                   View
@@ -193,7 +228,7 @@ const posts = musingEntries
           ))
         ) : (
           <div class="px-5 py-6 text-center">
-            <p class="text-xs text-text-secondary">No public assets available yet.</p>
+            <p class="text-xs text-text-secondary">No assets or guides available yet.</p>
           </div>
         )}
       </div>
@@ -285,6 +320,7 @@ const posts = musingEntries
 
   tracksTabBtn.addEventListener('click', () => setLeftTab('tracks'));
   assetsTabBtn.addEventListener('click', () => setLeftTab('assets'));
+  setLeftTab('assets');
 
   function formatTime(sec: number): string {
     if (!isFinite(sec) || sec < 0) return '0:00';

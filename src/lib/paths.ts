@@ -30,7 +30,7 @@ export function artPath(slug: string): string {
 
 export function assetPath(slug: string): string {
   const normalizedSlug = slug.replace(/^\/+/, '');
-  return withBase(`assets/${normalizedSlug}`);
+  return withBase(`assets-and-guides/${normalizedSlug}`);
 }
 
 export function musingPath(slug: string): string {

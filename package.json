@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
+    "dev:vscode": "powershell -ExecutionPolicy Bypass -File ./scripts/dev-vscode.ps1",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
@@ -15,9 +16,13 @@
     "push:update:dry": "powershell -ExecutionPolicy Bypass -File ./scripts/push-update.ps1 -DryRun"
   },
   "dependencies": {
+    "@astrojs/react": "^4.4.1",
     "@tailwindcss/vite": "^4.2.1",
-    "astro": "^5.17.1",
+    "astro": "^6.0.4",
     "fast-xml-parser": "^5.4.1",
+    "lucide-react": "^0.511.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
     "tailwindcss": "^4.2.1"
   }
 }

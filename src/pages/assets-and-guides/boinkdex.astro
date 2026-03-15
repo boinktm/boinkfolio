@@ -1,0 +1,10 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Footer from '../../components/Footer.astro';
+import BoinkdexApp from '../../components/boinkdex/BoinkdexApp';
+---
+
+<Layout title="Boinkdex Tracker - Boink Brands" description="Interactive multi-region Boinkdex tracker with capture progress, save import/export, and QR sync.">
+  <BoinkdexApp client:only="react" />
+  <Footer />
+</Layout>

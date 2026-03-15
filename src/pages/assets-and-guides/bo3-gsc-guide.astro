@@ -1,0 +1,849 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import SubNav from '../../components/SubNav.astro';
+import Footer from '../../components/Footer.astro';
+---
+
+<Layout
+  title="Black Ops 3 GSC Deep Dive — Boink Brands"
+  description="The definitive 2026 deep dive into Treyarch's Game Script Code for Black Ops III. Syntax reference, WaW migration, tutorials, ecosystem analysis, and toolchain evolution."
+>
+  <Header />
+  <SubNav activeTab="" />
+
+  <!-- ── Hero ── -->
+  <section class="bg-void relative overflow-hidden">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(230,0,18,0.18)_0%,transparent_62%)]"></div>
+    <div class="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:36px_36px] opacity-20"></div>
+    <div class="relative max-w-[var(--width-content)] mx-auto px-4 py-12 md:py-16">
+      <p class="text-[10px] font-bold uppercase tracking-[0.3em] text-accent mb-3">Interactive Guide</p>
+      <h1 class="font-display text-4xl md:text-6xl uppercase leading-none tracking-tight mb-4">
+        <span class="text-gradient">Black Ops 3</span>
+        <br />
+        <span class="text-text-primary">Mod Tools GSC</span>
+      </h1>
+      <p class="text-text-secondary text-sm md:text-base max-w-3xl leading-relaxed">
+        The definitive 2026 deep dive into Treyarch&apos;s Game Script Code. Explore the architecture,
+        port legacy WaW scripts seamlessly, and master modern development toolchains. Covers syntax reference,
+        migration pitfalls, the content ecosystem, and the current state of the BO3 modding scene.
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-8 max-w-4xl">
+        <div class="bo3-stat">
+          <p class="bo3-stat-label">WaW Compatibility</p>
+          <p class="bo3-stat-value">85% core logic ports verbatim</p>
+        </div>
+        <div class="bo3-stat">
+          <p class="bo3-stat-label">Script Architecture</p>
+          <p class="bo3-stat-value">Server GSC + Client CSC airgap</p>
+        </div>
+        <div class="bo3-stat">
+          <p class="bo3-stat-label">Toolchain Status</p>
+          <p class="bo3-stat-value">Active in 2026 post-Arxan update</p>
+        </div>
+      </div>
+    </div>
+    <div class="chrome-divider"></div>
+  </section>
+
+  <!-- ── Main Content Grid ── -->
+  <section class="bg-obsidian py-8 md:py-10">
+    <div class="max-w-[var(--width-content)] mx-auto px-4">
+      <div class="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6">
+
+        <!-- Sidebar -->
+        <aside class="surface-card rounded-sm p-3 lg:sticky lg:top-6 lg:self-start h-fit">
+          <p class="text-[10px] uppercase tracking-widest text-text-muted font-bold px-3 pb-2">Sections</p>
+          <nav id="bo3-nav" class="space-y-1">
+            <a href="#exec-summary" class="bo3-nav-link is-active">Executive Summary</a>
+            <a href="#syntax-ref" class="bo3-nav-link">Syntax Reference</a>
+            <a href="#waw-compat" class="bo3-nav-link">WaW Compatibility</a>
+            <a href="#migration" class="bo3-nav-link">Migration Guide</a>
+            <a href="#roadmap" class="bo3-nav-link">Tutorials &amp; Roadmap</a>
+            <a href="#ecosystem" class="bo3-nav-link">Content Ecosystem</a>
+            <a href="#resources" class="bo3-nav-link">Resources Appendix</a>
+            <a href="#state-2026" class="bo3-nav-link">Current State 2026</a>
+          </nav>
+
+          <div class="mt-5 pt-4 border-t border-border space-y-3">
+            <div class="bo3-side-note">
+              <p class="bo3-side-note-label">Scope</p>
+              <p class="bo3-side-note-copy">Covers server-side GSC, client-side CSC, and the WaW-to-BO3 migration path with code comparisons.</p>
+            </div>
+            <div class="bo3-side-note">
+              <p class="bo3-side-note-label">Format</p>
+              <p class="bo3-side-note-copy">Radar chart ecosystem analysis, collapsible learning roadmap, tabbed migration deep-dive, and inline code blocks.</p>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main id="bo3-content" class="space-y-6">
+
+          <!-- ── 1. Executive Summary ── -->
+          <section id="exec-summary" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <p class="section-kicker">Executive Summary</p>
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">Game Script Code Architecture</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl mb-6">
+              Game Script Code (GSC) is the foundational, server-side logic execution environment for Call of Duty: Black Ops III.
+              Utilizing a syntax derivative of C/C++, it executes on a custom Virtual Machine tied directly to the engine&apos;s 20Hz tick rate.
+              It excels at game-state manipulation, entity management, and event-driven architecture via a cooperative multitasking model.
+            </p>
+
+            <div class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+              <h3 class="font-display text-xl uppercase text-text-primary mb-4">Legacy WaW Core Logic Compatibility</h3>
+              <div class="flex justify-between items-end mb-2">
+                <span class="text-sm font-bold text-text-primary">Standard loops, math, and threading structures</span>
+                <span class="text-accent font-mono text-xl font-bold">85%</span>
+              </div>
+              <div class="w-full bg-ash rounded-full h-4 overflow-hidden">
+                <div class="bg-accent h-4 rounded-full" style="width: 85%"></div>
+              </div>
+              <p class="text-xs text-text-muted mt-2">Despite an 8-year engine gap and 64-bit overhaul, 85% of standard loops, mathematical logic, and threading structures port completely verbatim from World at War to BO3.</p>
+            </div>
+
+            <div class="mt-6 border-l-2 border-accent bg-accent/10 p-4">
+              <h4 class="text-xs font-bold uppercase tracking-widest text-accent">Key Takeaway</h4>
+              <p class="text-xs text-text-secondary mt-2 leading-relaxed">
+                GSC is not just code — it is the nervous system of the engine. Understanding its cooperative threading model and entity referencing system is essential before writing any custom zombies or multiplayer logic.
+              </p>
+            </div>
+          </section>
+
+          <!-- ── 2. Full Syntax Reference ── -->
+          <section id="syntax-ref" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <p class="section-kicker">Syntax Reference</p>
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">Full GSC Syntax Reference</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl mb-6">
+              GSC is dynamically typed and relies heavily on implicit entity referencing and asynchronous threading. Below is the core lexical structure required for BO3.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+                <p class="mini-kicker">Fundamentals</p>
+                <h3 class="font-display text-xl uppercase text-text-primary mb-3">Data Types &amp; Scoping</h3>
+                <ul class="guide-list text-sm font-mono">
+                  <li><span class="text-blue-400">Int</span>: 1, 52, 97</li>
+                  <li><span class="text-blue-400">Float</span>: 5.1754, 0.05</li>
+                  <li><span class="text-blue-400">String</span>: &quot;shootable_teddy&quot;</li>
+                  <li><span class="text-blue-400">Bool</span>: true (1), false (0)</li>
+                  <li><span class="text-blue-400">Array</span>: Zero-indexed dynamic lists</li>
+                  <li><span class="text-blue-400">Entity (ent)</span>: Pointers to 3D map objects</li>
+                </ul>
+                <div class="mt-4 pt-4 border-t border-border">
+                  <p class="text-sm text-text-secondary"><strong class="text-text-primary">Local:</strong> <code class="gsc-inline-code">var = 1;</code> (Confined to function)</p>
+                  <p class="text-sm text-text-secondary mt-2"><strong class="text-text-primary">Global:</strong> <code class="gsc-inline-code">level.var = 1;</code> (Engine-wide)</p>
+                  <p class="text-sm text-text-secondary mt-2"><strong class="text-text-primary">Entity Prop:</strong> <code class="gsc-inline-code">self.var = 1;</code> (Attached to self)</p>
+                </div>
+              </article>
+
+              <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+                <p class="mini-kicker">Concurrency</p>
+                <h3 class="font-display text-xl uppercase text-text-primary mb-3">Threading &amp; Event Model</h3>
+                <p class="text-sm text-text-secondary mb-3">GSC operates on cooperative threading. Scripts must manually yield control to the engine to prevent fatal crashes.</p>
+                <pre class="guide-code-block"><code><span class="gsc-keyword">wait</span><span class="gsc-plain">(0.05);</span>
+<span class="gsc-comment">// Yields execution for exactly 1 server frame.</span>
+
+<span class="gsc-entity">self</span> <span class="gsc-keyword">waittill</span><span class="gsc-plain">("event_name");</span>
+<span class="gsc-comment">// Pauses thread until event is broadcast.</span>
+
+<span class="gsc-entity">self</span> <span class="gsc-keyword">notify</span><span class="gsc-plain">("event_name", data);</span>
+<span class="gsc-comment">// Broadcasts event and optional data payload.</span>
+
+<span class="gsc-entity">self</span> <span class="gsc-keyword">endon</span><span class="gsc-plain">("death");</span>
+<span class="gsc-comment">// Kills thread if entity dies (memory leak prevention).</span></code></pre>
+              </article>
+            </div>
+          </section>
+
+          <!-- ── 3. WaW Compatibility ── -->
+          <section id="waw-compat" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <p class="section-kicker">WaW Compatibility</p>
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">What Still Works 100% From WaW</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl mb-6">
+              The 85% compatibility rating means legacy scripts can often be copy-pasted directly into a BO3 environment, provided you add the <code class="gsc-inline-code">function</code> keyword prefix.
+            </p>
+
+            <div class="space-y-4">
+              <article class="surface-card rounded-sm overflow-hidden bg-charcoal/20">
+                <div class="flex justify-between items-center px-5 py-3 bg-charcoal/40 border-b border-border">
+                  <span class="text-xs font-mono text-text-secondary">Basic UI Printing &amp; Math</span>
+                  <span class="text-xs font-bold text-green-400 uppercase tracking-wider">100% Identical</span>
+                </div>
+                <pre class="guide-code-block !border-0 !rounded-none"><code><span class="gsc-keyword">function</span> <span class="gsc-function">example_function</span>() {'{'}
+    <span class="gsc-entity">iprintlnbold</span>(<span class="gsc-plain">"This is an example function"</span>);
+    teddys_to_shoot = <span class="gsc-literal">3</span>;
+    <span class="gsc-entity">iprintlnbold</span>( <span class="gsc-plain">"You have "</span> + teddys_to_shoot + <span class="gsc-plain">" Teddy Bears to Shoot"</span> );
+{'}'}</code></pre>
+              </article>
+
+              <article class="surface-card rounded-sm overflow-hidden bg-charcoal/20">
+                <div class="flex justify-between items-center px-5 py-3 bg-charcoal/40 border-b border-border">
+                  <span class="text-xs font-mono text-text-secondary">Event-Driven Infinite Loops</span>
+                  <span class="text-xs font-bold text-green-400 uppercase tracking-wider">100% Identical</span>
+                </div>
+                <pre class="guide-code-block !border-0 !rounded-none"><code><span class="gsc-keyword">function</span> <span class="gsc-function">blood_splatter</span>() {'{'}
+    <span class="gsc-entity">self</span> <span class="gsc-keyword">endon</span>( <span class="gsc-plain">"death"</span> );
+    <span class="gsc-keyword">while</span>(<span class="gsc-literal">1</span>) {'{'}
+        <span class="gsc-entity">self</span> <span class="gsc-keyword">waittill</span>( <span class="gsc-plain">"splatter_blood_on_screen"</span> );
+        <span class="gsc-entity">iprintlnbold</span>( <span class="gsc-plain">"splatter blood now"</span> );
+    {'}'}
+{'}'}</code></pre>
+              </article>
+            </div>
+          </section>
+
+          <!-- ── 4. Migration & Changes ── -->
+          <section id="migration" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <p class="section-kicker">Migration Guide</p>
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">What Changed &amp; Migration Guide</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl mb-6">
+              While core logic is identical, the structural paradigm of the engine evolved significantly. BO3 enforces strict compiler rules and networks visuals differently.
+            </p>
+
+            <!-- Tabs -->
+            <div class="border-b border-border mb-6">
+              <nav class="flex flex-wrap gap-4 -mb-px" aria-label="Migration topic tabs">
+                <button type="button" class="migration-tab is-active" data-tab-btn data-target="tab-rules">Strict Rules</button>
+                <button type="button" class="migration-tab" data-tab-btn data-target="tab-csc">Server vs Client</button>
+                <button type="button" class="migration-tab" data-tab-btn data-target="tab-ui">LUI vs .menu</button>
+              </nav>
+            </div>
+
+            <div id="tab-rules" class="tab-panel space-y-4">
+              <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+                <p class="mini-kicker">Syntax Strictness &amp; Crash Handling</p>
+                <ul class="guide-list">
+                  <li><strong class="text-text-primary">The <code class="gsc-inline-code">function</code> keyword:</strong> You MUST prepend <code class="gsc-inline-code">function</code> to all definitions. WaW allowed <code class="gsc-inline-code">main() {'{ }'}</code>. BO3 requires <code class="gsc-inline-code">function main() {'{ }'}</code>.</li>
+                  <li><strong class="text-text-primary">Fatal Infinite Loops:</strong> In WaW, forgetting a <code class="gsc-inline-code">wait</code> in a <code class="gsc-inline-code">while(1)</code> caused severe lag. In BO3, it immediately causes a fatal <strong>&quot;Connection Interrupted&quot;</strong> server crash.</li>
+                  <li><strong class="text-text-primary">Array Iteration Update:</strong> BO3 natively introduces the <code class="gsc-inline-code">foreach</code> loop. You no longer need to write verbose <code class="gsc-inline-code">for(i=0; i&lt;array.size; i++)</code> blocks.</li>
+                </ul>
+              </article>
+            </div>
+
+            <div id="tab-csc" class="tab-panel hidden">
+              <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+                <p class="mini-kicker">The Client-Side Script (.csc) Airgap</p>
+                <p class="text-sm text-text-secondary leading-relaxed mb-4">
+                  WaW processed everything on the server. BO3 separates logic. Server-side scripts (<code class="gsc-inline-code font-mono text-accent">.gsc</code>) handle game logic. Client-side scripts (<code class="gsc-inline-code font-mono text-accent">.csc</code>) handle visual effects, sounds, and thermal states independently per player to save bandwidth.
+                </p>
+                <div class="surface-card rounded-sm p-4 bg-charcoal/40 border-border-light">
+                  <p class="text-sm font-mono text-text-muted"><span class="text-text-primary font-bold">Bridge mechanism:</span> ClientFields.</p>
+                  <pre class="guide-code-block mt-3"><code><span class="gsc-comment">// Server (.gsc)</span>
+<span class="gsc-entity">clientfield</span>::<span class="gsc-keyword">set</span>(<span class="gsc-plain">"show_fx"</span>, <span class="gsc-literal">1</span>);
+
+<span class="gsc-comment">// Client (.csc)</span>
+<span class="gsc-comment">// Detects field change -> Executes particle spawn.</span></code></pre>
+                </div>
+              </article>
+            </div>
+
+            <div id="tab-ui" class="tab-panel hidden">
+              <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+                <p class="mini-kicker">Deprecation of .menu Files</p>
+                <p class="text-sm text-text-secondary leading-relaxed mb-4">
+                  The archaic <code class="gsc-inline-code font-mono text-accent">.menu</code> files from CoD5 have been completely deprecated. BO3 utilizes the modern <strong class="text-text-primary">Lua User Interface (LUI)</strong> frontend.
+                </p>
+                <p class="text-sm text-text-secondary leading-relaxed">
+                  GSC scripts update frontend HUDs, Custom Perks, and Easter Egg trackers by piping data into <strong class="text-text-primary">UIModels</strong>. Lua scripts continuously listen to these models and dynamically animate/update the UI widgets on the screen.
+                </p>
+              </article>
+            </div>
+
+            <!-- Pitfalls -->
+            <h3 class="font-display text-xl uppercase text-text-primary mt-8 mb-4">Top Migration Pitfalls</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <article class="surface-card rounded-sm p-5 md:p-6 bg-[linear-gradient(180deg,rgba(230,0,18,0.12)_0%,rgba(20,20,20,0.7)_100%)] border-accent/30">
+                <p class="mini-kicker text-accent">G_Spawn Error</p>
+                <p class="text-sm text-text-secondary leading-relaxed">
+                  Caused by hitting the entity limit. <strong class="text-text-primary">Fix:</strong> You must strictly call <code class="gsc-inline-code">ent delete();</code> on dynamic objects when done to prevent memory leaks.
+                </p>
+              </article>
+              <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30 border-border-light">
+                <p class="mini-kicker">Undefined Linker Error</p>
+                <p class="text-sm text-text-secondary leading-relaxed">
+                  Cannot find a function. <strong class="text-text-primary">Fix:</strong> BO3 requires explicit includes like <code class="gsc-inline-code">#using scripts\zm\my_script;</code> at the top of your file.
+                </p>
+              </article>
+            </div>
+          </section>
+
+          <!-- ── 5. Tutorials & Roadmap ── -->
+          <section id="roadmap" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <p class="section-kicker">Tutorials &amp; Roadmap</p>
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">Best Tutorials &amp; Learning Roadmap</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl mb-6">
+              The definitive, community-vetted path for a complete beginner to master BO3 GSC Mod Tools in 2026. Follow these ranked resources systematically.
+            </p>
+
+            <div class="space-y-4">
+              <!-- Week 1 -->
+              <article class="surface-card rounded-sm overflow-hidden bg-charcoal/20">
+                <button type="button" class="accordion-btn" data-accordion-btn>
+                  <span>Week 1: Environment &amp; Lexicon</span>
+                  <span class="accordion-icon">+</span>
+                </button>
+                <div class="accordion-panel" data-accordion-panel>
+                  <div class="space-y-3">
+                    <p class="text-sm text-text-muted">Set up the modern 2026 IDE toolchain and memorize GSC primitive data types.</p>
+                    <div class="surface-card rounded-sm p-4 bg-charcoal/40">
+                      <span class="roadmap-badge roadmap-badge-guide">Guide</span>
+                      <a href="https://wiki.modme.co/wiki/black_ops_3/guides/Scripting-guide.html" target="_blank" rel="noopener noreferrer" class="text-text-primary hover:text-accent underline font-bold">NateSmithZombies Modme Scripting Guide</a>
+                      <p class="text-xs text-text-muted mt-2">&quot;COD script is a derivative of &apos;C code&apos;, with a lot of changes that make scripting easier.&quot;</p>
+                    </div>
+                    <div class="surface-card rounded-sm p-4 bg-charcoal/40">
+                      <span class="roadmap-badge roadmap-badge-tool">Tool</span>
+                      <span class="text-text-primary font-bold">VS Code + vscode-gsc-ultimate Extension</span>
+                      <p class="text-xs text-text-muted mt-2">Ditch Notepad. Install Mjkzy&apos;s extension for static analysis and auto-completion of engine APIs.</p>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <!-- Week 2 & 3 -->
+              <article class="surface-card rounded-sm overflow-hidden bg-charcoal/20">
+                <button type="button" class="accordion-btn" data-accordion-btn>
+                  <span>Week 2 &amp; 3: World Interaction &amp; Event Logic</span>
+                  <span class="accordion-icon">+</span>
+                </button>
+                <div class="accordion-panel" data-accordion-panel>
+                  <div class="space-y-3">
+                    <p class="text-sm text-text-muted">Master the Publisher-Subscriber event model, threading, and Radiant trigger links.</p>
+                    <div class="surface-card rounded-sm p-4 bg-charcoal/40">
+                      <span class="roadmap-badge roadmap-badge-video">Video</span>
+                      <a href="https://icegrenade.co.uk/" target="_blank" rel="noopener noreferrer" class="text-text-primary hover:text-accent underline font-bold">IceGrenade GSC Scripting Series (Parts 1-5)</a>
+                      <p class="text-xs text-text-muted mt-2">The absolute benchmark video series for linking triggers in Radiant map editor directly to backend GSC prints.</p>
+                    </div>
+                    <div class="surface-card rounded-sm p-4 bg-charcoal/40">
+                      <span class="roadmap-badge roadmap-badge-video">Video</span>
+                      <span class="text-text-primary font-bold">Program115 Scripting Series</span>
+                      <p class="text-xs text-text-muted mt-2">60+ video playlist covering practical implementations: playing FX, handling custom scoring overrides, and rotating entities.</p>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <!-- Week 4 -->
+              <article class="surface-card rounded-sm overflow-hidden bg-charcoal/20">
+                <button type="button" class="accordion-btn" data-accordion-btn>
+                  <span>Week 4: Advanced Reverse Engineering</span>
+                  <span class="accordion-icon">+</span>
+                </button>
+                <div class="accordion-panel" data-accordion-panel>
+                  <div class="space-y-3">
+                    <p class="text-sm text-text-muted">Decompile base game scripts to learn undocumented APIs and Treyarch&apos;s exact coding methodologies.</p>
+                    <div class="surface-card rounded-sm p-4 bg-charcoal/40">
+                      <span class="roadmap-badge roadmap-badge-tool">Tool</span>
+                      <a href="https://github.com/Scobalula/Cerberus" target="_blank" rel="noopener noreferrer" class="text-text-primary hover:text-accent underline font-bold">Cerberus Decompiler (by Scobalula)</a>
+                      <p class="text-xs text-text-muted mt-2">Master-level essential tool. Decompiles .ff fastfiles back to GSC, bypassing FNV1A-64 hashes using smart loop detection.</p>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <!-- ── 6. Content Ecosystem ── -->
+          <section id="ecosystem" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <p class="section-kicker">Content Ecosystem</p>
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">Content Ecosystem Analysis</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl mb-6">
+              The 2026 BO3 community landscape relies heavily on decentralized hubs. 90% of all online content is skewed towards Custom Zombies development rather than Multiplayer.
+            </p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+              <div class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+                <h3 class="font-display text-xl uppercase text-text-primary mb-4">Platform Utility Analysis</h3>
+                <div class="guide-chart-container">
+                  <canvas id="ecosystemChart"></canvas>
+                </div>
+                <p class="text-[11px] text-text-muted text-center mt-3 italic">Analysis of platform utility based on 2024-2026 data trends.</p>
+              </div>
+
+              <div class="space-y-4">
+                <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+                  <p class="mini-kicker">Primary Hubs</p>
+                  <h3 class="font-display text-xl uppercase text-text-primary mb-3">Discord Servers</h3>
+                  <p class="text-sm text-text-secondary leading-relaxed">
+                    Servers like <strong class="text-text-primary">Black Ops 3 Mod Tools (6k+ members)</strong> and Devraw discords are the ONLY places for real-time GSC debugging in 2026. <span class="text-accent">Drawback:</span> Knowledge is lost to chat history and unsearchable by Google.
+                  </p>
+                </article>
+                <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+                  <p class="mini-kicker">Showcase &amp; Legacy</p>
+                  <h3 class="font-display text-xl uppercase text-text-primary mb-3">YouTube</h3>
+                  <p class="text-sm text-text-secondary leading-relaxed">
+                    Dominant for visual, step-by-step setup guides (IceGrenade) and recent mod-menu injection bypass showcases (Scroptss). <span class="text-accent">Drawback:</span> UI injection vids from 2017 are heavily obsolete.
+                  </p>
+                </article>
+                <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+                  <p class="mini-kicker">Archives</p>
+                  <h3 class="font-display text-xl uppercase text-text-primary mb-3">GitHub &amp; Archived Wikis</h3>
+                  <p class="text-sm text-text-secondary leading-relaxed">
+                    GitHub handles toolchain hosting (Cerberus, T7 compilers). Modme/UGX wikis act as the ancient sacred texts. Reddit&apos;s &quot;Super Guide&quot; is the universally pinned directory.
+                  </p>
+                </article>
+              </div>
+            </div>
+          </section>
+
+          <!-- ── 7. Resources Appendix ── -->
+          <section id="resources" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <p class="section-kicker">Resources Appendix</p>
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">Resources Appendix</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <a href="#" class="resource-card group">
+                <p class="mini-kicker group-hover:text-accent">Script API</p>
+                <h4 class="font-display text-lg uppercase text-text-primary group-hover:text-accent mb-1">GSCode Library</h4>
+                <p class="text-xs text-text-muted">Official Script API mirror of bo3_scriptapifunctions.htm</p>
+              </a>
+              <a href="#" class="resource-card group">
+                <p class="mini-kicker group-hover:text-accent">API Reference</p>
+                <h4 class="font-display text-lg uppercase text-text-primary group-hover:text-accent mb-1">Zeroy BO3 API</h4>
+                <p class="text-xs text-text-muted">Deep engine function documentation and param definitions.</p>
+              </a>
+              <a href="#" class="resource-card group">
+                <p class="mini-kicker group-hover:text-accent">IDE Extension</p>
+                <h4 class="font-display text-lg uppercase text-text-primary group-hover:text-accent mb-1">VS Code GSC Ultimate</h4>
+                <p class="text-xs text-text-muted">Mjkzy&apos;s extension for linting and hash completion.</p>
+              </a>
+              <a href="https://github.com/Scobalula/Cerberus" target="_blank" rel="noopener noreferrer" class="resource-card group">
+                <p class="mini-kicker group-hover:text-accent">Decompiler</p>
+                <h4 class="font-display text-lg uppercase text-text-primary group-hover:text-accent mb-1">Cerberus Decompiler</h4>
+                <p class="text-xs text-text-muted">Scobalula&apos;s master tool for FF extraction to GSC code.</p>
+              </a>
+              <a href="#" class="resource-card group">
+                <p class="mini-kicker group-hover:text-accent">Open Source</p>
+                <h4 class="font-display text-lg uppercase text-text-primary group-hover:text-accent mb-1">T7-Scripts Repo</h4>
+                <p class="text-xs text-text-muted">Resxt&apos;s open source collection of intermediate pointers.</p>
+              </a>
+              <a href="#" class="resource-card group">
+                <p class="mini-kicker group-hover:text-accent">Directory</p>
+                <h4 class="font-display text-lg uppercase text-text-primary group-hover:text-accent mb-1">Reddit Super Guide</h4>
+                <p class="text-xs text-text-muted">JBird632&apos;s mega-thread for map setup checklists.</p>
+              </a>
+            </div>
+
+            <div class="mt-4 border-l-2 border-accent bg-accent/10 p-4">
+              <h4 class="text-xs font-bold uppercase tracking-widest text-accent">Placeholder Links</h4>
+              <p class="text-xs text-text-secondary mt-2 leading-relaxed">
+                Several resource links above are pending real URLs. The Cerberus Decompiler link is live. Remaining links will be updated once URLs are provided.
+              </p>
+            </div>
+          </section>
+
+          <!-- ── 8. Current State 2026 ── -->
+          <section id="state-2026" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <p class="section-kicker">Current State 2026</p>
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">Toolchain Evolution</h2>
+
+            <div class="surface-card rounded-sm p-6 md:p-8 bg-[linear-gradient(135deg,rgba(230,0,18,0.10)_0%,rgba(20,20,20,0.8)_100%)] border-accent/20 relative overflow-hidden">
+              <h3 class="font-display text-2xl uppercase text-text-primary mb-4">The Cat-and-Mouse Security Game</h3>
+              <p class="text-sm md:text-base text-text-secondary leading-relaxed mb-6">
+                Even a decade post-release, the engine modification scene is fiercely active. In <strong class="text-accent">February 2026</strong>, a major Steam update introduced Arxan re-compilations designed specifically to neutralize unauthorized GSC injections and split-block memory signatures used by legacy mod menus.
+              </p>
+
+              <div class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/40 border-border-light">
+                <p class="mini-kicker text-accent">2026 CRC Bypasses</p>
+                <p class="text-sm text-text-secondary mb-3 leading-relaxed">
+                  The reverse-engineering community instantly adapted by mapping entirely new C++ CRC (Cyclic Redundancy Check) bypass gadgets. Instead of patching massive memory blocks, modern injectors intercept three specific assembly comparison logic blocks:
+                </p>
+                <pre class="guide-code-block"><code><span class="gsc-comment">&gt; XOR Logic:</span>    <span class="gsc-literal">8B 0C 8B 33 0C 82</span>
+<span class="gsc-comment">&gt; NEG/ADD Logic:</span> <span class="gsc-literal">8B 0C 8B F7 D9 03 0C 82</span>
+<span class="gsc-comment">&gt; Direct CMP:</span>    <span class="gsc-literal">8B 04 82 8B 14 8B 3B C2</span></code></pre>
+                <p class="text-sm text-text-secondary mt-3 leading-relaxed">
+                  By forcing these exact offset registers to return valid checksums, custom GSC injection (via tools like EZZ BOIII) remains fully functional, cementing the longevity of the BO3 modding lifespan indefinitely.
+                </p>
+              </div>
+            </div>
+          </section>
+
+        </main>
+      </div>
+    </div>
+  </section>
+
+  <Footer />
+
+  <!-- ── Scripts ── -->
+  <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script is:inline>
+    const initBO3Guide = () => {
+      // ── IntersectionObserver for sidebar nav ──
+      const navLinks = Array.from(document.querySelectorAll('.bo3-nav-link'));
+      const sections = Array.from(document.querySelectorAll('[data-guide-section]'));
+
+      if (navLinks.length && sections.length) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              navLinks.forEach((link) => {
+                const isMatch = link.getAttribute('href') === `#${entry.target.id}`;
+                link.classList.toggle('is-active', isMatch);
+              });
+            });
+          },
+          {
+            root: null,
+            rootMargin: '-18% 0px -65% 0px',
+            threshold: 0,
+          }
+        );
+        sections.forEach((section) => observer.observe(section));
+      }
+
+      // ── Accordion logic ──
+      const accordionButtons = Array.from(document.querySelectorAll('[data-accordion-btn]'));
+      accordionButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const panel = button.nextElementSibling;
+          const icon = button.querySelector('.accordion-icon');
+          const isOpen = panel?.style.maxHeight;
+
+          accordionButtons.forEach((otherButton) => {
+            const otherPanel = otherButton.nextElementSibling;
+            const otherIcon = otherButton.querySelector('.accordion-icon');
+            if (otherPanel) otherPanel.style.maxHeight = null;
+            if (otherIcon) otherIcon.textContent = '+';
+            otherButton.classList.remove('is-open');
+          });
+
+          if (panel && !isOpen) {
+            panel.style.maxHeight = `${panel.scrollHeight}px`;
+            button.classList.add('is-open');
+            if (icon) icon.textContent = '-';
+          }
+        });
+      });
+
+      // ── Tab logic ──
+      const tabButtons = Array.from(document.querySelectorAll('[data-tab-btn]'));
+      const tabPanels = Array.from(document.querySelectorAll('.tab-panel'));
+      tabButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const targetId = button.getAttribute('data-target');
+          if (!targetId) return;
+          tabButtons.forEach((b) => b.classList.remove('is-active'));
+          button.classList.add('is-active');
+          tabPanels.forEach((panel) => {
+            panel.classList.toggle('hidden', panel.id !== targetId);
+          });
+        });
+      });
+
+      // ── Chart.js radar chart ──
+      const ecoCanvas = document.getElementById('ecosystemChart');
+      if (ecoCanvas && window.Chart) {
+        new window.Chart(ecoCanvas, {
+          type: 'radar',
+          data: {
+            labels: ['Real-time Help', 'Syntax Tutorials', 'Code Accuracy', 'Asset Sharing', 'Tool Updates'],
+            datasets: [
+              {
+                label: 'Discord Servers',
+                data: [95, 40, 80, 75, 85],
+                backgroundColor: 'rgba(230, 0, 18, 0.18)',
+                borderColor: '#e60012',
+                pointBackgroundColor: '#ff1a2e',
+                borderWidth: 2,
+              },
+              {
+                label: 'YouTube',
+                data: [10, 95, 60, 30, 40],
+                backgroundColor: 'rgba(85, 85, 85, 0.18)',
+                borderColor: '#888888',
+                pointBackgroundColor: '#aaaaaa',
+                borderWidth: 2,
+              },
+              {
+                label: 'Archived Wikis',
+                data: [0, 85, 95, 20, 10],
+                backgroundColor: 'rgba(136, 136, 136, 0.12)',
+                borderColor: '#555555',
+                pointBackgroundColor: '#666666',
+                borderWidth: 2,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              r: {
+                angleLines: { color: 'rgba(85, 85, 85, 0.4)' },
+                grid: { color: 'rgba(85, 85, 85, 0.4)' },
+                pointLabels: { color: '#aaaaaa', font: { size: 11, weight: 'bold' } },
+                ticks: { display: false, max: 100, min: 0 },
+              },
+            },
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: { color: '#aaaaaa', usePointStyle: true, padding: 20 },
+              },
+              tooltip: {
+                backgroundColor: '#161616',
+                titleColor: '#e60012',
+                bodyColor: '#f0f0f0',
+                borderColor: '#2d2d2d',
+                borderWidth: 1,
+              },
+            },
+          },
+        });
+      }
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initBO3Guide, { once: true });
+    } else {
+      initBO3Guide();
+    }
+  </script>
+</Layout>
+
+<style>
+  /* ── Stat boxes (hero) ── */
+  .bo3-stat {
+    border: 1px solid var(--color-border);
+    background: rgba(22, 22, 22, 0.8);
+    padding: 0.9rem 1rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .bo3-stat-label,
+  .section-kicker,
+  .mini-kicker,
+  .bo3-side-note-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+  }
+
+  .bo3-stat-label,
+  .section-kicker,
+  .mini-kicker {
+    color: var(--color-accent);
+    margin-bottom: 0.45rem;
+  }
+
+  .bo3-stat-value,
+  .bo3-side-note-copy {
+    color: var(--color-text-secondary);
+    font-size: 0.8rem;
+    line-height: 1.6;
+  }
+
+  /* ── Sidebar nav items ── */
+  .bo3-nav-link {
+    display: block;
+    width: 100%;
+    text-align: left;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--color-text-secondary);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.7rem 0.8rem;
+    border-radius: var(--radius-sm);
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+
+  .bo3-nav-link:hover {
+    color: var(--color-text-primary);
+    border-color: var(--color-border-light);
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .bo3-nav-link.is-active {
+    color: #ffffff;
+    border-color: var(--color-accent);
+    background: rgba(230, 0, 18, 0.15);
+    box-shadow: inset 3px 0 0 var(--color-accent);
+  }
+
+  /* ── Sidebar side-notes ── */
+  .bo3-side-note {
+    border: 1px solid var(--color-border);
+    background: rgba(255, 255, 255, 0.02);
+    padding: 0.85rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .bo3-side-note-label {
+    color: var(--color-text-primary);
+    margin-bottom: 0.35rem;
+  }
+
+  /* ── Content lists ── */
+  .guide-list {
+    list-style: disc;
+    padding-left: 1.15rem;
+    color: var(--color-text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .guide-list li + li {
+    margin-top: 0.55rem;
+  }
+
+  /* ── Code blocks ── */
+  .guide-code-block {
+    background: #0f0f0f;
+    border: 1px solid var(--color-border);
+    color: #d4d4d4;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.6;
+    padding: 1rem;
+    overflow-x: auto;
+  }
+
+  .gsc-inline-code {
+    background: rgba(45, 45, 45, 0.8);
+    padding: 0.1rem 0.35rem;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+  }
+
+  /* GSC syntax highlight colors */
+  .gsc-keyword { color: #ff6b9d; }
+  .gsc-entity { color: #6bb7ff; }
+  .gsc-function { color: #4ade80; }
+  .gsc-literal { color: #fbbf24; }
+  .gsc-plain { color: #d4d4d4; }
+  .gsc-comment { color: #555555; font-style: italic; }
+
+  /* ── Chart container ── */
+  .guide-chart-container {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    margin-inline: auto;
+    height: 320px;
+  }
+
+  @media (min-width: 768px) {
+    .guide-chart-container {
+      height: 390px;
+    }
+  }
+
+  /* ── Accordion ── */
+  .accordion-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.15rem;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--color-text-primary);
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border: 0;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  .accordion-btn:hover,
+  .accordion-btn.is-open {
+    background: rgba(230, 0, 18, 0.08);
+  }
+
+  .accordion-icon {
+    color: var(--color-accent);
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .accordion-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .accordion-panel > * {
+    padding: 0 1.15rem 1.15rem;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+  }
+
+  /* ── Migration tabs ── */
+  .migration-tab {
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    color: var(--color-text-muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.85rem 0;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .migration-tab:hover {
+    color: var(--color-text-secondary);
+  }
+
+  .migration-tab.is-active {
+    color: var(--color-text-primary);
+    border-bottom-color: var(--color-accent);
+  }
+
+  /* ── Resource cards ── */
+  .resource-card {
+    display: block;
+    padding: 1.25rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .resource-card:hover {
+    border-color: var(--color-accent);
+    box-shadow: 0 4px 24px rgba(230, 0, 18, 0.12);
+  }
+
+  /* ── Roadmap badges ── */
+  .roadmap-badge {
+    display: inline-block;
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--radius-sm);
+    margin-right: 0.5rem;
+    vertical-align: middle;
+  }
+
+  .roadmap-badge-guide {
+    background: rgba(59, 130, 246, 0.2);
+    color: #6bb7ff;
+  }
+
+  .roadmap-badge-tool {
+    background: rgba(168, 85, 247, 0.2);
+    color: #c084fc;
+  }
+
+  .roadmap-badge-video {
+    background: rgba(230, 0, 18, 0.2);
+    color: #ff6b6b;
+  }
+</style>

@@ -591,7 +591,7 @@ const App = () => {
     <div className="boinkdex-root min-h-screen overflow-x-hidden bg-black text-[13px] font-mono text-white selection:bg-[var(--accent)] selection:text-black" style={{ '--accent': accent.hex, '--accent-rgb': accent.rgb }}>
       <style>{boinkdexStyles}</style>
 
-      <div className="sticky top-0 z-[60] flex items-center justify-between border-b-4 bg-[#1a1a1a] px-4 py-2 shadow-2xl header-glow" style={{ borderColor: 'var(--accent)' }}>
+      <div className="sticky top-0 z-[60] flex items-center justify-between border-b-4 bg-[#1a1a1a] px-2 py-2 shadow-2xl header-glow sm:px-4 lg:px-0" style={{ borderColor: 'var(--accent)' }}>
         <div className="flex items-center gap-4">
           <div className="skew-x-[-12deg] px-4 py-1 text-sm font-black tracking-tighter text-black sm:text-base" style={{ backgroundColor: 'var(--accent)' }}>BOINKDEX_SYSTEM_V5</div>
           <div className="hidden animate-pulse text-[9px] font-bold uppercase tracking-[0.2em] text-slate-500 sm:block">CONNECTION_STABLE</div>
@@ -608,7 +608,7 @@ const App = () => {
         </div>
       </div>
 
-      <header className="y2k-header relative z-50 p-5 pb-3">
+      <header className="y2k-header relative z-50 px-2 py-5 pb-3 sm:px-4 lg:px-0">
         {/* Y2K corner brackets */}
         <div className="y2k-corner y2k-corner-tl" />
         <div className="y2k-corner y2k-corner-tr" />
@@ -682,7 +682,7 @@ const App = () => {
         </div>
       </header>
 
-      <main className="bg-red-grid min-h-screen p-4 md:p-8">
+      <main className="bg-red-grid min-h-screen px-2 py-4 sm:px-4 md:py-8 lg:px-0">
         <div className="mx-auto max-w-[1920px]">
           {loading ? (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">

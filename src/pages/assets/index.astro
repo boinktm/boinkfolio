@@ -37,6 +37,17 @@ const rest = featured ? publicAssets.slice(1) : [];
 
   <section class="bg-obsidian py-8">
     <div class="max-w-[var(--width-content)] mx-auto px-4 space-y-4">
+      <a href={withBase('assets/botw-60fps-guide')} class="surface-card rounded-sm overflow-hidden block group border-glow">
+        <div class="relative p-6 md:p-8 bg-[linear-gradient(135deg,rgba(230,0,18,0.14)_0%,rgba(20,20,20,0.9)_60%)]">
+          <p class="text-[9px] font-bold uppercase tracking-widest text-accent mb-2">Interactive Guide</p>
+          <h2 class="font-display text-2xl md:text-4xl uppercase text-text-primary leading-none mb-3">Breath of the Wild: 60 FPS Optimization</h2>
+          <p class="text-sm text-text-secondary max-w-2xl">
+            Open the full step-by-step dashboard with checklist tracking, plugin installation order, overclock target charts, and realistic performance expectations.
+          </p>
+          <p class="text-[10px] uppercase tracking-wider text-text-muted mt-4">Open Guide -></p>
+        </div>
+      </a>
+
       {featured ? (
         <>
           <a href={assetPath(featured.slug)} class="surface-card rounded-sm overflow-hidden block group">

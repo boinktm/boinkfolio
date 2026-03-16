@@ -32,6 +32,15 @@ export function buildFullGuide(meta, sections) {
   const safeTitle = escapeAstroQuoted(meta.title || '');
   const safeDesc = escapeAstroQuoted(meta.description || '');
 
+  // --- Guide metadata (round-trip comment for the editor) ---
+  lines.push(`<!-- guide-meta: ${JSON.stringify({
+    category: meta.category || '',
+    date: meta.date || '',
+    heroImage: meta.heroImage || '',
+    tags: meta.tags || [],
+    featured: !!meta.featured,
+  })} -->`);
+
   // --- Frontmatter ---
   lines.push('---');
   lines.push("import Layout from '../../layouts/Layout.astro';");

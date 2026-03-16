@@ -68,8 +68,8 @@ export default function GuideBuilder({ projectRoot, updateStatus }) {
         setSections(parsed.sections.map((s, i) => ({
           id: i + 1,
           title: s.title,
-          intro: '',
-          blocks: [],
+          intro: s.intro || '',
+          blocks: (s.blocks || []).map((b, j) => ({ ...b, id: j + 1 })),
         })));
         nextId.current = parsed.sections.length + 1;
       }

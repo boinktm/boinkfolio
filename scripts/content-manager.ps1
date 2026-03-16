@@ -3,6 +3,84 @@ Add-Type -AssemblyName System.Drawing
 
 [System.Windows.Forms.Application]::EnableVisualStyles()
 
+# Frutiger Aero Dark Theme
+$global:themeBg = [System.Drawing.Color]::FromArgb(10, 25, 40)
+$global:themeFg = [System.Drawing.Color]::FromArgb(230, 240, 255)
+$global:themeInputBg = [System.Drawing.Color]::FromArgb(20, 40, 60)
+$global:themeSidebar = [System.Drawing.Color]::FromArgb(5, 15, 25)
+$global:themeBorder = [System.Drawing.Color]::FromArgb(50, 80, 110)
+$global:themeAccent = [System.Drawing.Color]::FromArgb(0, 230, 170)
+$global:themeAccentDark = [System.Drawing.Color]::FromArgb(0, 180, 130)
+$global:mainFont = [System.Drawing.Font]::new('Segoe UI', [float]9)
+
+function Style-Button {
+  param([System.Windows.Forms.Button]$Btn, [bool]$IsPrimary = $false)
+  $Btn.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
+  $Btn.FlatAppearance.BorderColor = $global:themeBorder
+  $Btn.BackColor = if ($IsPrimary) { $global:themeAccent } else { $global:themeInputBg }
+  $Btn.ForeColor = if ($IsPrimary) { [System.Drawing.Color]::Black } else { $global:themeFg }
+  $Btn.Cursor = [System.Windows.Forms.Cursors]::Hand
+  $Btn.Font = [System.Drawing.Font]::new('Segoe UI', [float]9, [System.Drawing.FontStyle]::Bold)
+}
+
+function Style-GlossyButton {
+  param(
+    [System.Windows.Forms.Button]$Btn,
+    [System.Drawing.Color]$BaseColor,
+    [System.Drawing.Color]$DarkColor
+  )
+
+  $Btn.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
+  $Btn.FlatAppearance.BorderSize = 0
+  $Btn.BackColor = $BaseColor
+  $Btn.ForeColor = [System.Drawing.Color]::Black
+  $Btn.Font = [System.Drawing.Font]::new('Segoe UI', [float]10, [System.Drawing.FontStyle]::Bold)
+  $Btn.Cursor = [System.Windows.Forms.Cursors]::Hand
+
+  $Btn.Paint.Add({
+    param($sender, $e)
+    $g = $e.Graphics
+    $g.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::AntiAlias
+
+    $rect = $Btn.ClientRectangle
+
+    $currentBaseColor = if ($Btn.Capture) { $DarkColor } else { $BaseColor }
+
+    $lightColor = [System.Windows.Forms.ControlPaint]::Light($currentBaseColor, 0.6)
+    $darkColor = [System.Windows.Forms.ControlPaint]::Dark($currentBaseColor, 0.1)
+
+    $g.Clear($Btn.Parent.BackColor)
+
+    $path = [System.Drawing.Drawing2D.GraphicsPath]::new()
+    $path.AddArc($rect.X, $rect.Y, 12, 12, 180, 90)
+    $path.AddArc($rect.Right - 12, $rect.Y, 12, 12, 270, 90)
+    $path.AddArc($rect.Right - 12, $rect.Bottom - 12, 12, 12, 0, 90)
+    $path.AddArc($rect.X, $rect.Bottom - 12, 12, 12, 90, 90)
+    $path.CloseAllFigures()
+
+    $gradientBrush = [System.Drawing.Drawing2D.LinearGradientBrush]::new($rect, $lightColor, $darkColor, [System.Drawing.Drawing2D.LinearGradientMode]::Vertical)
+    $g.FillPath($gradientBrush, $path)
+
+    $glareRect = [System.Drawing.Rectangle]::new($rect.X, $rect.Y, $rect.Width, [int]($rect.Height / 2))
+    $glarePath = [System.Drawing.Drawing2D.GraphicsPath]::new()
+    $glarePath.AddArc($glareRect.X, $glareRect.Y, 12, 12, 180, 90)
+    $glarePath.AddArc($glareRect.Right - 12, $glareRect.Y, 12, 12, 270, 90)
+    $glarePath.AddLine($glareRect.Right, $glareRect.Y + 6, $glareRect.Right)
+    $glarePath.AddLine($rect.Right, $rect.Height / 2, $rect.Left, $rect.Height / 2)
+    $glareBrush = [System.Drawing.Drawing2D.LinearGradientBrush]::new($glareRect, [System.Drawing.Color]::FromArgb(160, [System.Drawing.Color]::White), [System.Drawing.Color]::FromArgb(10, [System.Drawing.Color]::White), [System.Drawing.Drawing2D.LinearGradientMode]::Vertical)
+    $g.FillPath($glareBrush, $glarePath)
+
+    $textFormat = [System.Windows.Forms.TextFormatFlags]::HorizontalCenter -bor [System.Windows.Forms.TextFormatFlags]::VerticalCenter
+    [System.Windows.Forms.TextRenderer]::DrawText($g, $Btn.Text, $Btn.Font, $rect, $Btn.ForeColor, $textFormat)
+
+    $gradientBrush.Dispose()
+    $glareBrush.Dispose()
+    $path.Dispose()
+    $glarePath.Dispose()
+  })
+}
+
+
 function Escape-YamlDouble {
   param([string]$Value)
   if ($null -eq $Value) { return '' }
@@ -302,6 +380,130 @@ function Write-ContentFile {
   return $filePath
 }
 
+function Write-TextFileDirect {
+  param(
+    [string]$FilePath,
+    [string]$Content
+  )
+
+  $text = if ($null -eq $Content) { '' } else { $Content }
+  [System.IO.File]::WriteAllText($FilePath, $text, [System.Text.UTF8Encoding]::new($false))
+  return $FilePath
+}
+
+function Write-TextFile {
+  param(
+    [string]$Directory,
+    [string]$FileName,
+    [string]$Content
+  )
+
+  Ensure-ContentDirectory -Path $Directory
+
+  $filePath = Join-Path $Directory $FileName
+  if (Test-Path -LiteralPath $filePath) {
+    $overwrite = [System.Windows.Forms.MessageBox]::Show(
+      "The file already exists:`n$filePath`n`nOverwrite it?",
+      'File Exists',
+      [System.Windows.Forms.MessageBoxButtons]::YesNo,
+      [System.Windows.Forms.MessageBoxIcon]::Question
+    )
+
+    if ($overwrite -ne [System.Windows.Forms.DialogResult]::Yes) {
+      return $null
+    }
+  }
+
+  $text = if ($null -eq $Content) { '' } else { $Content }
+  [System.IO.File]::WriteAllText($filePath, $text, [System.Text.UTF8Encoding]::new($false))
+  return $filePath
+}
+
+function Escape-AstroSingleQuoted {
+  param([string]$Value)
+
+  if ($null -eq $Value) {
+    return ''
+  }
+
+  $escaped = $Value.Trim()
+  $escaped = $escaped -replace '\\', '\\\\'
+  $escaped = $escaped -replace "'", "\\'"
+  $escaped = $escaped -replace "`r?`n", ' '
+  return $escaped
+}
+
+function Build-AstroStringArrayLiteral {
+  param([string[]]$Values)
+
+  if ($null -eq $Values -or $Values.Count -eq 0) {
+    return ''
+  }
+
+  return (($Values | ForEach-Object { Escape-AstroSingleQuoted $_ }) -join '|')
+}
+
+function Build-GuideSectionsLiteral {
+  param([string]$OutlineRaw)
+
+  $lines = @()
+  if (-not [string]::IsNullOrWhiteSpace($OutlineRaw)) {
+    $lines = ($OutlineRaw -split "`r?`n" |
+      ForEach-Object { $_.Trim() } |
+      Where-Object { $_ -ne '' })
+  }
+
+  if ($lines.Count -eq 0) {
+    $lines = @('Overview', 'Setup', 'Workflow', 'Examples', 'Curriculum', 'Common Mistakes')
+  }
+
+  return (($lines | ForEach-Object { Escape-AstroSingleQuoted $_ }) -join '|')
+}
+
+function Build-GuideAstroContent {
+  param(
+    [string]$TemplatePath,
+    [string]$Title,
+    [string]$Description,
+    [string]$Category,
+    [string]$Date,
+    [string]$HeroImage,
+    [string[]]$Tags,
+    [bool]$Featured,
+    [string]$OutlineRaw
+  )
+
+  if (-not (Test-Path -LiteralPath $TemplatePath)) {
+    throw "Guide template not found: $TemplatePath"
+  }
+
+  $template = Get-Content -LiteralPath $TemplatePath -Raw -Encoding UTF8
+
+  $safeTitle = Escape-AstroSingleQuoted $Title
+  $safeDescription = Escape-AstroSingleQuoted $Description
+  $safeCategory = Escape-AstroSingleQuoted $Category
+  $safeDate = Escape-AstroSingleQuoted $Date
+  $safeHeroImage = Escape-AstroSingleQuoted $HeroImage
+  $tagLiteral = Build-AstroStringArrayLiteral -Values $Tags
+  $featuredLiteral = $Featured.ToString().ToLowerInvariant()
+  $sectionsLiteral = Build-GuideSectionsLiteral -OutlineRaw $OutlineRaw
+
+  $template = $template.Replace('__GUIDE_TITLE__', $safeTitle)
+  $template = $template.Replace('__GUIDE_DESCRIPTION__', $safeDescription)
+  $template = $template.Replace('__GUIDE_CATEGORY__', $safeCategory)
+  $template = $template.Replace('__GUIDE_DATE__', $safeDate)
+  $template = $template.Replace('__GUIDE_HERO_IMAGE__', $safeHeroImage)
+  $template = $template.Replace('__GUIDE_TAGS__', $tagLiteral)
+  $template = $template.Replace('__GUIDE_FEATURED__', $featuredLiteral)
+  $template = $template.Replace('__GUIDE_SECTIONS__', $sectionsLiteral)
+
+  if (-not $template.EndsWith("`n")) {
+    $template += "`n"
+  }
+
+  return $template
+}
+
 function Show-Error {
   param([string]$Message)
   [void][System.Windows.Forms.MessageBox]::Show(
@@ -310,6 +512,118 @@ function Show-Error {
     [System.Windows.Forms.MessageBoxButtons]::OK,
     [System.Windows.Forms.MessageBoxIcon]::Warning
   )
+}
+
+function Handle-FileBrowse {
+  param(
+    [System.Windows.Forms.TextBox]$TargetTextBox,
+    [string]$ContentCollection,
+    [bool]$AllowMultiSelect = $false
+  )
+
+  $publicRoot = Join-Path $projectRoot 'public'
+  $destDir = Join-Path $publicRoot "images\$ContentCollection"
+  if (-not (Test-Path -LiteralPath $destDir)) {
+    [void](New-Item -ItemType Directory -Path $destDir -Force)
+  }
+
+  $dialog = [System.Windows.Forms.OpenFileDialog]::new()
+  $dialog.Filter = 'Image files (*.jpg, *.jpeg, *.png, *.gif, *.webp, *.svg)|*.jpg;*.jpeg;*.png;*.gif;*.webp;*.svg|All files (*.*)|*.*'
+  $dialog.InitialDirectory = (Get-Location).Path
+  $dialog.Multiselect = $AllowMultiSelect
+
+  if ($dialog.ShowDialog() -ne [System.Windows.Forms.DialogResult]::OK) {
+    return
+  }
+
+  $urls = @()
+  foreach ($file in $dialog.FileNames) {
+    $fileName = [System.IO.Path]::GetFileName($file)
+    $destPath = Join-Path $destDir $fileName
+    if (Test-Path -LiteralPath $destPath) {
+      $overwrite = [System.Windows.Forms.MessageBox]::Show(
+        "The file already exists in the destination:`n$destPath`n`nOverwrite it?",
+        'File Exists',
+        [System.Windows.Forms.MessageBoxButtons]::YesNo,
+        [System.Windows.Forms.MessageBoxIcon]::Question
+      )
+
+      if ($overwrite -ne [System.Windows.Forms.DialogResult]::Yes) {
+        # If not overwriting, assume the user wants to use the existing file
+        $relativeUrl = ($destPath -replace [regex]::Escape($publicRoot), '' -replace '\\', '/').TrimStart('/')
+        $urls += "/$relativeUrl"
+        continue
+      }
+    }
+
+    try {
+      Copy-Item -LiteralPath $file -Destination $destPath -Force
+      $relativeUrl = ($destPath -replace [regex]::Escape($publicRoot), '' -replace '\\', '/').TrimStart('/')
+      $urls += "/$relativeUrl"
+    } catch {
+      Show-Error "Failed to copy file '$fileName': $($_.Exception.Message)"
+    }
+  }
+
+  if ($urls.Count -gt 0) {
+    if ($AllowMultiSelect) {
+      $existingUrls = Get-ListValues $TargetTextBox.Text
+      $allUrls = $existingUrls + $urls
+      $TargetTextBox.Text = ($allUrls -join [Environment]::NewLine)
+      $statusLabel.Text = "Added $($urls.Count) image(s)."
+    } else {
+      $TargetTextBox.Text = $urls[0]
+      $statusLabel.Text = "Set image to: $($urls[0])"
+    }
+  }
+}
+
+function Add-FileFieldRow {
+  param(
+    [object]$Layout,
+    [string]$Label,
+    [System.Windows.Forms.TextBox]$Control,
+    [int]$Height = 30,
+    [string]$ContentCollection,
+    [bool]$AllowMultiSelect = $false
+  )
+
+  if ($Layout -is [System.Array]) {
+    $Layout = $Layout | Where-Object { $_ -is [System.Windows.Forms.TableLayoutPanel] } | Select-Object -First 1
+  }
+
+  $rowIndex = $Layout.RowCount
+  $Layout.RowCount += 1
+  [void]$Layout.RowStyles.Add([System.Windows.Forms.RowStyle]::new([System.Windows.Forms.SizeType]::Absolute, $Height))
+
+  $labelControl = [System.Windows.Forms.Label]::new()
+  $labelControl.Text = $Label
+  $labelControl.TextAlign = [System.Drawing.ContentAlignment]::MiddleLeft
+  $labelControl.Dock = [System.Windows.Forms.DockStyle]::Fill
+  $labelControl.Margin = [System.Windows.Forms.Padding]::new(0, 5, 10, 5)
+
+  $cell = [System.Windows.Forms.TableLayoutPanel]::new()
+  $cell.Dock = [System.Windows.Forms.DockStyle]::Fill
+  $cell.ColumnCount = 2
+  $cell.RowCount = 1
+  $cell.Margin = [System.Windows.Forms.Padding]::new(0, 3, 0, 3)
+  [void]$cell.ColumnStyles.Add([System.Windows.Forms.ColumnStyle]::new([System.Windows.Forms.SizeType]::Percent, 100))
+  [void]$cell.ColumnStyles.Add([System.Windows.Forms.ColumnStyle]::new([System.Windows.Forms.SizeType]::Absolute, 80))
+
+  $Control.Dock = [System.Windows.Forms.DockStyle]::Fill
+
+  $browseBtn = [System.Windows.Forms.Button]::new()
+  $browseBtn.Text = 'Browse...'
+  $browseBtn.Dock = [System.Windows.Forms.DockStyle]::Fill
+  $browseBtn.Margin = [System.Windows.Forms.Padding]::new(4, -1, 0, 0)
+  Style-Button -Btn $browseBtn
+  $browseBtn.Add_Click({ Handle-FileBrowse -TargetTextBox $Control -ContentCollection $ContentCollection -AllowMultiSelect $AllowMultiSelect }.GetNewClosure())
+
+  [void]$cell.Controls.Add($Control, 0, 0)
+  [void]$cell.Controls.Add($browseBtn, 1, 0)
+
+  $Layout.Controls.Add($labelControl, 0, $rowIndex)
+  $Layout.Controls.Add($cell, 1, $rowIndex)
 }
 
 function Add-FieldRow {
@@ -353,6 +667,9 @@ function New-TextBoxField {
 
   $tb = [System.Windows.Forms.TextBox]::new()
   $tb.Text = $Default
+  $tb.BackColor = $global:themeInputBg
+  $tb.ForeColor = $global:themeFg
+  $tb.BorderStyle = [System.Windows.Forms.BorderStyle]::FixedSingle
   if ($MultiLine) {
     $tb.Multiline = $true
     $tb.ScrollBars = [System.Windows.Forms.ScrollBars]::Vertical
@@ -429,6 +746,8 @@ function Resolve-ProjectRoot {
 $baseDirectory = Get-ExecutableBaseDirectory
 $projectRoot = Resolve-ProjectRoot -BaseDirectory $baseDirectory
 $contentRoot = Join-Path $projectRoot 'src\content'
+$guidePagesRoot = Join-Path $projectRoot 'src\pages\assets-and-guides'
+$guideTemplatePath = Join-Path $projectRoot 'src\templates\interactive-guide-template.astro'
 
 $pushScriptCandidateA = Join-Path $projectRoot 'scripts\push-update.ps1'
 $pushScriptCandidateB = Join-Path $baseDirectory 'push-update.ps1'
@@ -441,12 +760,14 @@ $pushScriptPath = if (Test-Path -LiteralPath $pushScriptCandidateA) {
 }
 
 Ensure-ContentDirectory -Path $contentRoot
+Ensure-ContentDirectory -Path $guidePagesRoot
 $lastSavedFilePath = $null
 $editingFileByTab = @{
   Art = $null
   Assets = $null
   Mapping = $null
   Musings = $null
+  Guides = $null
 }
 
 $form = [System.Windows.Forms.Form]::new()
@@ -454,36 +775,109 @@ $form.Text = 'Boinkfolio Content Manager'
 $form.Size = [System.Drawing.Size]::new(980, 780)
 $form.StartPosition = [System.Windows.Forms.FormStartPosition]::CenterScreen
 $form.MinimumSize = [System.Drawing.Size]::new(900, 700)
+$form.BackColor = $global:themeBg
+$form.ForeColor = $global:themeFg
+$form.Font = $global:mainFont
 
 $rootLayout = [System.Windows.Forms.TableLayoutPanel]::new()
 $rootLayout.Dock = [System.Windows.Forms.DockStyle]::Fill
-$rootLayout.ColumnCount = 1
-$rootLayout.RowCount = 3
-[void]$rootLayout.RowStyles.Add([System.Windows.Forms.RowStyle]::new([System.Windows.Forms.SizeType]::Absolute, 52))
-[void]$rootLayout.RowStyles.Add([System.Windows.Forms.RowStyle]::new([System.Windows.Forms.SizeType]::Percent, 100))
-[void]$rootLayout.RowStyles.Add([System.Windows.Forms.RowStyle]::new([System.Windows.Forms.SizeType]::Absolute, 68))
+$rootLayout.ColumnCount = 2
+$rootLayout.RowCount = 1
+[void]$rootLayout.ColumnStyles.Add([System.Windows.Forms.ColumnStyle]::new([System.Windows.Forms.SizeType]::Absolute, 220))
+[void]$rootLayout.ColumnStyles.Add([System.Windows.Forms.ColumnStyle]::new([System.Windows.Forms.SizeType]::Percent, 100))
 [void]$form.Controls.Add($rootLayout)
 
+$sidebarPanel = [System.Windows.Forms.FlowLayoutPanel]::new()
+$sidebarPanel.Dock = [System.Windows.Forms.DockStyle]::Fill
+$sidebarPanel.BackColor = $global:themeSidebar
+$sidebarPanel.FlowDirection = [System.Windows.Forms.FlowDirection]::TopDown
+$sidebarPanel.WrapContents = $false
+$sidebarPanel.Margin = [System.Windows.Forms.Padding]::new(0)
+[void]$rootLayout.Controls.Add($sidebarPanel, 0, 0)
+
+$brandLabel = [System.Windows.Forms.Label]::new()
+$brandLabel.Text = "BOINKFOLIO"
+$brandLabel.ForeColor = $global:themeAccent
+$brandLabel.Font = [System.Drawing.Font]::new('Segoe UI Black', [float]16)
+$brandLabel.AutoSize = $false
+$brandLabel.Size = [System.Drawing.Size]::new(220, 80)
+$brandLabel.TextAlign = [System.Drawing.ContentAlignment]::MiddleCenter
+[void]$sidebarPanel.Controls.Add($brandLabel)
+
+$mainLayout = [System.Windows.Forms.TableLayoutPanel]::new()
+$mainLayout.Dock = [System.Windows.Forms.DockStyle]::Fill
+$mainLayout.ColumnCount = 1
+$mainLayout.RowCount = 3
+[void]$mainLayout.RowStyles.Add([System.Windows.Forms.RowStyle]::new([System.Windows.Forms.SizeType]::Absolute, 52))
+[void]$mainLayout.RowStyles.Add([System.Windows.Forms.RowStyle]::new([System.Windows.Forms.SizeType]::Percent, 100))
+[void]$mainLayout.RowStyles.Add([System.Windows.Forms.RowStyle]::new([System.Windows.Forms.SizeType]::Absolute, 68))
+[void]$rootLayout.Controls.Add($mainLayout, 1, 0)
+
 $header = [System.Windows.Forms.Label]::new()
-$header.Text = 'Create new site content using tabbed forms. Required fields are validated before file creation.'
+$header.Text = 'Select a category from the sidebar to manage content.'
 $header.Dock = [System.Windows.Forms.DockStyle]::Fill
 $header.TextAlign = [System.Drawing.ContentAlignment]::MiddleLeft
 $header.Padding = [System.Windows.Forms.Padding]::new(12, 0, 12, 0)
-[void]$rootLayout.Controls.Add($header, 0, 0)
+[void]$mainLayout.Controls.Add($header, 0, 0)
 
-$tabs = [System.Windows.Forms.TabControl]::new()
-$tabs.Dock = [System.Windows.Forms.DockStyle]::Fill
-[void]$rootLayout.Controls.Add($tabs, 0, 1)
+$contentContainer = [System.Windows.Forms.Panel]::new()
+$contentContainer.Dock = [System.Windows.Forms.DockStyle]::Fill
+[void]$mainLayout.Controls.Add($contentContainer, 0, 1)
 
-function New-TabLayout {
+$global:navButtons = @{}
+$global:contentPanels = @{}
+$global:currentTab = 'Art'
+
+function Switch-Tab {
+  param([string]$TabName)
+  $global:currentTab = $TabName
+  foreach ($key in $global:contentPanels.Keys) {
+    $global:contentPanels[$key].Visible = ($key -eq $TabName)
+  }
+  foreach ($key in $global:navButtons.Keys) {
+    if ($key -eq $TabName) {
+      $global:navButtons[$key].BackColor = $global:themeAccent
+      $global:navButtons[$key].ForeColor = [System.Drawing.Color]::Black
+    } else {
+      $global:navButtons[$key].BackColor = $global:themeSidebar
+      $global:navButtons[$key].ForeColor = $global:themeFg
+    }
+  }
+
+  $createBtnVar = Get-Variable -Name createBtn -Scope Script -ErrorAction SilentlyContinue
+  $editModeVar = Get-Variable -Name editModeCheck -Scope Script -ErrorAction SilentlyContinue
+  if ($null -ne $createBtnVar -and $null -ne $editModeVar) {
+    $isEditMode = [bool]$editModeVar.Value.Checked
+    if ($TabName -eq 'Guides') {
+      $createBtnVar.Value.Text = if ($isEditMode) { 'Save Guide Page' } else { 'Create Guide Page' }
+    } else {
+      $createBtnVar.Value.Text = if ($isEditMode) { 'Save Markdown Changes' } else { 'Create Markdown File' }
+    }
+  }
+}
+
+function New-NavTab {
   param([string]$Title)
 
-  $tab = [System.Windows.Forms.TabPage]::new($Title)
-  $tab.Padding = [System.Windows.Forms.Padding]::new(10)
+  $btn = [System.Windows.Forms.Button]::new()
+  $btn.Text = $Title.ToUpper()
+  $btn.Size = [System.Drawing.Size]::new(220, 50)
+  $btn.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
+  $btn.FlatAppearance.BorderSize = 0
+  $btn.Margin = [System.Windows.Forms.Padding]::new(0)
+  $btn.Font = [System.Drawing.Font]::new('Segoe UI', [float]10, [System.Drawing.FontStyle]::Bold)
+  $btn.Cursor = [System.Windows.Forms.Cursors]::Hand
+  $btn.TextAlign = [System.Drawing.ContentAlignment]::MiddleLeft
+  $btn.Padding = [System.Windows.Forms.Padding]::new(30, 0, 0, 0)
+  $btn.Add_Click({ Switch-Tab -TabName $Title }.GetNewClosure())
+  [void]$sidebarPanel.Controls.Add($btn)
+  $global:navButtons[$Title] = $btn
 
   $panel = [System.Windows.Forms.Panel]::new()
   $panel.Dock = [System.Windows.Forms.DockStyle]::Fill
   $panel.AutoScroll = $true
+  $panel.Visible = $false
+  $panel.Padding = [System.Windows.Forms.Padding]::new(10)
 
   $layout = [System.Windows.Forms.TableLayoutPanel]::new()
   $layout.Dock = [System.Windows.Forms.DockStyle]::Top
@@ -494,14 +888,14 @@ function New-TabLayout {
   [void]$layout.ColumnStyles.Add([System.Windows.Forms.ColumnStyle]::new([System.Windows.Forms.SizeType]::Percent, 100))
 
   [void]$panel.Controls.Add($layout)
-  [void]$tab.Controls.Add($panel)
-  [void]$tabs.TabPages.Add($tab)
+  [void]$contentContainer.Controls.Add($panel)
+  $global:contentPanels[$Title] = $panel
 
   return $layout
 }
 
 # Art tab
-$artLayout = New-TabLayout -Title 'Art'
+$artLayout = New-NavTab -Title 'Art'
 $artSlug = New-TextBoxField
 $artTitle = New-TextBoxField
 $artTagline = New-TextBoxField
@@ -521,9 +915,9 @@ $artBody = New-TextBoxField -MultiLine $true
 Add-FieldRow $artLayout 'Slug (optional)' $artSlug
 Add-FieldRow $artLayout 'Title *' $artTitle
 Add-FieldRow $artLayout 'Tagline *' $artTagline
-Add-FieldRow $artLayout 'Thumbnail URL/Path *' $artThumbnail
-Add-FieldRow $artLayout 'Fullres URL/Path (optional)' $artFullres
-Add-FieldRow $artLayout 'Images (one per line)' $artImages 90
+Add-FileFieldRow $artLayout 'Thumbnail URL/Path *' $artThumbnail -ContentCollection 'art'
+Add-FileFieldRow $artLayout 'Fullres URL/Path (optional)' $artFullres -ContentCollection 'art'
+Add-FileFieldRow $artLayout 'Images (one per line)' $artImages 90 -ContentCollection 'art' -AllowMultiSelect $true
 Add-FieldRow $artLayout 'Video Links (one per line)' $artVideos 90
 Add-FieldRow $artLayout 'Medium *' $artMedium
 Add-FieldRow $artLayout 'Status *' $artStatus
@@ -535,7 +929,7 @@ Add-FieldRow $artLayout 'Featured' $artFeatured
 Add-FieldRow $artLayout 'Markdown Body' $artBody 180
 
 # Assets tab
-$assetsLayout = New-TabLayout -Title 'Assets'
+$assetsLayout = New-NavTab -Title 'Assets'
 $assetsSlug = New-TextBoxField
 $assetsTitle = New-TextBoxField
 $assetsSummary = New-TextBoxField
@@ -552,8 +946,8 @@ $assetsBody = New-TextBoxField -MultiLine $true
 Add-FieldRow $assetsLayout 'Slug (optional)' $assetsSlug
 Add-FieldRow $assetsLayout 'Title *' $assetsTitle
 Add-FieldRow $assetsLayout 'Summary *' $assetsSummary
-Add-FieldRow $assetsLayout 'File Path/URL *' $assetsFilePath
-Add-FieldRow $assetsLayout 'Preview Image (optional)' $assetsPreview
+Add-FileFieldRow $assetsLayout 'File Path/URL *' $assetsFilePath -ContentCollection 'assets'
+Add-FileFieldRow $assetsLayout 'Preview Image (optional)' $assetsPreview -ContentCollection 'assets'
 Add-FieldRow $assetsLayout 'Category *' $assetsCategory
 Add-FieldRow $assetsLayout 'Source Type *' $assetsSourceType
 Add-FieldRow $assetsLayout 'Date *' $assetsDate
@@ -563,7 +957,7 @@ Add-FieldRow $assetsLayout 'Related Art Slug (optional)' $assetsRelatedSlug
 Add-FieldRow $assetsLayout 'Markdown Body' $assetsBody 180
 
 # Mapping tab
-$mappingLayout = New-TabLayout -Title 'Mapping'
+$mappingLayout = New-NavTab -Title 'Mapping'
 $mappingSlug = New-TextBoxField
 $mappingTitle = New-TextBoxField
 $mappingGame = New-TextBoxField
@@ -581,8 +975,8 @@ Add-FieldRow $mappingLayout 'Slug (optional)' $mappingSlug
 Add-FieldRow $mappingLayout 'Title *' $mappingTitle
 Add-FieldRow $mappingLayout 'Game *' $mappingGame
 Add-FieldRow $mappingLayout 'Tagline *' $mappingTagline
-Add-FieldRow $mappingLayout 'Thumbnail URL/Path *' $mappingThumb
-Add-FieldRow $mappingLayout 'Images (one per line)' $mappingImages 90
+Add-FileFieldRow $mappingLayout 'Thumbnail URL/Path *' $mappingThumb -ContentCollection 'mapping'
+Add-FileFieldRow $mappingLayout 'Images (one per line)' $mappingImages 90 -ContentCollection 'mapping' -AllowMultiSelect $true
 Add-FieldRow $mappingLayout 'Video Links (one per line)' $mappingVideos 90
 Add-FieldRow $mappingLayout 'Workshop URL (optional)' $mappingWorkshop
 Add-FieldRow $mappingLayout 'Date *' $mappingDate
@@ -591,7 +985,7 @@ Add-FieldRow $mappingLayout 'Featured' $mappingFeatured
 Add-FieldRow $mappingLayout 'Markdown Body' $mappingBody 200
 
 # Musings tab
-$musingsLayout = New-TabLayout -Title 'Musings'
+$musingsLayout = New-NavTab -Title 'Musings'
 $musingsSlug = New-TextBoxField
 $musingsTitle = New-TextBoxField
 $musingsExcerpt = New-TextBoxField
@@ -608,59 +1002,87 @@ Add-FieldRow $musingsLayout 'Category *' $musingsCategory
 Add-FieldRow $musingsLayout 'Featured' $musingsFeatured
 Add-FieldRow $musingsLayout 'Markdown Body' $musingsBody 240
 
+# Guides tab
+$guidesLayout = New-NavTab -Title 'Guides'
+$guidesSlug = New-TextBoxField
+$guidesTitle = New-TextBoxField
+$guidesDescription = New-TextBoxField -MultiLine $true
+$guidesCategory = New-TextBoxField
+$guidesHero = New-TextBoxField
+$guidesDate = New-TextBoxField -Default (Get-Date -Format 'MMM yyyy')
+$guidesTags = New-TextBoxField
+$guidesFeatured = New-CheckBoxField
+$guidesBody = New-TextBoxField -MultiLine $true
+
+Add-FieldRow $guidesLayout 'Slug (optional)' $guidesSlug
+Add-FieldRow $guidesLayout 'Title *' $guidesTitle
+Add-FieldRow $guidesLayout 'Description *' $guidesDescription 60
+Add-FieldRow $guidesLayout 'Category' $guidesCategory
+Add-FileFieldRow $guidesLayout 'Hero Image (optional)' $guidesHero -ContentCollection 'guides'
+Add-FieldRow $guidesLayout 'Date *' $guidesDate
+Add-FieldRow $guidesLayout 'Tags (comma/line)' $guidesTags
+Add-FieldRow $guidesLayout 'Featured' $guidesFeatured
+Add-FieldRow $guidesLayout 'Section Outline (one per line)' $guidesBody 240
+
 $actionsPanel = [System.Windows.Forms.FlowLayoutPanel]::new()
 $actionsPanel.Dock = [System.Windows.Forms.DockStyle]::Fill
 $actionsPanel.FlowDirection = [System.Windows.Forms.FlowDirection]::LeftToRight
 $actionsPanel.Padding = [System.Windows.Forms.Padding]::new(10, 8, 10, 8)
 $actionsPanel.WrapContents = $false
-[void]$rootLayout.Controls.Add($actionsPanel, 0, 2)
+[void]$mainLayout.Controls.Add($actionsPanel, 0, 2)
 
 $createBtn = [System.Windows.Forms.Button]::new()
 $createBtn.Text = 'Create Markdown File'
-$createBtn.Width = 170
-$createBtn.Height = 36
+$createBtn.Width = 190
+$createBtn.Height = 42
+Style-GlossyButton -Btn $createBtn -BaseColor $global:themeAccent -DarkColor $global:themeAccentDark
 
 $editModeCheck = [System.Windows.Forms.CheckBox]::new()
 $editModeCheck.Text = 'Edit Existing Mode'
 $editModeCheck.AutoSize = $true
-$editModeCheck.Padding = [System.Windows.Forms.Padding]::new(8, 8, 8, 0)
+$editModeCheck.Padding = [System.Windows.Forms.Padding]::new(8, 12, 8, 0)
 
 $loadBtn = [System.Windows.Forms.Button]::new()
-$loadBtn.Text = 'Load Existing File'
-$loadBtn.Width = 150
+$loadBtn.Text = 'Load'
+$loadBtn.Width = 80
 $loadBtn.Height = 36
+Style-Button -Btn $loadBtn
 
 $clearBtn = [System.Windows.Forms.Button]::new()
-$clearBtn.Text = 'Clear All Data'
-$clearBtn.Width = 130
+$clearBtn.Text = 'Clear All'
+$clearBtn.Width = 90
 $clearBtn.Height = 36
+Style-Button -Btn $clearBtn
 
 $clearTabBtn = [System.Windows.Forms.Button]::new()
-$clearTabBtn.Text = 'Clear Current Tab'
-$clearTabBtn.Width = 140
+$clearTabBtn.Text = 'Clear Tab'
+$clearTabBtn.Width = 90
 $clearTabBtn.Height = 36
+Style-Button -Btn $clearTabBtn
 
 $formatBtn = [System.Windows.Forms.Button]::new()
-$formatBtn.Text = 'Auto Format Markdown'
-$formatBtn.Width = 170
+$formatBtn.Text = 'Format MD'
+$formatBtn.Width = 100
 $formatBtn.Height = 36
+Style-Button -Btn $formatBtn
 
 $formatOnSaveCheck = [System.Windows.Forms.CheckBox]::new()
 $formatOnSaveCheck.Text = 'Auto Format on Save'
 $formatOnSaveCheck.Checked = $true
 $formatOnSaveCheck.AutoSize = $true
-$formatOnSaveCheck.Padding = [System.Windows.Forms.Padding]::new(8, 8, 8, 0)
+$formatOnSaveCheck.Padding = [System.Windows.Forms.Padding]::new(8, 12, 8, 0)
 
 $pushBtn = [System.Windows.Forms.Button]::new()
 $pushBtn.Text = 'Push to Git'
 $pushBtn.Width = 120
-$pushBtn.Height = 36
-$pushBtn.Enabled = $true
+$pushBtn.Height = 42
+Style-GlossyButton -Btn $pushBtn -BaseColor $global:themeAccent -DarkColor $global:themeAccentDark
 
 $openBtn = [System.Windows.Forms.Button]::new()
-$openBtn.Text = 'Open src/content Folder'
-$openBtn.Width = 170
+$openBtn.Text = 'Open Folder'
+$openBtn.Width = 110
 $openBtn.Height = 36
+Style-Button -Btn $openBtn
 
 $statusLabel = [System.Windows.Forms.Label]::new()
 $statusLabel.AutoSize = $true
@@ -680,17 +1102,83 @@ $statusLabel.MaximumSize = [System.Drawing.Size]::new(560, 50)
 [void]$actionsPanel.Controls.Add($statusLabel)
 
 $editModeCheck.Add_CheckedChanged({
+  $isGuidesTab = ($global:currentTab -eq 'Guides')
   if ($editModeCheck.Checked) {
-    $createBtn.Text = 'Save Markdown Changes'
+    $createBtn.Text = if ($isGuidesTab) { 'Save Guide Page' } else { 'Save Markdown Changes' }
     $statusLabel.Text = 'Edit mode enabled. Load a file in the current tab.'
   } else {
-    $createBtn.Text = 'Create Markdown File'
+    $createBtn.Text = if ($isGuidesTab) { 'Create Guide Page' } else { 'Create Markdown File' }
     $statusLabel.Text = 'Create mode enabled.'
   }
 })
 
 $loadBtn.Add_Click({
-  $selectedTab = $tabs.SelectedTab.Text
+  $selectedTab = $global:currentTab
+
+  if ($selectedTab -eq 'Guides') {
+    Ensure-ContentDirectory -Path $guidePagesRoot
+
+    $dialog = [System.Windows.Forms.OpenFileDialog]::new()
+    $dialog.Filter = 'Astro files (*.astro)|*.astro'
+    $dialog.InitialDirectory = $guidePagesRoot
+    $dialog.Multiselect = $false
+
+    if ($dialog.ShowDialog() -ne [System.Windows.Forms.DialogResult]::OK) {
+      return
+    }
+
+    try {
+      $guidesSlug.Text = [System.IO.Path]::GetFileNameWithoutExtension($dialog.FileName)
+      $rawGuide = Get-Content -LiteralPath $dialog.FileName -Raw -Encoding UTF8
+      $guidesBody.Text = $rawGuide
+
+      $titleMatch = [regex]::Match($rawGuide, "title:\s*'((?:\\'|[^'])*)'")
+      if ($titleMatch.Success) {
+        $guidesTitle.Text = $titleMatch.Groups[1].Value -replace "\\'", "'"
+      }
+
+      $descriptionMatch = [regex]::Match($rawGuide, "description:\s*'((?:\\'|[^'])*)'")
+      if ($descriptionMatch.Success) {
+        $guidesDescription.Text = $descriptionMatch.Groups[1].Value -replace "\\'", "'"
+      }
+
+      $categoryMatch = [regex]::Match($rawGuide, "category:\s*'((?:\\'|[^'])*)'")
+      if ($categoryMatch.Success) {
+        $guidesCategory.Text = $categoryMatch.Groups[1].Value -replace "\\'", "'"
+      }
+
+      $dateMatch = [regex]::Match($rawGuide, "date:\s*'((?:\\'|[^'])*)'")
+      if ($dateMatch.Success) {
+        $guidesDate.Text = $dateMatch.Groups[1].Value -replace "\\'", "'"
+      }
+
+      $heroMatch = [regex]::Match($rawGuide, "heroImage:\s*'((?:\\'|[^'])*)'")
+      if ($heroMatch.Success) {
+        $guidesHero.Text = $heroMatch.Groups[1].Value -replace "\\'", "'"
+      }
+
+      $featuredMatch = [regex]::Match($rawGuide, "featuredToken:\s*'((?:\\'|[^'])*)'")
+      if ($featuredMatch.Success) {
+        $guidesFeatured.Checked = (($featuredMatch.Groups[1].Value -replace "\\'", "'").ToLowerInvariant() -eq 'true')
+      }
+
+      $tagMatch = [regex]::Match($rawGuide, "tags:\s*'((?:\\'|[^'])*)'")
+      if ($tagMatch.Success) {
+        $tagValues = ($tagMatch.Groups[1].Value -replace "\\'", "'") -split '\|' |
+          ForEach-Object { $_.Trim() } |
+          Where-Object { $_ -ne '' }
+        $guidesTags.Text = ($tagValues -join [Environment]::NewLine)
+      }
+
+      $editingFileByTab[$selectedTab] = $dialog.FileName
+      $statusLabel.Text = "Loaded guide page: $($dialog.FileName)"
+    } catch {
+      Show-Error "Unable to load guide page: $($_.Exception.Message)"
+    }
+
+    return
+  }
+
   $subDir = switch ($selectedTab) {
     'Art' { 'art' }
     'Assets' { 'assets' }
@@ -769,6 +1257,17 @@ $loadBtn.Add_Click({
         $musingsFeatured.Checked = Get-FrontmatterBool -Frontmatter $fm -Key 'featured'
         $musingsBody.Text = $parsed.Body
       }
+      'Guides' {
+        $guidesSlug.Text = [System.IO.Path]::GetFileNameWithoutExtension($dialog.FileName)
+        $guidesTitle.Text = Get-FrontmatterValue -Frontmatter $fm -Key 'title'
+        $guidesDescription.Text = Get-FrontmatterValue -Frontmatter $fm -Key 'description'
+        $guidesCategory.Text = Get-FrontmatterValue -Frontmatter $fm -Key 'category'
+        $guidesHero.Text = Get-FrontmatterValue -Frontmatter $fm -Key 'heroImage'
+        $guidesDate.Text = Get-FrontmatterValue -Frontmatter $fm -Key 'date'
+        $guidesTags.Text = Join-ListText $fm['tags']
+        $guidesFeatured.Checked = Get-FrontmatterBool -Frontmatter $fm -Key 'featured'
+        $guidesBody.Text = $parsed.Body
+      }
     }
 
     $editingFileByTab[$selectedTab] = $dialog.FileName
@@ -779,7 +1278,14 @@ $loadBtn.Add_Click({
 })
 
 $openBtn.Add_Click({
-  [System.Diagnostics.Process]::Start('explorer.exe', $contentRoot) | Out-Null
+  $selectedTab = $global:currentTab
+  $openPath = if ($selectedTab -eq 'Guides') {
+    $guidePagesRoot
+  } else {
+    $contentRoot
+  }
+
+  [System.Diagnostics.Process]::Start('explorer.exe', $openPath) | Out-Null
 })
 
 $clearBtn.Add_Click({
@@ -846,17 +1352,28 @@ $clearBtn.Add_Click({
   $musingsFeatured.Checked = $false
   $musingsBody.Text = ''
 
+  $guidesSlug.Text = ''
+  $guidesTitle.Text = ''
+  $guidesDescription.Text = ''
+  $guidesCategory.Text = ''
+  $guidesHero.Text = ''
+  $guidesDate.Text = $defaultDate
+  $guidesTags.Text = ''
+  $guidesFeatured.Checked = $false
+  $guidesBody.Text = ''
+
   $editingFileByTab['Art'] = $null
   $editingFileByTab['Assets'] = $null
   $editingFileByTab['Mapping'] = $null
   $editingFileByTab['Musings'] = $null
+  $editingFileByTab['Guides'] = $null
   $lastSavedFilePath = $null
 
   $statusLabel.Text = 'All form data cleared.'
 })
 
 $clearTabBtn.Add_Click({
-  $selectedTab = $tabs.SelectedTab.Text
+  $selectedTab = $global:currentTab
   $confirm = [System.Windows.Forms.MessageBox]::Show(
     "Clear all data in the '$selectedTab' tab?",
     'Clear Current Tab',
@@ -929,6 +1446,18 @@ $clearTabBtn.Add_Click({
       $musingsBody.Text = ''
       $editingFileByTab['Musings'] = $null
     }
+    'Guides' {
+        $guidesSlug.Text = ''
+        $guidesTitle.Text = ''
+        $guidesDescription.Text = ''
+        $guidesCategory.Text = ''
+        $guidesHero.Text = ''
+        $guidesDate.Text = $defaultDate
+        $guidesTags.Text = ''
+        $guidesFeatured.Checked = $false
+        $guidesBody.Text = ''
+        $editingFileByTab['Guides'] = $null
+    }
   }
 
   $lastSavedFilePath = $null
@@ -936,7 +1465,13 @@ $clearTabBtn.Add_Click({
 })
 
 $formatBtn.Add_Click({
-  $selectedTab = $tabs.SelectedTab.Text
+  $selectedTab = $global:currentTab
+
+  if ($selectedTab -eq 'Guides') {
+    $statusLabel.Text = 'Format MD is disabled for Guides. Edit the Astro template directly.'
+    return
+  }
+
   $targetBody = $null
 
   switch ($selectedTab) {
@@ -944,6 +1479,7 @@ $formatBtn.Add_Click({
     'Assets' { $targetBody = $assetsBody }
     'Mapping' { $targetBody = $mappingBody }
     'Musings' { $targetBody = $musingsBody }
+    'Guides' { $targetBody = $guidesBody }
   }
 
   if ($null -eq $targetBody) {
@@ -1020,7 +1556,7 @@ $pushBtn.Add_Click({
 })
 
 $createBtn.Add_Click({
-  $selectedTab = $tabs.SelectedTab.Text
+  $selectedTab = $global:currentTab
   $filePath = $null
 
   $saveExistingPath = $null
@@ -1202,6 +1738,47 @@ $createBtn.Add_Click({
         $filePath = Write-ContentFile -Directory (Join-Path $contentRoot 'musings') -Slug $slug -FrontmatterLines $frontmatter -Body $musingsBodyText
       }
     }
+    'Guides' {
+      if ($editModeCheck.Checked -and -not [string]::IsNullOrWhiteSpace($guidesBody.Text) -and ($guidesBody.Text -match '<Layout')) {
+        $filePath = Write-TextFileDirect -FilePath $saveExistingPath -Content $guidesBody.Text
+        break
+      }
+
+      $title = $guidesTitle.Text.Trim()
+      $slug = if ($guidesSlug.Text.Trim()) { ConvertTo-Slug $guidesSlug.Text } else { ConvertTo-Slug $title }
+      $description = $guidesDescription.Text.Trim()
+      $date = $guidesDate.Text.Trim()
+
+      if ($title -eq '' -or $slug -eq '' -or $description -eq '' -or $date -eq '') {
+        Show-Error 'Guides requires: title, description, and date.'
+        return
+      }
+
+      $tags = Get-ListValues $guidesTags.Text
+      $category = if ([string]::IsNullOrWhiteSpace($guidesCategory.Text)) { 'General' } else { $guidesCategory.Text.Trim() }
+      $heroImage = if ([string]::IsNullOrWhiteSpace($guidesHero.Text)) { '' } else { $guidesHero.Text.Trim().Replace('\\', '/') }
+
+      $astroContent = Build-GuideAstroContent `
+        -TemplatePath $guideTemplatePath `
+        -Title $title `
+        -Description $description `
+        -Category $category `
+        -Date $date `
+        -HeroImage $heroImage `
+        -Tags $tags `
+        -Featured $guidesFeatured.Checked `
+        -OutlineRaw $guidesBody.Text
+
+      if ($editModeCheck.Checked) {
+        $filePath = Write-TextFileDirect -FilePath $saveExistingPath -Content $astroContent
+      } else {
+        $filePath = Write-TextFile -Directory $guidePagesRoot -FileName ("$slug.astro") -Content $astroContent
+      }
+
+      if ($filePath) {
+        $guidesBody.Text = $astroContent
+      }
+    }
   }
 
   if ($filePath) {
@@ -1209,7 +1786,7 @@ $createBtn.Add_Click({
     $statusLabel.Text = "${verb}: $filePath"
     $lastSavedFilePath = $filePath
     [void][System.Windows.Forms.MessageBox]::Show(
-      "Content file $($verb.ToLowerInvariant()):`n$filePath",
+      "File $($verb.ToLowerInvariant()):`n$filePath",
       'Success',
       [System.Windows.Forms.MessageBoxButtons]::OK,
       [System.Windows.Forms.MessageBoxIcon]::Information
@@ -1218,5 +1795,7 @@ $createBtn.Add_Click({
     $statusLabel.Text = 'No file saved.'
   }
 })
+
+Switch-Tab -TabName 'Art'
 
 [void]$form.ShowDialog()

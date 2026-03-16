@@ -1,8 +1,8 @@
 ---
 title: "The IPZ"
 game: "Black Ops 3"
-tagline: "A vertical hostage rescue scenario inside a brutalist high-rise."
-thumbnail: "https://placehold.co/800x450/0a0a0a/0050c8?text=cs_complex"
+tagline: "A BO3 Zombies map set around a nightclub and the surrounding city high-rise."
+thumbnail: "https://drive.google.com/file/d/1TQ_e-R8SZehwfCNCVPpQRVnh-nRERGga/preview"
 images:
   - "https://placehold.co/1200x675/0a0a0a/f0f0f0?text=Exterior+Shot"
   - "https://placehold.co/1200x675/0a0a0a/f0f0f0?text=Lobby+Atrium"
@@ -18,6 +18,7 @@ tags:
   - "\"Vertical\"]"
 featured: false
 ---
+
 
 
 **cs_complex** turns the hostage formula on its side — literally. Instead of a traditional horizontal layout, this map plays across three floors of a crumbling brutalist apartment tower. CTs start at ground level and must push upward through stairwells, elevator shafts, and exposed balcony walkways to reach two hostage locations on the upper floors.

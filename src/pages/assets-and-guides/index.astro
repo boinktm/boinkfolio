@@ -3,33 +3,25 @@ import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import SubNav from '../../components/SubNav.astro';
 import Footer from '../../components/Footer.astro';
-import { assetPath, withBase } from '../../lib/paths';
-import { getCollection } from 'astro:content';
-
-const entries = await getCollection('assets');
-const publicAssets = entries
-  .filter(entry => entry.data.isPublic)
-  .map(entry => ({ slug: entry.id, ...entry.data }));
-
-const featured = publicAssets[0] ?? null;
-const rest = featured ? publicAssets.slice(1) : [];
+import { withBase } from '../../lib/paths';
 ---
 
-<Layout title="Assets and Guides — Boink Brands" description="Downloadable assets and interactive guides from Boink Brands.">
+<Layout title="Assets and Guides — Boink Brands" description="Browse interactive guides and standalone assets from Boink Brands.">
   <Header />
   <SubNav activeTab="3D Art" />
 
   <section class="bg-void relative overflow-hidden">
     <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(230,0,18,0.07)_0%,transparent_70%)]"></div>
     <div class="relative max-w-[var(--width-content)] mx-auto px-4 py-16 md:py-20 text-center">
-      <p class="text-[10px] font-bold uppercase tracking-[0.3em] text-accent mb-3">Downloads</p>
+      <p class="text-[10px] font-bold uppercase tracking-[0.3em] text-accent mb-3">Library</p>
       <h1 class="font-display text-4xl md:text-6xl uppercase leading-none tracking-tight mb-4">
         <span class="text-gradient">Assets</span>
         <br />
         <span class="text-text-primary">and Guides</span>
       </h1>
-      <p class="text-text-secondary text-sm md:text-base max-w-xl mx-auto leading-relaxed">
-        A curated list of shareable files and helpful guides. Open any entry to view details and download the latest version.
+      <p class="text-text-secondary text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
+        Switch between deep editorial guides and standalone assets. Guides are structured walkthroughs and analyses.
+        Assets are practical tools or resources you can use directly.
       </p>
     </div>
     <div class="chrome-divider"></div>
@@ -37,108 +29,166 @@ const rest = featured ? publicAssets.slice(1) : [];
 
   <section class="bg-obsidian py-8">
     <div class="max-w-[var(--width-content)] mx-auto px-4 space-y-4">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <a href={withBase('assets-and-guides/botw-60fps-guide')} class="surface-card rounded-sm overflow-hidden block group border-glow">
-          <div class="relative p-6 md:p-8 bg-[linear-gradient(135deg,rgba(230,0,18,0.14)_0%,rgba(20,20,20,0.9)_60%)]">
-            <p class="text-[9px] font-bold uppercase tracking-widest text-accent mb-2">Interactive Guide</p>
-            <h2 class="font-display text-2xl md:text-4xl uppercase text-text-primary leading-none mb-3">Breath of the Wild: 60 FPS Optimization</h2>
-            <p class="text-sm text-text-secondary max-w-2xl">
-              Open the full step-by-step dashboard with checklist tracking, plugin installation order, overclock target charts, and realistic performance expectations.
-            </p>
-            <p class="text-[10px] uppercase tracking-wider text-text-muted mt-4">Open Guide -></p>
+      <div class="surface-card rounded-sm p-3 md:p-4">
+        <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <p class="text-[10px] uppercase tracking-widest text-text-muted font-bold">Browse By Type</p>
+          <div class="inline-flex w-full md:w-auto bg-charcoal/50 border border-border rounded-sm p-1">
+            <button type="button" class="content-toggle-btn is-active" data-content-toggle-btn data-target="guides-panel" aria-pressed="true">Guides</button>
+            <button type="button" class="content-toggle-btn" data-content-toggle-btn data-target="assets-panel" aria-pressed="false">Assets</button>
           </div>
-        </a>
-
-        <a href={withBase('assets-and-guides/pokemon-diamond-pearl-vs-platinum')} class="surface-card rounded-sm overflow-hidden block group">
-          <div class="relative p-6 md:p-8 bg-[linear-gradient(135deg,rgba(255,255,255,0.08)_0%,rgba(20,20,20,0.92)_62%)]">
-            <p class="text-[9px] font-bold uppercase tracking-widest text-accent mb-2">Interactive Guide</p>
-            <h2 class="font-display text-2xl md:text-4xl uppercase text-text-primary leading-none mb-3">Pokemon Diamond, Pearl, and Platinum</h2>
-            <p class="text-sm text-text-secondary max-w-2xl">
-              Explore the Sinnoh comparison dashboard covering engine cleanup, progression changes, regional dex growth, and regional cartridge revisions.
-            </p>
-            <p class="text-[10px] uppercase tracking-wider text-text-muted mt-4">Open Guide -></p>
-          </div>
-        </a>
-
-        <a href={withBase('assets-and-guides/boinkdex')} class="surface-card rounded-sm overflow-hidden block group">
-          <div class="relative p-6 md:p-8 bg-[linear-gradient(135deg,rgba(250,204,21,0.14)_0%,rgba(20,20,20,0.92)_62%)]">
-            <p class="text-[9px] font-bold uppercase tracking-widest text-accent mb-2">Interactive Guide</p>
-            <h2 class="font-display text-2xl md:text-4xl uppercase text-text-primary leading-none mb-3">Boinkdex Tracker</h2>
-            <p class="text-sm text-text-secondary max-w-2xl">
-              Open the full multi-region Boinkdex with capture tracking, shiny mode, save/import code, and QR sync backup.
-            </p>
-            <p class="text-[10px] uppercase tracking-wider text-text-muted mt-4">Open Guide -></p>
-          </div>
-        </a>
-
-        <a href={withBase('assets-and-guides/bo3-gsc-guide')} class="surface-card rounded-sm overflow-hidden block group">
-          <div class="relative p-6 md:p-8 bg-[linear-gradient(135deg,rgba(230,0,18,0.18)_0%,rgba(20,20,20,0.92)_62%)]">
-            <p class="text-[9px] font-bold uppercase tracking-widest text-accent mb-2">Interactive Guide</p>
-            <h2 class="font-display text-2xl md:text-4xl uppercase text-text-primary leading-none mb-3">Black Ops 3 Mod Tools GSC</h2>
-            <p class="text-sm text-text-secondary max-w-2xl">
-              The definitive 2026 deep dive into GSC architecture, WaW migration, syntax reference, learning roadmap, ecosystem analysis, and toolchain evolution.
-            </p>
-            <p class="text-[10px] uppercase tracking-wider text-text-muted mt-4">Open Guide -></p>
-          </div>
-        </a>
+        </div>
       </div>
 
-      {featured ? (
-        <>
-          <a href={assetPath(featured.slug)} class="surface-card rounded-sm overflow-hidden block group">
-            <div class="relative aspect-[21/9] md:aspect-[3/1] overflow-hidden">
-              {featured.previewImage ? (
-                <img src={withBase(featured.previewImage)} alt={featured.title} class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="eager" />
-              ) : (
-                <div class="absolute inset-0 bg-gradient-to-br from-charcoal to-void"></div>
-              )}
-              <div class="absolute inset-0 bg-gradient-to-t from-void via-void/70 to-transparent"></div>
+      <div id="guides-panel" data-content-panel class="space-y-4">
+        <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+          <p class="text-[10px] uppercase tracking-widest text-accent font-bold mb-2">Guides Defined</p>
+          <p class="text-sm text-text-secondary leading-relaxed">
+            Guides are long-form pages focused on explanation, step-by-step process, or comparative breakdowns.
+            They are built for reading, learning, and reference.
+          </p>
+        </article>
 
-              <div class="relative z-10 p-6 md:p-8 h-full flex flex-col justify-end">
-                <div class="flex items-center gap-2 mb-2 flex-wrap">
-                  <span class="text-[9px] font-bold uppercase tracking-wider bg-accent/20 text-accent px-2 py-0.5 rounded-sm">Featured</span>
-                  <span class="text-[9px] font-bold uppercase tracking-wider text-text-muted border border-border px-2 py-0.5 rounded-sm">{featured.category}</span>
-                  <span class="text-[9px] font-bold uppercase tracking-wider text-text-muted border border-border px-2 py-0.5 rounded-sm">{featured.sourceType}</span>
-                </div>
-                <h2 class="font-display text-3xl md:text-5xl uppercase text-text-primary leading-none mb-2">{featured.title}</h2>
-                <p class="text-sm text-text-secondary max-w-2xl">{featured.summary}</p>
-              </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <a href={withBase('assets-and-guides/botw-60fps-guide')} class="surface-card rounded-sm overflow-hidden block group border-glow">
+            <div class="relative p-6 md:p-8 bg-[linear-gradient(135deg,rgba(230,0,18,0.14)_0%,rgba(20,20,20,0.9)_60%)]">
+              <p class="text-[9px] font-bold uppercase tracking-widest text-accent mb-2">Interactive Guide</p>
+              <h2 class="font-display text-2xl md:text-4xl uppercase text-text-primary leading-none mb-3">Breath of the Wild: 60 FPS Optimization</h2>
+              <p class="text-sm text-text-secondary max-w-2xl">
+                Open the full step-by-step dashboard with checklist tracking, plugin installation order, overclock target charts, and realistic performance expectations.
+              </p>
+              <p class="text-[10px] uppercase tracking-wider text-text-muted mt-4">Open Guide -></p>
             </div>
           </a>
 
-          {rest.length > 0 && (
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {rest.map(asset => (
-                <a href={assetPath(asset.slug)} class="surface-card rounded-sm overflow-hidden group block">
-                  <div class="relative aspect-[16/9] overflow-hidden">
-                    {asset.previewImage ? (
-                      <img src={withBase(asset.previewImage)} alt={asset.title} class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
-                    ) : (
-                      <div class="w-full h-full bg-gradient-to-br from-charcoal to-void"></div>
-                    )}
-                    <div class="absolute inset-0 bg-gradient-to-t from-void/80 to-transparent"></div>
-                  </div>
-                  <div class="p-5">
-                    <div class="flex items-center justify-between gap-3 mb-2">
-                      <h3 class="font-display text-xl uppercase text-text-primary leading-tight">{asset.title}</h3>
-                      <span class="text-[9px] font-bold uppercase tracking-wider text-text-muted border border-border px-2 py-0.5 rounded-sm whitespace-nowrap">{asset.sourceType}</span>
-                    </div>
-                    <p class="text-[10px] uppercase tracking-wider text-text-muted mb-2">{asset.category} · {asset.date}</p>
-                    <p class="text-xs text-text-secondary leading-relaxed">{asset.summary}</p>
-                  </div>
-                </a>
-              ))}
+          <a href={withBase('assets-and-guides/pokemon-diamond-pearl-vs-platinum')} class="surface-card rounded-sm overflow-hidden block group">
+            <div class="relative p-6 md:p-8 bg-[linear-gradient(135deg,rgba(255,255,255,0.08)_0%,rgba(20,20,20,0.92)_62%)]">
+              <p class="text-[9px] font-bold uppercase tracking-widest text-accent mb-2">Interactive Guide</p>
+              <h2 class="font-display text-2xl md:text-4xl uppercase text-text-primary leading-none mb-3">Pokemon Diamond, Pearl, and Platinum</h2>
+              <p class="text-sm text-text-secondary max-w-2xl">
+                Explore the Sinnoh comparison dashboard covering engine cleanup, progression changes, regional dex growth, and regional cartridge revisions.
+              </p>
+              <p class="text-[10px] uppercase tracking-wider text-text-muted mt-4">Open Guide -></p>
             </div>
-          )}
-        </>
-      ) : (
-        <article class="surface-card rounded-sm p-8 text-center">
-          <h2 class="font-display text-2xl uppercase text-text-primary mb-2">No Assets or Guides Yet</h2>
-          <p class="text-text-secondary text-sm">Add items under <span class="text-text-primary">src/content/assets</span> and set <span class="text-text-primary">isPublic: true</span> to publish them here.</p>
+          </a>
+
+          <a href={withBase('assets-and-guides/bo3-gsc-guide')} class="surface-card rounded-sm overflow-hidden block group">
+            <div class="relative p-6 md:p-8 bg-[linear-gradient(135deg,rgba(230,0,18,0.18)_0%,rgba(20,20,20,0.92)_62%)]">
+              <p class="text-[9px] font-bold uppercase tracking-widest text-accent mb-2">Interactive Guide</p>
+              <h2 class="font-display text-2xl md:text-4xl uppercase text-text-primary leading-none mb-3">Black Ops 3 Mod Tools GSC</h2>
+              <p class="text-sm text-text-secondary max-w-2xl">
+                The definitive 2026 deep dive into GSC architecture, WaW migration, syntax reference, learning roadmap, ecosystem analysis, and toolchain evolution.
+              </p>
+              <p class="text-[10px] uppercase tracking-wider text-text-muted mt-4">Open Guide -></p>
+            </div>
+          </a>
+
+          <a href={withBase('assets-and-guides/pokemon-gba-rom-hacking-guide')} class="surface-card rounded-sm overflow-hidden block group border-glow">
+            <div class="relative p-6 md:p-8 bg-[linear-gradient(135deg,rgba(230,0,18,0.14)_0%,rgba(20,20,20,0.9)_60%)]">
+              <p class="text-[9px] font-bold uppercase tracking-widest text-accent mb-2">Interactive Guide</p>
+              <h2 class="font-display text-2xl md:text-4xl uppercase text-text-primary leading-none mb-3">Pokemon GBA ROM Hacking</h2>
+              <p class="text-sm text-text-secondary max-w-2xl">
+                Beginner to intermediate guide covering the modern decompilation workflow, GBA hardware architecture, Porymap, Poryscript, and a structured four-week learning curriculum.
+              </p>
+              <p class="text-[10px] uppercase tracking-wider text-text-muted mt-4">Open Guide -></p>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div id="assets-panel" data-content-panel class="hidden space-y-4">
+        <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+          <p class="text-[10px] uppercase tracking-widest text-accent font-bold mb-2">Assets Defined</p>
+          <p class="text-sm text-text-secondary leading-relaxed">
+            Assets are practical tools and reusable resources. As of now, Boinkdex is the only asset in this section.
+          </p>
         </article>
-      )}
+
+        <a href={withBase('assets-and-guides/boinkdex')} class="surface-card rounded-sm overflow-hidden block group border-glow">
+          <div class="relative p-6 md:p-8 bg-[linear-gradient(135deg,rgba(250,204,21,0.14)_0%,rgba(20,20,20,0.92)_62%)]">
+            <p class="text-[9px] font-bold uppercase tracking-widest text-accent mb-2">Interactive Asset</p>
+            <h2 class="font-display text-2xl md:text-4xl uppercase text-text-primary leading-none mb-3">Boinkdex Tracker</h2>
+            <p class="text-sm text-text-secondary max-w-2xl">
+              Open the multi-region Boinkdex with capture tracking, shiny mode, save/import code, and QR sync backup.
+            </p>
+            <p class="text-[10px] uppercase tracking-wider text-text-muted mt-4">Open Asset -></p>
+          </div>
+        </a>
+
+        <article class="surface-card rounded-sm p-5 md:p-6">
+          <p class="text-[10px] uppercase tracking-widest text-text-muted font-bold mb-2">Current Asset Scope</p>
+          <p class="text-sm text-text-secondary leading-relaxed">
+            Additional assets can be added later, but this panel is intentionally limited to Boinkdex right now.
+          </p>
+        </article>
+      </div>
     </div>
   </section>
 
+  <script is:inline>
+    const initAssetsGuidesToggle = () => {
+      const buttons = Array.from(document.querySelectorAll('[data-content-toggle-btn]'));
+      const panels = Array.from(document.querySelectorAll('[data-content-panel]'));
+
+      if (!buttons.length || !panels.length) return;
+
+      const setActivePanel = (targetId) => {
+        buttons.forEach((button) => {
+          const isActive = button.getAttribute('data-target') === targetId;
+          button.classList.toggle('is-active', isActive);
+          button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        });
+
+        panels.forEach((panel) => {
+          panel.classList.toggle('hidden', panel.id !== targetId);
+        });
+      };
+
+      buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const targetId = button.getAttribute('data-target');
+          if (!targetId) return;
+          setActivePanel(targetId);
+        });
+      });
+
+      setActivePanel('guides-panel');
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initAssetsGuidesToggle, { once: true });
+    } else {
+      initAssetsGuidesToggle();
+    }
+  </script>
+
   <Footer />
 </Layout>
+
+<style>
+  .content-toggle-btn {
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--color-text-secondary);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.55rem 0.85rem;
+    border-radius: var(--radius-sm);
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+    flex: 1;
+  }
+
+  .content-toggle-btn:hover {
+    color: var(--color-text-primary);
+    border-color: var(--color-border-light);
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .content-toggle-btn.is-active {
+    color: #ffffff;
+    border-color: var(--color-accent);
+    background: rgba(230, 0, 18, 0.15);
+    box-shadow: inset 3px 0 0 var(--color-accent);
+  }
+</style>

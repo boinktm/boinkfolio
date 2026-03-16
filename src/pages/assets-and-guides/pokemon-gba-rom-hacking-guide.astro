@@ -1,0 +1,1040 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import SubNav from '../../components/SubNav.astro';
+import Footer from '../../components/Footer.astro';
+---
+
+<Layout
+  title="Pokemon GBA ROM Hacking Guide - Boink Brands"
+  description="A beginner to intermediate guide to Pokemon GBA ROM hacking using the modern decompilation workflow, covering hardware, toolchain setup, Porymap, Poryscript, and a structured learning curriculum."
+>
+  <Header />
+  <SubNav activeTab="3D Art" />
+
+  <section class="bg-void relative overflow-hidden">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(230,0,18,0.18)_0%,transparent_62%)]"></div>
+    <div class="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:36px_36px] opacity-20"></div>
+    <div class="relative max-w-[var(--width-content)] mx-auto px-4 py-12 md:py-16">
+      <p class="text-[10px] font-bold uppercase tracking-[0.3em] text-accent mb-3">Interactive Guide</p>
+      <h1 class="font-display text-4xl md:text-6xl uppercase leading-none tracking-tight mb-4">
+        <span class="text-gradient">GBA ROM Hacking</span>
+        <br />
+        <span class="text-text-primary">Beginner to Intermediate</span>
+      </h1>
+      <p class="text-text-secondary text-sm md:text-base max-w-3xl leading-relaxed">
+        The ecosystem of Game Boy Advance Pokemon ROM hacking has evolved into a sophisticated software development
+        landscape. This guide covers the modern decompilation workflow exclusively, from GBA hardware architecture
+        to map editing, scripting, and a structured four-week learning curriculum.
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-8 max-w-4xl">
+        <div class="guide-stat">
+          <p class="guide-stat-label">Workflow</p>
+          <p class="guide-stat-value">pokeemerald-expansion decompilation</p>
+        </div>
+        <div class="guide-stat">
+          <p class="guide-stat-label">Toolchain</p>
+          <p class="guide-stat-value">WSL, devkitARM, Porymap, Poryscript</p>
+        </div>
+        <div class="guide-stat">
+          <p class="guide-stat-label">Curriculum</p>
+          <p class="guide-stat-value">Four-week milestone-based plan</p>
+        </div>
+      </div>
+    </div>
+    <div class="chrome-divider"></div>
+  </section>
+
+  <section class="bg-obsidian py-8 md:py-10">
+    <div class="max-w-[var(--width-content)] mx-auto px-4">
+      <div class="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6">
+        <aside class="surface-card rounded-sm p-3 lg:sticky lg:top-6 lg:self-start h-fit">
+          <p class="text-[10px] uppercase tracking-widest text-text-muted font-bold px-3 pb-2">Sections</p>
+          <nav id="guide-nav" class="space-y-1">
+            <a href="#hardware" class="guide-nav-link is-active">GBA Hardware</a>
+            <a href="#workflow" class="guide-nav-link">Decompilation Workflow</a>
+            <a href="#maps" class="guide-nav-link">Map Creation</a>
+            <a href="#npcs" class="guide-nav-link">NPC Placement</a>
+            <a href="#scripting" class="guide-nav-link">Scripted Events</a>
+            <a href="#battles" class="guide-nav-link">Trainer Battles</a>
+            <a href="#starters" class="guide-nav-link">Starter Pokemon</a>
+            <a href="#items" class="guide-nav-link">Item Editing</a>
+            <a href="#encounters" class="guide-nav-link">Wild Encounters</a>
+            <a href="#sprites" class="guide-nav-link">Custom Sprites</a>
+            <a href="#curriculum" class="guide-nav-link">Learning Curriculum</a>
+            <a href="#mistakes" class="guide-nav-link">Common Mistakes</a>
+          </nav>
+
+          <div class="mt-5 pt-4 border-t border-border space-y-3">
+            <div class="guide-side-note">
+              <p class="guide-side-note-label">Base Engine</p>
+              <p class="guide-side-note-copy">pokeemerald-expansion by RHH with Gen 9 mechanics and modern battle engine.</p>
+            </div>
+            <div class="guide-side-note">
+              <p class="guide-side-note-label">Format</p>
+              <p class="guide-side-note-copy">Step-by-step tutorials with code samples, memory tables, and progress checkpoints.</p>
+            </div>
+          </div>
+        </aside>
+
+        <main id="guide-content" class="space-y-6">
+
+          <!-- GBA Hardware -->
+          <section id="hardware" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <p class="section-kicker">Architecture</p>
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">GBA Hardware and Memory</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl mb-6">
+              The Game Boy Advance is a 32-bit system powered by an ARM7TDMI processor at 16.78 MHz. It relies on a
+              rigid, hardcoded memory map. While the decompilation compiler handles most allocation automatically,
+              understanding this map is crucial for debugging.
+            </p>
+
+            <div class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30 overflow-x-auto">
+              <h3 class="font-display text-xl uppercase text-text-primary mb-4">Memory Map</h3>
+              <table class="guide-table">
+                <thead>
+                  <tr>
+                    <th>Sector</th>
+                    <th>Size</th>
+                    <th>Address Range</th>
+                    <th>Function</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>BIOS</strong></td>
+                    <td>16 KB</td>
+                    <td><code>0x00000000 - 0x00003FFF</code></td>
+                    <td>Read-only system instructions provided by Nintendo.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>On-Chip WRAM</strong></td>
+                    <td>32 KB</td>
+                    <td><code>0x03000000 - 0x03007FFF</code></td>
+                    <td>Fast Work RAM embedded directly on the CPU.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>On-Board WRAM</strong></td>
+                    <td>256 KB</td>
+                    <td><code>0x02000000 - 0x0203FFFF</code></td>
+                    <td>Slower Work RAM. Stores the active game state.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>VRAM</strong></td>
+                    <td>96 KB</td>
+                    <td><code>0x06000000 - 0x06017FFF</code></td>
+                    <td>Video RAM. Stores graphical tile data.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>OAM</strong></td>
+                    <td>1 KB</td>
+                    <td><code>0x07000000 - 0x070003FF</code></td>
+                    <td>Object Attribute Memory. Tracks up to 128 hardware sprites.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>PAL RAM</strong></td>
+                    <td>1 KB</td>
+                    <td><code>0x05000000 - 0x050003FF</code></td>
+                    <td>Palette RAM. Stores 512 distinct 15-bit colors.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>ROM</strong></td>
+                    <td>Up to 32 MB</td>
+                    <td><code>0x08000000 - 0x09FFFFFF</code></td>
+                    <td>Read-Only Memory. The actual game cartridge data.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="border-l-2 border-accent bg-accent/10 p-4 mt-6 rounded-sm">
+              <p class="text-sm text-text-secondary leading-relaxed">
+                <strong class="text-text-primary">Key takeaway:</strong> In traditional binary hacking, developers manually managed pointers and free space.
+                In the decompilation workflow, the C compiler automatically allocates memory and assigns pointers during the build process,
+                rendering manual hex editing obsolete.
+              </p>
+            </div>
+          </section>
+
+          <!-- Decompilation Workflow -->
+          <section id="workflow" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <p class="section-kicker">Modern Workflow</p>
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">The Decompilation Paradigm</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl mb-6">
+              The Pokemon Reverse Engineering Team (pret) successfully reverse-engineered the original games back into highly
+              readable, modular C code. Rather than modifying a pre-compiled binary, you modify raw C source files, JSON data
+              structures, and standard PNG image assets, then compile a new .gba ROM from scratch.
+            </p>
+
+            <div class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30 mb-6">
+              <p class="mini-kicker">Recommended Base</p>
+              <h3 class="font-display text-xl uppercase text-text-primary mb-3">pokeemerald-expansion</h3>
+              <p class="text-sm text-text-secondary leading-relaxed">
+                The undisputed standard in 2026 is the pokeemerald-expansion repository maintained by the Rom Hacking Hideout (RHH).
+                This heavily modified fork acts as a modern game engine with Generation 9 Pokemon, updated abilities, modernized
+                battle mechanics, and modern items natively integrated.
+              </p>
+            </div>
+
+            <div class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+              <h3 class="font-display text-xl uppercase text-text-primary mb-2">Essential Toolchain</h3>
+              <p class="text-sm text-text-secondary leading-relaxed mb-4">Click items as you install them. This keeps dependencies in order and prevents setup failures later.</p>
+              <ul id="toolchain-checklist" class="space-y-3">
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span><strong>WSL (Ubuntu)</strong> — Required to run the Linux-based compiler on Windows. Install via <code>wsl --install -d Ubuntu</code>.</span>
+                </li>
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span><strong>devkitARM</strong> — The compiler toolchain. Install via devkitPro pacman inside your WSL terminal.</span>
+                </li>
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span><strong>Visual Studio Code</strong> — The recommended text editor for editing C files and Poryscript.</span>
+                </li>
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span><strong>Poryscript Extension</strong> — VS Code extension for autocomplete and syntax highlighting.</span>
+                </li>
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span><strong>GitHub Desktop</strong> — Used to clone the source code and manage versions.</span>
+                </li>
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span><strong>pokeemerald-expansion</strong> — Clone the repo via <code>git clone</code> in your WSL terminal.</span>
+                </li>
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span><strong>Porymap</strong> — The exclusive visual map editor for decompilation projects.</span>
+                </li>
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span><strong>mGBA</strong> — The definitive, highly accurate GBA emulator for testing compiled ROMs.</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="border-l-2 border-accent bg-accent/10 p-4 mt-6 rounded-sm">
+              <p class="text-sm text-text-secondary leading-relaxed">
+                <strong class="text-text-primary">Compiling:</strong> Open your WSL terminal, navigate to your pokeemerald-expansion
+                folder, and run <code>make -jX</code> (where X is your CPU core count, e.g. <code>make -j8</code>).
+                This generates a <code>pokeemerald.gba</code> file you can open in mGBA.
+              </p>
+            </div>
+          </section>
+
+          <!-- Map Creation -->
+          <section id="maps" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <p class="section-kicker">Tutorial 1</p>
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">Map Creation and Terrain Modification</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl mb-6">
+              Porymap is a standalone desktop application that reads your project folders and visualizes the map data.
+              It handles metatile layout (8x8 pixel blocks grouped into 16x16 game tiles) and automatically generates
+              collision boundaries based on the tiles you select.
+            </p>
+
+            <div class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+              <h3 class="font-display text-xl uppercase text-text-primary mb-4">Step-by-Step Process</h3>
+              <ul class="space-y-3">
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span>Launch Porymap and go to <strong>File &gt; Open Project</strong>. Select your pokeemerald-expansion root folder.</span>
+                </li>
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span>On the left sidebar, expand <strong>data &gt; maps</strong> and click on <strong>Route101</strong>.</span>
+                </li>
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span>In the center you will see the layout. On the right sidebar is your Blockset (the palette of available terrain tiles).</span>
+                </li>
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span>Click a grass tile in the Blockset, then click and drag on the central map to paint over existing terrain.</span>
+                </li>
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span>Switch to the <strong>Collisions</strong> tab. Porymap auto-assigns Passable (blue) or Impassable (red) values. You can manually override these.</span>
+                </li>
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span>Click <strong>File &gt; Save</strong> (Ctrl+S).</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="guide-checkpoint">
+              <p class="guide-checkpoint-label">Progress Checkpoint</p>
+              <p class="text-sm text-text-secondary leading-relaxed">
+                Compile your ROM with <code>make</code> and open mGBA. Walk out of Littleroot Town into Route 101.
+                You should instantly see your new terrain layout, and the game will correctly block you from walking through any trees you placed.
+              </p>
+            </div>
+          </section>
+
+          <!-- NPC Placement -->
+          <section id="npcs" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <p class="section-kicker">Tutorial 2</p>
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">NPC Placement and Spatial Events</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl mb-6">
+              Beyond terrain, maps need objects. Porymap uses the Events tab to inject coordinates for NPCs, item balls,
+              and warp doors directly into the map&apos;s JSON data.
+            </p>
+
+            <div class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+              <h3 class="font-display text-xl uppercase text-text-primary mb-4">Step-by-Step Process</h3>
+              <ul class="space-y-3">
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span>In Porymap (still on Route 101), click the <strong>Events</strong> tab at the top.</span>
+                </li>
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span>Right-click on an empty grass tile and select <strong>Add Object Event</strong>. A new NPC placeholder will appear.</span>
+                </li>
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span>In the Properties panel, change the <strong>Graphics</strong> dropdown to <code>OBJ_EVENT_GFX_FAT_MAN</code>.</span>
+                </li>
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span>Set his <strong>Movement Type</strong> to <code>MOVEMENT_TYPE_LOOK_AROUND</code>.</span>
+                </li>
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span>In the <strong>Script</strong> text box, type: <code>Route101_EventScript_FatMan</code>.</span>
+                </li>
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span>Save the map in Porymap.</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="guide-checkpoint">
+              <p class="guide-checkpoint-label">Progress Checkpoint</p>
+              <p class="text-sm text-text-secondary leading-relaxed">
+                Compile and open mGBA. Walk to the spot where you placed the NPC. The Fat Man will be there, looking around.
+                If you press A to talk to him, nothing happens yet because we haven&apos;t written his script.
+              </p>
+            </div>
+          </section>
+
+          <!-- Scripting -->
+          <section id="scripting" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <p class="section-kicker">Tutorial 3</p>
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">Scripted Events and Interactive Dialogue</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl mb-6">
+              Poryscript is a programming language designed specifically for Pokemon decomp hacking. It allows you to write
+              C-style code (using if/else statements and loops) that the compiler translates into Game Boy assembly.
+            </p>
+
+            <div class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30 mb-6">
+              <p class="mini-kicker">Example Script</p>
+              <h3 class="font-display text-xl uppercase text-text-primary mb-3">NPC Dialogue</h3>
+              <pre class="guide-code-block"><code>script Route101_EventScript_FatMan {'{'}
+    lock
+    faceplayer
+    msgbox(format("Hello, {'{'}{`PLAYER`}{'}'}! Welcome to my newly remodeled Route 101!"))
+    release
+    end
+{'}'}</code></pre>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+                <p class="mini-kicker">Command Reference</p>
+                <ul class="guide-list">
+                  <li><strong>lock:</strong> Stops the NPC and surrounding NPCs from wandering off while you speak.</li>
+                  <li><strong>faceplayer:</strong> Forces the NPC to turn and look at the player.</li>
+                  <li><strong>release / end:</strong> Restores the game to normal overworld state and terminates the script.</li>
+                </ul>
+              </article>
+
+              <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+                <p class="mini-kicker">Key Feature</p>
+                <ul class="guide-list">
+                  <li><strong>msgbox(format("...")):</strong> The msgbox command calls the text UI window.</li>
+                  <li><strong>format() wrapper:</strong> Poryscript&apos;s greatest feature, automatically calculating line breaks for the GBA screen so text never overflows the box.</li>
+                </ul>
+              </article>
+            </div>
+
+            <div class="guide-checkpoint">
+              <p class="guide-checkpoint-label">Progress Checkpoint</p>
+              <p class="text-sm text-text-secondary leading-relaxed">
+                Save the <code>.pory</code> file and run <code>make</code>. Because you only changed a script, compilation takes seconds.
+                In mGBA, talk to the Fat Man. A text box will appear with perfectly formatted dialogue.
+              </p>
+            </div>
+          </section>
+
+          <!-- Trainer Battles -->
+          <section id="battles" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <p class="section-kicker">Tutorial 4</p>
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">Trainer Battle Configuration</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl mb-6">
+              Triggering combat uses a built-in macro called <code>trainerbattle_single</code>. The engine handles the music
+              change, screen transition, and saving the victory state automatically.
+            </p>
+
+            <div class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30 mb-6">
+              <p class="mini-kicker">Example Script</p>
+              <h3 class="font-display text-xl uppercase text-text-primary mb-3">Trainer Battle</h3>
+              <pre class="guide-code-block"><code>script Route101_EventScript_NewTrainer {'{'}
+    trainerbattle_single(TRAINER_CALVIN_1, "Halt! Let's battle!", "Wow, you are strong!")
+    msgbox(format("I need to go train some more before I challenge the Gym."), MSGBOX_AUTOCLOSE)
+    end
+{'}'}</code></pre>
+            </div>
+
+            <div class="border-l-2 border-accent bg-accent/10 p-4 rounded-sm">
+              <p class="text-sm text-text-secondary leading-relaxed">
+                <strong class="text-text-primary">How it works:</strong> When you talk to the NPC, <code>trainerbattle_single</code>
+                checks a hidden flag tied to <code>TRAINER_CALVIN_1</code>. If the flag is 0 (undefeated), it displays the first
+                string, fights you, displays the second string upon losing, and sets the flag to 1. If the flag is already 1,
+                the engine skips the battle and plays the <code>msgbox</code> at the bottom instead.
+              </p>
+            </div>
+
+            <div class="guide-checkpoint">
+              <p class="guide-checkpoint-label">Progress Checkpoint</p>
+              <p class="text-sm text-text-secondary leading-relaxed">
+                Compile and test. Walk in front of the new NPC to be pulled into a battle against Bug Catcher Calvin.
+                Win, talk to him again, and verify he only says his post-battle dialogue.
+              </p>
+            </div>
+          </section>
+
+          <!-- Starter Pokemon -->
+          <section id="starters" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <p class="section-kicker">Tutorial 5</p>
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">Modifying Starter Pokemon Selections</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl mb-6">
+              To change a starter, you must modify both the mechanical script that gives the player the Pokemon
+              and the visual C arrays that dictate what sprite appears on the briefcase UI.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+                <p class="mini-kicker">Step 1: The Logic</p>
+                <h3 class="font-display text-xl uppercase text-text-primary mb-3">Script Modification</h3>
+                <p class="text-sm text-text-secondary leading-relaxed">
+                  Navigate to <code>data/maps/Route101/scripts.pory</code>. Find <code>Route101_EventScript_ChooseStarter</code>.
+                  Locate the three <code>givemon</code> commands and change <code>givemon(SPECIES_MUDKIP, 5, ITEM_NONE)</code>
+                  to <code>givemon(SPECIES_SQUIRTLE, 5, ITEM_NONE)</code>.
+                </p>
+              </article>
+
+              <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+                <p class="mini-kicker">Step 2: The Visuals</p>
+                <h3 class="font-display text-xl uppercase text-text-primary mb-3">Sprite Array Update</h3>
+                <p class="text-sm text-text-secondary leading-relaxed">
+                  Open <code>src/starter_choose.c</code>. Search for <code>SPECIES_MUDKIP</code> in the <code>sStarterMon</code>
+                  array and change it to <code>SPECIES_SQUIRTLE</code>.
+                </p>
+              </article>
+            </div>
+
+            <div class="guide-checkpoint">
+              <p class="guide-checkpoint-label">Progress Checkpoint</p>
+              <p class="text-sm text-text-secondary leading-relaxed">
+                Compile your ROM. Start a new game, trigger the Professor Birch event, and open the briefcase.
+                The right-most Poke Ball will display a Squirtle sprite, and selecting it adds a Level 5 Squirtle to your party.
+              </p>
+            </div>
+          </section>
+
+          <!-- Item Editing -->
+          <section id="items" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <p class="section-kicker">Tutorial 6</p>
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">Item Editing and Database Management</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl mb-6">
+              The decomp project stores global data like stats, moves, and items in centralized <code>.h</code> header files.
+              Changes here propagate across the entire game.
+            </p>
+
+            <div class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30 mb-6">
+              <p class="mini-kicker">Example: Potion Price Change</p>
+              <h3 class="font-display text-xl uppercase text-text-primary mb-3">gItemsInfo Array</h3>
+              <pre class="guide-code-block"><code>{` =
+{
+    .name = _("POTION"),
+    .price = 10,          // Changed from 300
+    .description = sPotionDesc,
+    .pocket = POCKET_ITEMS,
+    .type = ITEM_USE_PARTY_MENU,
+    .battleUsage = EFFECT_ITEM_RESTORE_HP,
+},`}</code></pre>
+            </div>
+
+            <div class="guide-checkpoint">
+              <p class="guide-checkpoint-label">Progress Checkpoint</p>
+              <p class="text-sm text-text-secondary leading-relaxed">
+                Compile the ROM. Because you changed a core C header, the compiler rebuilds several files.
+                Walk to the Oldale Town Pokemart and verify Potions now cost 10 Pokedollars.
+              </p>
+            </div>
+          </section>
+
+          <!-- Wild Encounters -->
+          <section id="encounters" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <p class="section-kicker">Tutorial 7</p>
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">Wild Encounter Tables Configuration</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl mb-6">
+              Modern decomp projects use <code>src/data/wild_encounters.json</code>. Porymap features a dedicated UI
+              to safely edit this JSON file without risking syntax errors.
+            </p>
+
+            <div class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+              <h3 class="font-display text-xl uppercase text-text-primary mb-4">Step-by-Step Process</h3>
+              <ul class="space-y-3">
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span>Open Porymap and load <strong>Route101</strong>.</span>
+                </li>
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span>Click the <strong>Wild Pokemon</strong> tab at the top.</span>
+                </li>
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span>Ensure the <strong>Land</strong> (tall grass) encounter group is selected. You will see 12 slots, each representing a percentage chance.</span>
+                </li>
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span>Click on the Zigzagoon slot and change the species to <code>SPECIES_SNORLAX</code>.</span>
+                </li>
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span>Change the Min Level and Max Level boxes to 5 and 7.</span>
+                </li>
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span>Click <strong>File &gt; Save</strong>. This automatically updates <code>wild_encounters.json</code>.</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="guide-checkpoint">
+              <p class="guide-checkpoint-label">Progress Checkpoint</p>
+              <p class="text-sm text-text-secondary leading-relaxed">
+                Compile the ROM. Run in the tall grass on Route 101. You now have a mathematical chance
+                (dictated by the slot percentage you replaced) to encounter a wild Snorlax.
+              </p>
+            </div>
+          </section>
+
+          <!-- Custom Sprites -->
+          <section id="sprites" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <p class="section-kicker">Tutorial 8</p>
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">Custom Sprite Replacement and Indexing</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl mb-6">
+              The GBA hardware strictly requires 4-bit per pixel (4bpp) images with a maximum of 16 colors.
+              The decomp workflow simplifies this: provide a properly formatted <code>.png</code> and the compiler&apos;s
+              automated <code>gbagfx</code> tool compresses it into LZ77 format during the build.
+            </p>
+
+            <div class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+              <h3 class="font-display text-xl uppercase text-text-primary mb-4">Step-by-Step Process</h3>
+              <ul class="space-y-3">
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span>Open your image editor (Aseprite, GIMP). Create a 64x64 pixel canvas.</span>
+                </li>
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span>Draw your custom Pokemon or import a sprite.</span>
+                </li>
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span><strong>Critical:</strong> Index your image palette to 16 colors. The absolute background color (the color you want invisible in-game) must be <strong>Index 0</strong> in the palette. If you skip this, the sprite will have a solid box around it in battle.</span>
+                </li>
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span>Export the image as <code>front.png</code>.</span>
+                </li>
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span>Navigate to <code>graphics/pokemon/bulbasaur/</code> and replace the existing <code>front.png</code>.</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="border-l-2 border-accent bg-accent/10 p-4 mt-4 rounded-sm">
+              <p class="text-sm text-text-secondary leading-relaxed">
+                <strong class="text-text-primary">Palette Index 0:</strong> This is the single most common source of broken sprites.
+                Always verify your transparency color sits at index 0 in your image editor&apos;s palette window before exporting.
+              </p>
+            </div>
+
+            <div class="guide-checkpoint">
+              <p class="guide-checkpoint-label">Progress Checkpoint</p>
+              <p class="text-sm text-text-secondary leading-relaxed">
+                Run <code>make</code>. The compiler detects the new <code>front.png</code>, processes the palette, and injects it into the ROM.
+                Open mGBA, encounter a Bulbasaur, and your custom pixel art will be flawlessly integrated into the battle engine.
+              </p>
+            </div>
+          </section>
+
+          <!-- Learning Curriculum -->
+          <section id="curriculum" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <p class="section-kicker">Roadmap</p>
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">Four-Week Learning Curriculum</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl mb-6">
+              To prevent burnout and scope creep, follow this rigid, milestone-based curriculum to build your first playable demo.
+            </p>
+
+            <div class="space-y-4">
+              <article class="surface-card rounded-sm overflow-hidden bg-charcoal/20">
+                <button type="button" class="accordion-btn" data-accordion-btn>
+                  <span>Week 1: Foundations — Environment and Data Manipulation</span>
+                  <span class="accordion-icon">+</span>
+                </button>
+                <div class="accordion-panel" data-accordion-panel>
+                  <div class="space-y-2">
+                    <p><strong>Tools:</strong> WSL, devkitARM, VS Code.</p>
+                    <ul class="guide-list">
+                      <li><strong>Day 1-2:</strong> Install the toolchain and successfully run <code>make</code> on a clean pokeemerald-expansion repo.</li>
+                      <li><strong>Day 3-5:</strong> Open <code>src/data/pokemon/species_info.h</code>. Modify Bulbasaur&apos;s base stats. Open <code>src/data/items.h</code> and make Master Balls cost 100 Pokedollars.</li>
+                      <li><strong>Day 6-7:</strong> Use the starter Pokemon tutorial to change the briefcase options to your favorite Pokemon.</li>
+                    </ul>
+                  </div>
+                </div>
+              </article>
+
+              <article class="surface-card rounded-sm overflow-hidden bg-charcoal/20">
+                <button type="button" class="accordion-btn" data-accordion-btn>
+                  <span>Week 2: Cartography — Spatial Design and World Building</span>
+                  <span class="accordion-icon">+</span>
+                </button>
+                <div class="accordion-panel" data-accordion-panel>
+                  <div class="space-y-2">
+                    <p><strong>Tools:</strong> Porymap.</p>
+                    <ul class="guide-list">
+                      <li><strong>Day 1-3:</strong> Open a fresh map. Focus entirely on block collision data. Learn why ledges only let you jump one way, and why water requires Surf.</li>
+                      <li><strong>Day 4-5:</strong> Configure Warp Events in Porymap. Create a house exterior and link its door coordinate to a house interior map.</li>
+                      <li><strong>Day 6-7:</strong> Use the Wild Pokemon tab in Porymap to completely rewrite the encounters for your new route.</li>
+                    </ul>
+                  </div>
+                </div>
+              </article>
+
+              <article class="surface-card rounded-sm overflow-hidden bg-charcoal/20">
+                <button type="button" class="accordion-btn" data-accordion-btn>
+                  <span>Week 3: Logic — Scripting and Event Flow</span>
+                  <span class="accordion-icon">+</span>
+                </button>
+                <div class="accordion-panel" data-accordion-panel>
+                  <div class="space-y-2">
+                    <p><strong>Tools:</strong> VS Code (Poryscript extension).</p>
+                    <ul class="guide-list">
+                      <li><strong>Day 1-2:</strong> Populate your new town with NPCs. Write basic <code>msgbox</code> scripts for all of them.</li>
+                      <li><strong>Day 3-5:</strong> Create an item-giving NPC using the <code>giveitem</code> command. Use <code>setflag</code> and <code>goto_if_set</code> logic to ensure the player only receives the item once.</li>
+                      <li><strong>Day 6-7:</strong> Construct a custom Rival trainer battle blocking the exit to the town.</li>
+                    </ul>
+                  </div>
+                </div>
+              </article>
+
+              <article class="surface-card rounded-sm overflow-hidden bg-charcoal/20">
+                <button type="button" class="accordion-btn" data-accordion-btn>
+                  <span>Week 4: Synthesis — Playable Demo Construction</span>
+                  <span class="accordion-icon">+</span>
+                </button>
+                <div class="accordion-panel" data-accordion-panel>
+                  <div class="space-y-2">
+                    <p><strong>Tools:</strong> GitHub Desktop, mGBA.</p>
+                    <ul class="guide-list">
+                      <li><strong>Day 1-4:</strong> Chain your Week 2 and Week 3 work together. Ensure the player can spawn in your town, get a starter, battle the rival, and catch a wild Pokemon on your route.</li>
+                      <li><strong>Day 5-6:</strong> Playtest rigorously in mGBA. Fix dialogue typos and broken warp doors.</li>
+                      <li><strong>Day 7:</strong> Use GitHub Desktop to commit all final changes. Export the <code>.gba</code> file. You have successfully made a ROM hack.</li>
+                    </ul>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <!-- Common Mistakes -->
+          <section id="mistakes" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <p class="section-kicker">Pitfalls</p>
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">Common Beginner Mistakes</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl mb-6">
+              Avoid these frequent pitfalls that derail new ROM hacking projects.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+                <p class="mini-kicker">Design</p>
+                <h3 class="font-display text-xl uppercase text-text-primary mb-3">Scope Creep</h3>
+                <p class="text-sm text-text-secondary leading-relaxed mb-3">
+                  Beginners vastly underestimate the volume of mapping, writing, and scripting required for a full game.
+                </p>
+                <div class="border-l-2 border-accent bg-accent/10 p-3 rounded-sm">
+                  <p class="text-sm text-text-secondary leading-relaxed">
+                    <strong class="text-text-primary">Mitigation:</strong> Start incredibly small. Design a single town and route.
+                    Polish this micro-environment to completion before attempting a multi-region epic.
+                  </p>
+                </div>
+              </article>
+
+              <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+                <p class="mini-kicker">Balance</p>
+                <h3 class="font-display text-xl uppercase text-text-primary mb-3">Stat Bloat</h3>
+                <p class="text-sm text-text-secondary leading-relaxed mb-3">
+                  Artificially inflating Base Stat Totals past 500 to make early-game Pokemon viable late-game destroys the mathematical difficulty curve.
+                </p>
+                <div class="border-l-2 border-accent bg-accent/10 p-3 rounded-sm">
+                  <p class="text-sm text-text-secondary leading-relaxed">
+                    <strong class="text-text-primary">Mitigation:</strong> Balance horizontally. Adjust typing, grant modern abilities,
+                    or optimize move learnsets for unique tactical niches without breaking early-game math.
+                  </p>
+                </div>
+              </article>
+
+              <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+                <p class="mini-kicker">Pacing</p>
+                <h3 class="font-display text-xl uppercase text-text-primary mb-3">Unskippable Dialogue</h3>
+                <p class="text-sm text-text-secondary leading-relaxed mb-3">
+                  Dense, unskippable cutscenes drag pacing to a halt and frustrate players.
+                </p>
+                <div class="border-l-2 border-accent bg-accent/10 p-3 rounded-sm">
+                  <p class="text-sm text-text-secondary leading-relaxed">
+                    <strong class="text-text-primary">Mitigation:</strong> Adhere to &quot;show, don&apos;t tell.&quot;
+                    Relegate heavy world-building lore to optional interactions like readable books on shelves or optional NPCs.
+                  </p>
+                </div>
+              </article>
+
+              <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+                <p class="mini-kicker">Workflow</p>
+                <h3 class="font-display text-xl uppercase text-text-primary mb-3">Version Control Neglect</h3>
+                <p class="text-sm text-text-secondary leading-relaxed mb-3">
+                  Failing to commit regularly means a syntax error can leave you with no working state to revert to.
+                </p>
+                <div class="border-l-2 border-accent bg-accent/10 p-3 rounded-sm">
+                  <p class="text-sm text-text-secondary leading-relaxed">
+                    <strong class="text-text-primary">Mitigation:</strong> Commit every time you successfully compile a working feature.
+                    Use branching to test experimental features without breaking your main game.
+                  </p>
+                </div>
+              </article>
+            </div>
+
+            <div class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30 mt-6">
+              <p class="mini-kicker">Resources</p>
+              <h3 class="font-display text-xl uppercase text-text-primary mb-3">Curated Documentation</h3>
+              <ul class="guide-list">
+                <li><strong>pokeemerald-expansion:</strong> The actively maintained codebase with explicit compilation instructions in its <code>FEATURES.md</code> and <code>INSTALL.md</code> files.</li>
+                <li><strong>Porymap Documentation:</strong> Visual tutorials on mapping and encounter generation.</li>
+                <li><strong>Poryscript Syntax Guide:</strong> All high-level scripting loops, conditional operators, and syntax formatting required for modern event scripting.</li>
+              </ul>
+            </div>
+          </section>
+
+        </main>
+      </div>
+    </div>
+  </section>
+
+  <Footer />
+
+  <script is:inline>
+    const initRomHackingGuide = () => {
+      const navLinks = Array.from(document.querySelectorAll('.guide-nav-link'));
+      const sections = Array.from(document.querySelectorAll('[data-guide-section]'));
+
+      if (navLinks.length && sections.length) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+
+              navLinks.forEach((link) => {
+                const isMatch = link.getAttribute('href') === `#${entry.target.id}`;
+                link.classList.toggle('is-active', isMatch);
+              });
+            });
+          },
+          {
+            root: null,
+            rootMargin: '-18% 0px -65% 0px',
+            threshold: 0,
+          }
+        );
+
+        sections.forEach((section) => observer.observe(section));
+      }
+
+      const accordionButtons = Array.from(document.querySelectorAll('[data-accordion-btn]'));
+      accordionButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const panel = button.nextElementSibling;
+          const icon = button.querySelector('.accordion-icon');
+          const isOpen = panel?.style.maxHeight;
+
+          if (panel && !isOpen) {
+            panel.style.maxHeight = `${panel.scrollHeight}px`;
+            button.classList.add('is-open');
+            if (icon) icon.textContent = '-';
+          } else if (panel) {
+            panel.style.maxHeight = null;
+            button.classList.remove('is-open');
+            if (icon) icon.textContent = '+';
+          }
+        });
+      });
+
+      const checklistItems = Array.from(document.querySelectorAll('[data-checklist-item]'));
+      checklistItems.forEach((item) => {
+        item.addEventListener('click', () => {
+          item.classList.toggle('checked');
+          const marker = item.querySelector('.checkmark');
+          if (!marker) return;
+          marker.textContent = item.classList.contains('checked') ? '[x]' : '[ ]';
+        });
+      });
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initRomHackingGuide, { once: true });
+    } else {
+      initRomHackingGuide();
+    }
+  </script>
+</Layout>
+
+<style>
+  .guide-stat {
+    border: 1px solid var(--color-border);
+    background: rgba(22, 22, 22, 0.8);
+    padding: 0.9rem 1rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .guide-stat-label,
+  .section-kicker,
+  .mini-kicker,
+  .guide-side-note-label,
+  .guide-checkpoint-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+  }
+
+  .guide-stat-label,
+  .section-kicker,
+  .mini-kicker {
+    color: var(--color-accent);
+    margin-bottom: 0.45rem;
+  }
+
+  .guide-stat-value,
+  .guide-side-note-copy {
+    color: var(--color-text-secondary);
+    font-size: 0.8rem;
+    line-height: 1.6;
+  }
+
+  .guide-nav-link {
+    display: block;
+    width: 100%;
+    text-align: left;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--color-text-secondary);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.7rem 0.8rem;
+    border-radius: var(--radius-sm);
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+
+  .guide-nav-link:hover {
+    color: var(--color-text-primary);
+    border-color: var(--color-border-light);
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .guide-nav-link.is-active {
+    color: #ffffff;
+    border-color: var(--color-accent);
+    background: rgba(230, 0, 18, 0.15);
+    box-shadow: inset 3px 0 0 var(--color-accent);
+  }
+
+  .guide-side-note {
+    border: 1px solid var(--color-border);
+    background: rgba(255, 255, 255, 0.02);
+    padding: 0.85rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .guide-side-note-label {
+    color: var(--color-text-primary);
+    margin-bottom: 0.35rem;
+  }
+
+  .guide-list {
+    list-style: disc;
+    padding-left: 1.15rem;
+    color: var(--color-text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .guide-list li + li {
+    margin-top: 0.55rem;
+  }
+
+  .guide-list-numbered {
+    list-style: decimal;
+  }
+
+  .guide-code-block {
+    background: #0f0f0f;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.15rem;
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: #f8f8f2;
+  }
+
+  .guide-code-block code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+    font-size: inherit;
+  }
+
+  .guide-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+
+  .guide-table th {
+    background: rgba(230, 0, 18, 0.15);
+    color: var(--color-text-primary);
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.75rem 0.85rem;
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .guide-table td {
+    padding: 0.65rem 0.85rem;
+    color: var(--color-text-secondary);
+    border-bottom: 1px solid var(--color-border);
+    line-height: 1.6;
+  }
+
+  .guide-table tr:hover td {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .guide-checkpoint {
+    background: rgba(230, 0, 18, 0.06);
+    border-left: 3px solid var(--color-accent);
+    padding: 1rem 1.15rem;
+    margin-top: 1.5rem;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  }
+
+  .guide-checkpoint-label {
+    color: var(--color-accent);
+    margin-bottom: 0.45rem;
+  }
+
+  .accordion-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.15rem;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--color-text-primary);
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border: 0;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  .accordion-btn:hover,
+  .accordion-btn.is-open {
+    background: rgba(230, 0, 18, 0.08);
+  }
+
+  .accordion-icon {
+    color: var(--color-accent);
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .accordion-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .accordion-panel > * {
+    padding: 0 1.15rem 1.15rem;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+  }
+
+  .checklist-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    color: var(--color-text-secondary);
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+
+  .checklist-item:hover {
+    border-color: var(--color-border-light);
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--color-text-primary);
+  }
+
+  .checklist-item.checked {
+    color: var(--color-text-muted);
+    text-decoration: line-through;
+  }
+
+  .checkmark {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--color-accent);
+    flex-shrink: 0;
+  }
+
+
+
+  @media (min-width: 768px) {
+    .guide-table {
+      font-size: 0.9rem;
+    }
+  }
+</style>

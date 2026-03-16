@@ -12,6 +12,7 @@ const works = entries.map(entry => ({
   slug: entry.id,
   ...entry.data,
 }));
+works.sort((a, b) => Number(b.featured) - Number(a.featured));
 
 const featuredWork = works.find(work => work.featured) ?? works[0] ?? null;
 const restWorks = featuredWork

@@ -12,7 +12,7 @@ import { toSlug, defaultDate } from '../../lib/utils';
  * Generic collection editor used by Art, Assets, Mapping, Musings tabs.
  * Renders a form based on the schema, handles create/edit/clear.
  */
-export default function CollectionEditor({ collection, projectRoot, updateStatus }) {
+export default function CollectionEditor({ collection, projectRoot, updateStatus, allowAstro }) {
   const schema = SCHEMAS[collection];
   const [fields, setFields] = useState(() => {
     const d = getDefaults(collection);
@@ -22,8 +22,10 @@ export default function CollectionEditor({ collection, projectRoot, updateStatus
   const [body, setBody] = useState('');
   const [editMode, setEditMode] = useState(false);
   const [editPath, setEditPath] = useState('');
+  const [fileType, setFileType] = useState('md'); // 'md' or 'astro'
 
   const contentDir = `src/content/${collection}`;
+  const astroDir = 'src/pages/assets-and-guides';
 
   const setField = useCallback((key, value) => {
     setFields((prev) => ({ ...prev, [key]: value }));
@@ -36,31 +38,57 @@ export default function CollectionEditor({ collection, projectRoot, updateStatus
     setBody('');
     setEditMode(false);
     setEditPath('');
+    setFileType('md');
     updateStatus('Cleared', 'info');
   };
 
   const handleLoad = async () => {
+    const filters = allowAstro
+      ? [{ name: 'Content files', extensions: ['md', 'astro'] }]
+      : [{ name: 'Markdown', extensions: ['md'] }];
+
     const filePath = await window.api.openFile({
-      filters: [{ name: 'Markdown', extensions: ['md'] }],
+      filters,
       defaultPath: editPath || undefined,
     });
     if (!filePath) return;
 
     try {
       const content = await window.api.readFile(filePath);
-      const { frontmatter, body: parsedBody } = parseMarkdownFile(content);
+      const isAstro = filePath.endsWith('.astro');
+      const ext = isAstro ? '.astro' : '.md';
 
-      const newFields = getDefaults(collection);
-      newFields.slug = filePath.split(/[\\/]/).pop().replace('.md', '');
+      if (isAstro) {
+        // Parse .astro frontmatter (same --- delimited YAML block)
+        const { frontmatter, body: parsedBody } = parseMarkdownFile(content);
+        const newFields = getDefaults(collection);
+        newFields.slug = filePath.split(/[\\/]/).pop().replace('.astro', '');
 
-      for (const field of schema) {
-        if (frontmatter[field.key] !== undefined) {
-          newFields[field.key] = frontmatter[field.key];
+        for (const field of schema) {
+          if (frontmatter[field.key] !== undefined) {
+            newFields[field.key] = frontmatter[field.key];
+          }
         }
+
+        setFields(newFields);
+        setBody(parsedBody);
+        setFileType('astro');
+      } else {
+        const { frontmatter, body: parsedBody } = parseMarkdownFile(content);
+        const newFields = getDefaults(collection);
+        newFields.slug = filePath.split(/[\\/]/).pop().replace('.md', '');
+
+        for (const field of schema) {
+          if (frontmatter[field.key] !== undefined) {
+            newFields[field.key] = frontmatter[field.key];
+          }
+        }
+
+        setFields(newFields);
+        setBody(parsedBody);
+        setFileType('md');
       }
 
-      setFields(newFields);
-      setBody(parsedBody);
       setEditMode(true);
       setEditPath(filePath);
       updateStatus(`Loaded: ${filePath}`, 'success');
@@ -91,7 +119,9 @@ export default function CollectionEditor({ collection, projectRoot, updateStatus
     }
 
     const content = buildMarkdownFile(fmFields, body);
-    const filePath = editMode && editPath ? editPath : `${contentDir}/${slug}.md`;
+    const ext = fileType === 'astro' ? '.astro' : '.md';
+    const dir = fileType === 'astro' ? astroDir : contentDir;
+    const filePath = editMode && editPath ? editPath : `${dir}/${slug}${ext}`;
 
     try {
       const savedPath = await window.api.writeFile(filePath, content);
@@ -151,6 +181,9 @@ export default function CollectionEditor({ collection, projectRoot, updateStatus
       <div className="editor-toolbar">
         <h2 className="font-display text-lg uppercase tracking-wide flex-1">
           {editMode ? `Edit ${collection}` : `New ${collection}`}
+          {editMode && fileType === 'astro' && (
+            <span className="ml-2 text-[10px] font-mono text-accent align-middle">.astro</span>
+          )}
         </h2>
         <button className="btn btn-sm" onClick={handleLoad}>Load</button>
         <button className="btn btn-sm" onClick={handleClear}>Clear</button>

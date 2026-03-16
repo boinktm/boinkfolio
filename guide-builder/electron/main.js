@@ -6,6 +6,8 @@ const { registerGitHandlers } = require('./git-service');
 const isDev = !app.isPackaged;
 
 function createWindow() {
+  const devServerUrl = process.env.VITE_DEV_SERVER_URL || 'http://127.0.0.1:5199';
+
   const win = new BrowserWindow({
     width: 1440,
     height: 900,
@@ -22,7 +24,7 @@ function createWindow() {
   });
 
   if (isDev) {
-    win.loadURL('http://localhost:5180');
+    win.loadURL(devServerUrl);
     win.webContents.openDevTools({ mode: 'detach' });
   } else {
     win.loadFile(path.join(__dirname, '..', 'dist', 'index.html'));

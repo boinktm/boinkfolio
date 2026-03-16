@@ -8,6 +8,7 @@ import { musingPath, withBase } from '../../lib/paths';
 
 const entries = await getCollection('musings');
 const musings = entries.map(entry => ({ slug: entry.id, ...entry.data }));
+musings.sort((a, b) => Number(b.featured) - Number(a.featured));
 
 const featured = musings.find(musing => musing.featured) ?? musings[0] ?? null;
 const rest = featured

@@ -66,6 +66,7 @@ export const SCHEMAS = {
     { key: 'tags', label: 'Tags', type: 'tags' },
     { key: 'isPublic', label: 'Public', type: 'checkbox', default: false },
     { key: 'relatedArtSlug', label: 'Related Art Slug', type: 'text' },
+    { key: 'featured', label: 'Featured', type: 'checkbox', default: false },
   ],
   mapping: [
     { key: 'title', label: 'Title', type: 'text', required: true },

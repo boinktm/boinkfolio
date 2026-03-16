@@ -14,6 +14,27 @@ const tracks = await fetchSoundCloudTracks(SOUNDCLOUD_USER_ID, 6);
 const assetEntries = await getCollection('assets');
 const musingEntries = await getCollection('musings');
 
+const parseEntryDate = (value: string): number => {
+  const raw = (value || '').trim();
+  if (!raw) return 0;
+
+  // ISO dates such as 2026-03-15
+  if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
+    const ts = Date.parse(`${raw}T00:00:00Z`);
+    return Number.isNaN(ts) ? 0 : ts;
+  }
+
+  // Month year labels such as "Feb 2026"
+  const monthYear = raw.match(/^([A-Za-z]{3,9})\s+(\d{4})$/);
+  if (monthYear) {
+    const ts = Date.parse(`1 ${monthYear[1]} ${monthYear[2]} UTC`);
+    return Number.isNaN(ts) ? 0 : ts;
+  }
+
+  const fallback = Date.parse(raw);
+  return Number.isNaN(fallback) ? 0 : fallback;
+};
+
 const publicAssets = assetEntries
   .filter(entry => entry.data.isPublic)
   .map(entry => {
@@ -28,6 +49,7 @@ const publicAssets = assetEntries
     title: entry.data.title,
     category: entry.data.category,
     date: entry.data.date,
+    featured: entry.data.featured ?? false,
     fileName,
     extension,
   };
@@ -37,36 +59,43 @@ const guides = [
   {
     title: 'Breath of the Wild: 60 FPS Optimization',
     category: 'Interactive Guide',
-    date: 'Live',
+    date: '2026-01-10',
     fileName: 'botw-60fps-guide',
     extension: 'GUIDE',
+    featured: false,
     href: withBase('assets-and-guides/botw-60fps-guide'),
   },
   {
     title: 'Pokemon Diamond, Pearl, and Platinum Analysis',
     category: 'Interactive Guide',
-    date: 'Live',
+    date: '2026-01-20',
     fileName: 'pokemon-diamond-pearl-vs-platinum',
     extension: 'GUIDE',
+    featured: false,
     href: withBase('assets-and-guides/pokemon-diamond-pearl-vs-platinum'),
   },
   {
     title: 'Boinkdex Tracker',
     category: 'Interactive Guide',
-    date: 'Live',
+    date: '2026-02-01',
     fileName: 'boinkdex',
     extension: 'GUIDE',
+    featured: true,
     href: withBase('assets-and-guides/boinkdex'),
   },
 ];
 
 const assetGuideEntries = [
-  ...guides,
+  ...guides.map((guide) => ({
+    ...guide,
+    sortRank: parseEntryDate(guide.date),
+  })),
   ...publicAssets.map(asset => ({
     ...asset,
     href: assetPath(asset.slug),
+    sortRank: parseEntryDate(asset.date),
   })),
-];
+].sort((a, b) => b.sortRank - a.sortRank);
 
 const posts = musingEntries
   .map(entry => ({
@@ -210,17 +239,37 @@ const posts = musingEntries
         </a>
         {assetGuideEntries.length > 0 ? (
           assetGuideEntries.map((entry) => (
-            <a href={entry.href} class="flex items-center justify-between gap-4 px-5 py-4 hover:bg-surface-hover transition-colors group">
+            <a
+              href={entry.href}
+              class:list={[
+                'flex items-center justify-between gap-4 px-5 py-4 transition-colors group hover:bg-surface-hover',
+                entry.featured && 'featured-listing bg-accent/5 border-l-2 border-l-accent',
+              ]}
+            >
               <div class="min-w-0">
-                <p class="text-sm font-semibold text-text-primary truncate group-hover:text-accent transition-colors">{entry.title}</p>
+                <p class:list={[
+                  'text-sm font-semibold truncate transition-colors group-hover:text-accent',
+                  entry.featured ? 'text-accent' : 'text-text-primary',
+                ]}>{entry.title}</p>
                 <p class="text-xs text-text-muted truncate">{entry.category} · {entry.date}</p>
                 <p class="text-xs text-text-muted/80 truncate">{entry.fileName}</p>
               </div>
               <div class="flex items-center gap-3 flex-shrink-0">
-                <span class="text-[9px] font-bold uppercase tracking-wider text-text-muted border border-border px-2 py-0.5 rounded-sm">
+                {entry.featured && (
+                  <span class="text-[9px] font-bold uppercase tracking-wider text-accent border border-accent/40 bg-accent/10 px-2 py-0.5 rounded-sm">
+                    Featured
+                  </span>
+                )}
+                <span class:list={[
+                  'text-[9px] font-bold uppercase tracking-wider border px-2 py-0.5 rounded-sm',
+                  entry.featured ? 'text-accent border-accent/30' : 'text-text-muted border-border',
+                ]}>
                   {entry.extension}
                 </span>
-                <span class="text-xs font-semibold uppercase tracking-widest text-text-secondary group-hover:text-accent transition-colors">
+                <span class:list={[
+                  'text-xs font-semibold uppercase tracking-widest transition-colors group-hover:text-accent',
+                  entry.featured ? 'text-accent/90' : 'text-text-secondary',
+                ]}>
                   View
                 </span>
               </div>

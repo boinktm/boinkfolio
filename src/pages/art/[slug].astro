@@ -23,6 +23,26 @@ const { Content } = await render(entry);
 const hasPieceNotes = typeof entry.body === 'string' && entry.body.trim().length > 0;
 
 const isDirectVideo = (url: string) => /\.(mp4|webm|ogg)(\?.*)?$/i.test(url);
+const resolveMediaUrl = (url: string) => {
+  if (!url) return '';
+  return /^https?:\/\//i.test(url) ? url : withBase(url.replace(/^\/+/, ''));
+};
+const getGoogleDriveId = (url: string): string | null => {
+  try {
+    const parsed = new URL(url);
+    if (!parsed.hostname.includes('drive.google.com')) return null;
+
+    const idFromSearch = parsed.searchParams.get('id');
+    if (idFromSearch) return idFromSearch;
+
+    const filePathMatch = parsed.pathname.match(/\/file\/d\/([^/]+)/);
+    if (filePathMatch) return filePathMatch[1];
+  } catch {
+    return null;
+  }
+
+  return null;
+};
 const toEmbedUrl = (url: string) => {
   if (url.includes('youtube.com/watch')) {
     const parsed = new URL(url);
@@ -40,11 +60,37 @@ const toEmbedUrl = (url: string) => {
   return url;
 };
 
-const normalizedVideos = piece.videos.map(url => ({
-  source: url,
-  embedUrl: toEmbedUrl(url),
-  isDirect: isDirectVideo(url),
-}));
+const normalizedVideos = piece.videos.map(url => {
+  const driveId = getGoogleDriveId(url);
+
+  if (driveId) {
+    return {
+      source: url,
+      isDirect: true,
+      playUrl: `https://drive.google.com/uc?export=view&id=${driveId}`,
+      fallbackUrl: `https://drive.google.com/file/d/${driveId}/preview`,
+      embedUrl: '',
+    };
+  }
+
+  if (isDirectVideo(url)) {
+    return {
+      source: url,
+      isDirect: true,
+      playUrl: resolveMediaUrl(url),
+      fallbackUrl: resolveMediaUrl(url),
+      embedUrl: '',
+    };
+  }
+
+  return {
+    source: url,
+    isDirect: false,
+    playUrl: '',
+    fallbackUrl: url,
+    embedUrl: toEmbedUrl(url),
+  };
+});
 
 const galleryImages = piece.images.length > 0
   ? piece.images
@@ -231,7 +277,7 @@ const otherPieces = allEntries
                 <div class="aspect-video rounded-sm overflow-hidden border border-border bg-charcoal">
                   {video.isDirect ? (
                     <video class="w-full h-full" controls preload="metadata" playsinline>
-                      <source src={withBase(video.source)} />
+                      <source src={video.playUrl} />
                     </video>
                   ) : (
                     <iframe

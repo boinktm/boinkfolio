@@ -70,6 +70,7 @@ const assets = defineCollection({
     tags: z.array(z.string()).default([]),
     isPublic: z.boolean().default(false),
     relatedArtSlug: z.string().optional(),
+    featured: z.boolean().default(false),
   }),
 });
 

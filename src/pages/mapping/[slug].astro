@@ -21,6 +21,14 @@ const { entry } = Astro.props as Props;
 const project = { slug: entry.id, ...entry.data };
 const { Content } = await render(entry);
 
+const resolveMediaUrl = (url: string) => {
+  if (!url) return '';
+  return /^https?:\/\//i.test(url) ? url : withBase(url.replace(/^\/+/, ''));
+};
+
+const resolvedThumbnail = resolveMediaUrl(project.thumbnail);
+const resolvedImages = project.images.map((img: string) => resolveMediaUrl(img));
+
 // For the "Other Projects" sidebar
 const allEntries = await getCollection('mapping');
 const otherProjects = allEntries
@@ -37,7 +45,7 @@ const otherProjects = allEntries
   <!-- Hero banner -->
   <section class="relative overflow-hidden bg-void">
     <img
-      src={project.thumbnail}
+      src={resolvedThumbnail}
       alt={project.title}
       class="absolute inset-0 w-full h-full object-cover"
       loading="eager"
@@ -123,19 +131,19 @@ const otherProjects = allEntries
         </div>
 
         <!-- Screenshot gallery -->
-        {project.images.length > 0 && (
+        {resolvedImages.length > 0 && (
           <div class="surface-card rounded-sm p-6 md:p-8">
             <div class="flex items-center justify-between mb-4">
               <h2 class="font-display text-lg uppercase tracking-wider text-text-primary">Screenshots</h2>
-              <span class="text-[10px] uppercase tracking-widest text-text-muted">{project.images.length} images</span>
+              <span class="text-[10px] uppercase tracking-widest text-text-muted">{resolvedImages.length} images</span>
             </div>
             <div class="chrome-divider mb-5"></div>
             <div class="grid grid-cols-2 gap-3">
-              {project.images.map((img, i) => (
+              {resolvedImages.map((img, i) => (
                 <button
                   class="lightbox-trigger relative aspect-[16/9] overflow-hidden rounded-sm border border-border
                          hover:border-border-light transition-all group cursor-pointer"
-                  data-images={JSON.stringify(project.images)}
+                  data-images={JSON.stringify(resolvedImages)}
                   data-title={project.title}
                   data-start={i}
                 >
@@ -223,7 +231,7 @@ const otherProjects = allEntries
               {otherProjects.map(other => (
                  <a href={mappingPath(other.slug)}
                    class="flex items-center gap-3 group">
-                  <img src={other.thumbnail} alt={other.title}
+                  <img src={resolveMediaUrl(other.thumbnail)} alt={other.title}
                        class="w-14 h-10 object-cover rounded-sm border border-border group-hover:border-border-light transition-colors flex-shrink-0"
                        loading="lazy" />
                   <div class="min-w-0">

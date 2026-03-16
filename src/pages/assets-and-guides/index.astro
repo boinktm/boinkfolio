@@ -4,6 +4,59 @@ import Header from '../../components/Header.astro';
 import SubNav from '../../components/SubNav.astro';
 import Footer from '../../components/Footer.astro';
 import { withBase } from '../../lib/paths';
+
+const GRADIENT_GRAY = 'rgba(255,255,255,0.08)_0%,rgba(20,20,20,0.92)_62%';
+const GRADIENT_RED = 'rgba(230,0,18,0.14)_0%,rgba(20,20,20,0.9)_60%';
+const GRADIENT_GOLD = 'rgba(250,204,21,0.14)_0%,rgba(20,20,20,0.92)_62%';
+
+const guides = [
+  {
+    slug: 'pokemon-gba-rom-hacking-guide',
+    title: 'Pokemon GBA ROM Hacking',
+    description: 'Beginner to intermediate guide covering the modern decompilation workflow, GBA hardware architecture, Porymap, Poryscript, and a structured four-week learning curriculum.',
+    date: '2026-03-15',
+    dateLabel: 'Mar 2026',
+    featured: true,
+  },
+  {
+    slug: 'bo3-gsc-guide',
+    title: 'Black Ops 3 Mod Tools GSC',
+    description: 'The definitive 2026 deep dive into GSC architecture, WaW migration, syntax reference, learning roadmap, ecosystem analysis, and toolchain evolution.',
+    date: '2026-02-15',
+    dateLabel: 'Feb 2026',
+    featured: false,
+  },
+  {
+    slug: 'pokemon-diamond-pearl-vs-platinum',
+    title: 'Pokemon Diamond, Pearl, and Platinum',
+    description: 'Explore the Sinnoh comparison dashboard covering engine cleanup, progression changes, regional dex growth, and regional cartridge revisions.',
+    date: '2026-01-20',
+    dateLabel: 'Jan 2026',
+    featured: false,
+  },
+  {
+    slug: 'botw-60fps-guide',
+    title: 'Breath of the Wild: 60 FPS Optimization',
+    description: 'Open the full step-by-step dashboard with checklist tracking, plugin installation order, overclock target charts, and realistic performance expectations.',
+    date: '2026-01-10',
+    dateLabel: 'Jan 2026',
+    featured: false,
+  },
+].sort((a, b) => b.date.localeCompare(a.date));
+
+const assets = [
+  {
+    slug: 'boinkdex',
+    title: 'Boinkdex Tracker',
+    description: 'Open the multi-region Boinkdex with capture tracking, shiny mode, save/import code, and QR sync backup.',
+    date: '2026-02-01',
+    dateLabel: 'Feb 2026',
+    featured: true,
+  },
+].sort((a, b) => b.date.localeCompare(a.date));
+
+const guideGradient = (g: typeof guides[number]) => g.featured ? GRADIENT_RED : GRADIENT_GRAY;
+const assetGradient = (a: typeof assets[number]) => a.featured ? GRADIENT_GOLD : GRADIENT_GRAY;
 ---
 
 <Layout title="Assets and Guides — Boink Brands" description="Browse interactive guides and standalone assets from Boink Brands.">
@@ -40,86 +93,37 @@ import { withBase } from '../../lib/paths';
       </div>
 
       <div id="guides-panel" data-content-panel class="space-y-4">
-        <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
-          <p class="text-[10px] uppercase tracking-widest text-accent font-bold mb-2">Guides Defined</p>
-          <p class="text-sm text-text-secondary leading-relaxed">
-            Guides are long-form pages focused on explanation, step-by-step process, or comparative breakdowns.
-            They are built for reading, learning, and reference.
-          </p>
-        </article>
-
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <a href={withBase('assets-and-guides/botw-60fps-guide')} class="surface-card rounded-sm overflow-hidden block group border-glow">
-            <div class="relative p-6 md:p-8 bg-[linear-gradient(135deg,rgba(230,0,18,0.14)_0%,rgba(20,20,20,0.9)_60%)]">
-              <p class="text-[9px] font-bold uppercase tracking-widest text-accent mb-2">Interactive Guide</p>
-              <h2 class="font-display text-2xl md:text-4xl uppercase text-text-primary leading-none mb-3">Breath of the Wild: 60 FPS Optimization</h2>
-              <p class="text-sm text-text-secondary max-w-2xl">
-                Open the full step-by-step dashboard with checklist tracking, plugin installation order, overclock target charts, and realistic performance expectations.
-              </p>
-              <p class="text-[10px] uppercase tracking-wider text-text-muted mt-4">Open Guide -></p>
-            </div>
-          </a>
-
-          <a href={withBase('assets-and-guides/pokemon-diamond-pearl-vs-platinum')} class="surface-card rounded-sm overflow-hidden block group">
-            <div class="relative p-6 md:p-8 bg-[linear-gradient(135deg,rgba(255,255,255,0.08)_0%,rgba(20,20,20,0.92)_62%)]">
-              <p class="text-[9px] font-bold uppercase tracking-widest text-accent mb-2">Interactive Guide</p>
-              <h2 class="font-display text-2xl md:text-4xl uppercase text-text-primary leading-none mb-3">Pokemon Diamond, Pearl, and Platinum</h2>
-              <p class="text-sm text-text-secondary max-w-2xl">
-                Explore the Sinnoh comparison dashboard covering engine cleanup, progression changes, regional dex growth, and regional cartridge revisions.
-              </p>
-              <p class="text-[10px] uppercase tracking-wider text-text-muted mt-4">Open Guide -></p>
-            </div>
-          </a>
-
-          <a href={withBase('assets-and-guides/bo3-gsc-guide')} class="surface-card rounded-sm overflow-hidden block group">
-            <div class="relative p-6 md:p-8 bg-[linear-gradient(135deg,rgba(230,0,18,0.18)_0%,rgba(20,20,20,0.92)_62%)]">
-              <p class="text-[9px] font-bold uppercase tracking-widest text-accent mb-2">Interactive Guide</p>
-              <h2 class="font-display text-2xl md:text-4xl uppercase text-text-primary leading-none mb-3">Black Ops 3 Mod Tools GSC</h2>
-              <p class="text-sm text-text-secondary max-w-2xl">
-                The definitive 2026 deep dive into GSC architecture, WaW migration, syntax reference, learning roadmap, ecosystem analysis, and toolchain evolution.
-              </p>
-              <p class="text-[10px] uppercase tracking-wider text-text-muted mt-4">Open Guide -></p>
-            </div>
-          </a>
-
-          <a href={withBase('assets-and-guides/pokemon-gba-rom-hacking-guide')} class="surface-card rounded-sm overflow-hidden block group border-glow">
-            <div class="relative p-6 md:p-8 bg-[linear-gradient(135deg,rgba(230,0,18,0.14)_0%,rgba(20,20,20,0.9)_60%)]">
-              <p class="text-[9px] font-bold uppercase tracking-widest text-accent mb-2">Interactive Guide</p>
-              <h2 class="font-display text-2xl md:text-4xl uppercase text-text-primary leading-none mb-3">Pokemon GBA ROM Hacking</h2>
-              <p class="text-sm text-text-secondary max-w-2xl">
-                Beginner to intermediate guide covering the modern decompilation workflow, GBA hardware architecture, Porymap, Poryscript, and a structured four-week learning curriculum.
-              </p>
-              <p class="text-[10px] uppercase tracking-wider text-text-muted mt-4">Open Guide -></p>
-            </div>
-          </a>
+          {guides.map(guide => (
+            <a href={withBase(`assets-and-guides/${guide.slug}`)} class:list={["surface-card rounded-sm overflow-hidden block group", guide.featured && "border-glow"]}>
+              <div class={`relative h-full p-6 md:p-8 bg-[linear-gradient(135deg,${guideGradient(guide)})]`}>
+                <div class="flex items-center gap-2 mb-2 flex-wrap">
+                  <p class="text-[9px] font-bold uppercase tracking-widest text-accent">Interactive Guide</p>
+                  <span class="text-[9px] font-bold uppercase tracking-wider text-text-muted">{guide.dateLabel}</span>
+                </div>
+                <h2 class="font-display text-2xl md:text-4xl uppercase text-text-primary leading-none mb-3">{guide.title}</h2>
+                <p class="text-sm text-text-secondary max-w-2xl">{guide.description}</p>
+                <p class="text-[10px] uppercase tracking-wider text-text-muted mt-4">Open Guide -></p>
+              </div>
+            </a>
+          ))}
         </div>
       </div>
 
       <div id="assets-panel" data-content-panel class="hidden space-y-4">
-        <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
-          <p class="text-[10px] uppercase tracking-widest text-accent font-bold mb-2">Assets Defined</p>
-          <p class="text-sm text-text-secondary leading-relaxed">
-            Assets are practical tools and reusable resources. As of now, Boinkdex is the only asset in this section.
-          </p>
-        </article>
-
-        <a href={withBase('assets-and-guides/boinkdex')} class="surface-card rounded-sm overflow-hidden block group border-glow">
-          <div class="relative p-6 md:p-8 bg-[linear-gradient(135deg,rgba(250,204,21,0.14)_0%,rgba(20,20,20,0.92)_62%)]">
-            <p class="text-[9px] font-bold uppercase tracking-widest text-accent mb-2">Interactive Asset</p>
-            <h2 class="font-display text-2xl md:text-4xl uppercase text-text-primary leading-none mb-3">Boinkdex Tracker</h2>
-            <p class="text-sm text-text-secondary max-w-2xl">
-              Open the multi-region Boinkdex with capture tracking, shiny mode, save/import code, and QR sync backup.
-            </p>
-            <p class="text-[10px] uppercase tracking-wider text-text-muted mt-4">Open Asset -></p>
-          </div>
-        </a>
-
-        <article class="surface-card rounded-sm p-5 md:p-6">
-          <p class="text-[10px] uppercase tracking-widest text-text-muted font-bold mb-2">Current Asset Scope</p>
-          <p class="text-sm text-text-secondary leading-relaxed">
-            Additional assets can be added later, but this panel is intentionally limited to Boinkdex right now.
-          </p>
-        </article>
+        {assets.map(asset => (
+          <a href={withBase(`assets-and-guides/${asset.slug}`)} class:list={["surface-card rounded-sm overflow-hidden block group", asset.featured && "border-glow"]}>
+            <div class={`relative h-full p-6 md:p-8 bg-[linear-gradient(135deg,${assetGradient(asset)})]`}>
+              <div class="flex items-center gap-2 mb-2 flex-wrap">
+                <p class="text-[9px] font-bold uppercase tracking-widest text-accent">Interactive Asset</p>
+                <span class="text-[9px] font-bold uppercase tracking-wider text-text-muted">{asset.dateLabel}</span>
+              </div>
+              <h2 class="font-display text-2xl md:text-4xl uppercase text-text-primary leading-none mb-3">{asset.title}</h2>
+              <p class="text-sm text-text-secondary max-w-2xl">{asset.description}</p>
+              <p class="text-[10px] uppercase tracking-wider text-text-muted mt-4">Open Asset -></p>
+            </div>
+          </a>
+        ))}
       </div>
     </div>
   </section>

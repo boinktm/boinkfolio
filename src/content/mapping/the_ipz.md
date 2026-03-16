@@ -1,25 +1,19 @@
 ---
-title: "The IPZ"
-game: "Black Ops 3"
-tagline: "A BO3 Zombies map set around a nightclub and the surrounding city high-rise."
-thumbnail: "https://drive.google.com/file/d/1TQ_e-R8SZehwfCNCVPpQRVnh-nRERGga/preview"
+title: 'The IPZ'
+game: 'Black Ops 3'
+tagline: 'A BO3 Zombies map set around a nightclub and the surrounding city high-rise.'
+thumbnail: 'https://drive.google.com/uc?export=view&id=1TQ_e-R8SZehwfCNCVPpQRVnh-nRERGga'
 images:
-  - "https://placehold.co/1200x675/0a0a0a/f0f0f0?text=Exterior+Shot"
-  - "https://placehold.co/1200x675/0a0a0a/f0f0f0?text=Lobby+Atrium"
-  - "https://placehold.co/1200x675/0a0a0a/f0f0f0?text=Hostage+Floor"
-  - "https://placehold.co/1200x675/0a0a0a/f0f0f0?text=Rooftop+Extract"
-videos:
-  - "[]"
-workshopUrl: "https://steamcommunity.com/sharedfiles/filedetails/?id=0000000000"
-date: "Sep 2025"
-tags:
-  - "[\"Hostage\""
-  - "\"Casual\""
-  - "\"Vertical\"]"
-featured: false
+  - 'https://placehold.co/1200x675/0a0a0a/f0f0f0?text=Exterior+Shot'
+  - 'https://placehold.co/1200x675/0a0a0a/f0f0f0?text=Lobby+Atrium'
+  - 'https://placehold.co/1200x675/0a0a0a/f0f0f0?text=Hostage+Floor'
+  - 'https://placehold.co/1200x675/0a0a0a/f0f0f0?text=Rooftop+Extract'
+videos: []
+workshopUrl: 'https://steamcommunity.com/sharedfiles/filedetails/?id=0000000000'
+date: 'April 2026'
+tags: []
+featured: true
 ---
-
-
 
 **cs_complex** turns the hostage formula on its side — literally. Instead of a traditional horizontal layout, this map plays across three floors of a crumbling brutalist apartment tower. CTs start at ground level and must push upward through stairwells, elevator shafts, and exposed balcony walkways to reach two hostage locations on the upper floors.
 

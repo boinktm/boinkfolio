@@ -1,4 +1,4 @@
-Add-Type -AssemblyName System.Windows.Forms
+﻿Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
 [System.Windows.Forms.Application]::EnableVisualStyles()
@@ -504,6 +504,119 @@ function Build-GuideAstroContent {
   return $template
 }
 
+function Get-GoogleDriveFileId {
+  param([string]$Url)
+
+  if ([string]::IsNullOrWhiteSpace($Url)) {
+    return $null
+  }
+
+  $trimmed = $Url.Trim()
+
+  $fileMatch = [regex]::Match($trimmed, 'https?://drive\.google\.com/file/d/([A-Za-z0-9_-]+)')
+  if ($fileMatch.Success) {
+    return $fileMatch.Groups[1].Value
+  }
+
+  if ($trimmed -match 'drive\.google\.com') {
+    $queryMatch = [regex]::Match($trimmed, '[\?&]id=([A-Za-z0-9_-]+)')
+    if ($queryMatch.Success) {
+      return $queryMatch.Groups[1].Value
+    }
+  }
+
+  return $null
+}
+
+function Normalize-ImageUrl {
+  param([string]$Value)
+
+  if ([string]::IsNullOrWhiteSpace($Value)) {
+    return ''
+  }
+
+  $normalized = $Value.Trim().Replace('\\', '/')
+  $googleDriveId = Get-GoogleDriveFileId -Url $normalized
+  if (-not [string]::IsNullOrWhiteSpace($googleDriveId)) {
+    return "https://drive.google.com/uc?export=view&id=$googleDriveId"
+  }
+
+  return $normalized
+}
+
+function Normalize-ImageUrlList {
+  param([string[]]$Values)
+
+  if ($null -eq $Values -or $Values.Count -eq 0) {
+    return @()
+  }
+
+  return ($Values |
+    ForEach-Object { Normalize-ImageUrl $_ } |
+    Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+}
+
+function Attach-ImageUrlNormalization {
+  param(
+    [System.Windows.Forms.TextBox]$TextBox,
+    [bool]$TreatAsList = $false
+  )
+
+  if ($null -eq $TextBox) {
+    return
+  }
+
+  $state = [pscustomobject]@{
+    IsNormalizing = $false
+  }
+
+  $applyNormalization = {
+    if ($state.IsNormalizing) {
+      return
+    }
+
+    $current = $TextBox.Text
+    $normalized = if ($TreatAsList) {
+      (Normalize-ImageUrlList (Get-ListValues $current)) -join [Environment]::NewLine
+    } else {
+      Normalize-ImageUrl $current
+    }
+
+    if ($normalized -eq $current) {
+      return
+    }
+
+    $state.IsNormalizing = $true
+    try {
+      $TextBox.Text = $normalized
+      $TextBox.SelectionStart = $TextBox.Text.Length
+      $TextBox.SelectionLength = 0
+    } finally {
+      $state.IsNormalizing = $false
+    }
+  }.GetNewClosure()
+
+  $TextBox.Add_TextChanged({
+    if ($state.IsNormalizing) {
+      return
+    }
+
+    $current = $TextBox.Text
+    if ([string]::IsNullOrWhiteSpace($current)) {
+      return
+    }
+
+    # Normalize immediately for pasted Google Drive links while avoiding work on unrelated typing.
+    if ($current -match 'drive\.google\.com') {
+      $applyNormalization.Invoke()
+    }
+  }.GetNewClosure())
+
+  $TextBox.Add_Leave({
+    $applyNormalization.Invoke()
+  }.GetNewClosure())
+}
+
 function Show-Error {
   param([string]$Message)
   [void][System.Windows.Forms.MessageBox]::Show(
@@ -810,7 +923,7 @@ $mainLayout.ColumnCount = 1
 $mainLayout.RowCount = 3
 [void]$mainLayout.RowStyles.Add([System.Windows.Forms.RowStyle]::new([System.Windows.Forms.SizeType]::Absolute, 52))
 [void]$mainLayout.RowStyles.Add([System.Windows.Forms.RowStyle]::new([System.Windows.Forms.SizeType]::Percent, 100))
-[void]$mainLayout.RowStyles.Add([System.Windows.Forms.RowStyle]::new([System.Windows.Forms.SizeType]::Absolute, 68))
+[void]$mainLayout.RowStyles.Add([System.Windows.Forms.RowStyle]::new([System.Windows.Forms.SizeType]::Absolute, 110))
 [void]$rootLayout.Controls.Add($mainLayout, 1, 0)
 
 $header = [System.Windows.Forms.Label]::new()
@@ -1024,12 +1137,39 @@ Add-FieldRow $guidesLayout 'Tags (comma/line)' $guidesTags
 Add-FieldRow $guidesLayout 'Featured' $guidesFeatured
 Add-FieldRow $guidesLayout 'Section Outline (one per line)' $guidesBody 240
 
-$actionsPanel = [System.Windows.Forms.FlowLayoutPanel]::new()
+Attach-ImageUrlNormalization -TextBox $artThumbnail
+Attach-ImageUrlNormalization -TextBox $artFullres
+Attach-ImageUrlNormalization -TextBox $artImages -TreatAsList $true
+Attach-ImageUrlNormalization -TextBox $assetsFilePath
+Attach-ImageUrlNormalization -TextBox $assetsPreview
+Attach-ImageUrlNormalization -TextBox $mappingThumb
+Attach-ImageUrlNormalization -TextBox $mappingImages -TreatAsList $true
+Attach-ImageUrlNormalization -TextBox $guidesHero
+
+$actionsPanel = [System.Windows.Forms.TableLayoutPanel]::new()
 $actionsPanel.Dock = [System.Windows.Forms.DockStyle]::Fill
-$actionsPanel.FlowDirection = [System.Windows.Forms.FlowDirection]::LeftToRight
-$actionsPanel.Padding = [System.Windows.Forms.Padding]::new(10, 8, 10, 8)
-$actionsPanel.WrapContents = $false
+$actionsPanel.ColumnCount = 1
+$actionsPanel.RowCount = 2
+[void]$actionsPanel.ColumnStyles.Add([System.Windows.Forms.ColumnStyle]::new([System.Windows.Forms.SizeType]::Percent, 100))
+[void]$actionsPanel.RowStyles.Add([System.Windows.Forms.RowStyle]::new([System.Windows.Forms.SizeType]::Absolute, 50))
+[void]$actionsPanel.RowStyles.Add([System.Windows.Forms.RowStyle]::new([System.Windows.Forms.SizeType]::Absolute, 50))
+$actionsPanel.Padding = [System.Windows.Forms.Padding]::new(0)
 [void]$mainLayout.Controls.Add($actionsPanel, 0, 2)
+
+$topActionsRow = [System.Windows.Forms.FlowLayoutPanel]::new()
+$topActionsRow.Dock = [System.Windows.Forms.DockStyle]::Fill
+$topActionsRow.FlowDirection = [System.Windows.Forms.FlowDirection]::LeftToRight
+$topActionsRow.Padding = [System.Windows.Forms.Padding]::new(10, 4, 10, 0)
+$topActionsRow.WrapContents = $false
+
+$bottomActionsRow = [System.Windows.Forms.FlowLayoutPanel]::new()
+$bottomActionsRow.Dock = [System.Windows.Forms.DockStyle]::Fill
+$bottomActionsRow.FlowDirection = [System.Windows.Forms.FlowDirection]::LeftToRight
+$bottomActionsRow.Padding = [System.Windows.Forms.Padding]::new(10, 4, 10, 4)
+$bottomActionsRow.WrapContents = $false
+
+[void]$actionsPanel.Controls.Add($topActionsRow, 0, 0)
+[void]$actionsPanel.Controls.Add($bottomActionsRow, 0, 1)
 
 $createBtn = [System.Windows.Forms.Button]::new()
 $createBtn.Text = 'Create Markdown File'
@@ -1084,22 +1224,38 @@ $openBtn.Width = 110
 $openBtn.Height = 36
 Style-Button -Btn $openBtn
 
+$updateNoteLabel = [System.Windows.Forms.Label]::new()
+$updateNoteLabel.Text = 'Update Note:'
+$updateNoteLabel.AutoSize = $true
+$updateNoteLabel.Padding = [System.Windows.Forms.Padding]::new(0, 10, 0, 0)
+
+$updateNoteBox = [System.Windows.Forms.TextBox]::new()
+$updateNoteBox.Width = 320
+$updateNoteBox.Height = 28
+$updateNoteBox.BackColor = $global:themeInputBg
+$updateNoteBox.ForeColor = $global:themeFg
+$updateNoteBox.BorderStyle = [System.Windows.Forms.BorderStyle]::FixedSingle
+$updateNoteBox.Margin = [System.Windows.Forms.Padding]::new(4, 6, 4, 0)
+
 $statusLabel = [System.Windows.Forms.Label]::new()
 $statusLabel.AutoSize = $true
 $statusLabel.TextAlign = [System.Drawing.ContentAlignment]::MiddleLeft
 $statusLabel.Padding = [System.Windows.Forms.Padding]::new(18, 10, 0, 0)
-$statusLabel.MaximumSize = [System.Drawing.Size]::new(560, 50)
+$statusLabel.MaximumSize = [System.Drawing.Size]::new(400, 50)
 
-[void]$actionsPanel.Controls.Add($createBtn)
-[void]$actionsPanel.Controls.Add($editModeCheck)
-[void]$actionsPanel.Controls.Add($loadBtn)
-[void]$actionsPanel.Controls.Add($clearTabBtn)
-[void]$actionsPanel.Controls.Add($clearBtn)
-[void]$actionsPanel.Controls.Add($formatBtn)
-[void]$actionsPanel.Controls.Add($formatOnSaveCheck)
-[void]$actionsPanel.Controls.Add($pushBtn)
-[void]$actionsPanel.Controls.Add($openBtn)
-[void]$actionsPanel.Controls.Add($statusLabel)
+[void]$topActionsRow.Controls.Add($createBtn)
+[void]$topActionsRow.Controls.Add($editModeCheck)
+[void]$topActionsRow.Controls.Add($loadBtn)
+[void]$topActionsRow.Controls.Add($clearTabBtn)
+[void]$topActionsRow.Controls.Add($clearBtn)
+[void]$topActionsRow.Controls.Add($formatBtn)
+[void]$topActionsRow.Controls.Add($formatOnSaveCheck)
+
+[void]$bottomActionsRow.Controls.Add($updateNoteLabel)
+[void]$bottomActionsRow.Controls.Add($updateNoteBox)
+[void]$bottomActionsRow.Controls.Add($pushBtn)
+[void]$bottomActionsRow.Controls.Add($openBtn)
+[void]$bottomActionsRow.Controls.Add($statusLabel)
 
 $editModeCheck.Add_CheckedChanged({
   $isGuidesTab = ($global:currentTab -eq 'Guides')
@@ -1497,7 +1653,10 @@ $pushBtn.Add_Click({
     return
   }
 
-  $defaultMessage = if (-not [string]::IsNullOrWhiteSpace([string]$lastSavedFilePath)) {
+  $userNote = $updateNoteBox.Text.Trim()
+  $defaultMessage = if (-not [string]::IsNullOrWhiteSpace($userNote)) {
+    $userNote
+  } elseif (-not [string]::IsNullOrWhiteSpace([string]$lastSavedFilePath)) {
     "Update content: $([System.IO.Path]::GetFileName($lastSavedFilePath))"
   } else {
     "Update site $(Get-Date -Format 'yyyy-MM-dd HH:mm')"
@@ -1573,7 +1732,7 @@ $createBtn.Add_Click({
       $title = $artTitle.Text.Trim()
       $slug = if ($artSlug.Text.Trim()) { ConvertTo-Slug $artSlug.Text } else { ConvertTo-Slug $title }
       $tagline = $artTagline.Text.Trim()
-      $thumbnail = $artThumbnail.Text.Trim().Replace('\\', '/')
+      $thumbnail = Normalize-ImageUrl $artThumbnail.Text
       $medium = $artMedium.Text.Trim()
       $status = $artStatus.Text.Trim()
       $date = $artDate.Text.Trim()
@@ -1583,10 +1742,13 @@ $createBtn.Add_Click({
         return
       }
 
-      $images = Get-ListValues $artImages.Text
+      $images = Normalize-ImageUrlList (Get-ListValues $artImages.Text)
       $videos = Get-ListValues $artVideos.Text
       $software = Get-ListValues $artSoftware.Text
       $tags = Get-ListValues $artTags.Text
+
+      $artThumbnail.Text = $thumbnail
+      $artImages.Text = ($images -join [Environment]::NewLine)
 
       $frontmatter = @(
         ('title: "{0}"' -f (Escape-YamlDouble $title)),
@@ -1595,7 +1757,9 @@ $createBtn.Add_Click({
       )
 
       if (-not [string]::IsNullOrWhiteSpace($artFullres.Text)) {
-        $frontmatter += ('fullres: "{0}"' -f (Escape-YamlDouble ($artFullres.Text.Trim().Replace('\\', '/'))))
+        $fullres = Normalize-ImageUrl $artFullres.Text
+        $artFullres.Text = $fullres
+        $frontmatter += ('fullres: "{0}"' -f (Escape-YamlDouble $fullres))
       }
 
       $frontmatter += Build-ArrayYaml -Name 'images' -Values $images
@@ -1625,7 +1789,7 @@ $createBtn.Add_Click({
       $title = $assetsTitle.Text.Trim()
       $slug = if ($assetsSlug.Text.Trim()) { ConvertTo-Slug $assetsSlug.Text } else { ConvertTo-Slug $title }
       $summary = $assetsSummary.Text.Trim()
-      $fileValue = $assetsFilePath.Text.Trim().Replace('\\', '/')
+      $fileValue = Normalize-ImageUrl $assetsFilePath.Text
       $category = $assetsCategory.Text.Trim()
       $sourceType = $assetsSourceType.Text.Trim()
       $date = $assetsDate.Text.Trim()
@@ -1636,6 +1800,7 @@ $createBtn.Add_Click({
       }
 
       $tags = Get-ListValues $assetsTags.Text
+      $assetsFilePath.Text = $fileValue
 
       $frontmatter = @(
         ('title: "{0}"' -f (Escape-YamlDouble $title)),
@@ -1644,7 +1809,9 @@ $createBtn.Add_Click({
       )
 
       if (-not [string]::IsNullOrWhiteSpace($assetsPreview.Text)) {
-        $frontmatter += ('previewImage: "{0}"' -f (Escape-YamlDouble ($assetsPreview.Text.Trim().Replace('\\', '/'))))
+        $previewValue = Normalize-ImageUrl $assetsPreview.Text
+        $assetsPreview.Text = $previewValue
+        $frontmatter += ('previewImage: "{0}"' -f (Escape-YamlDouble $previewValue))
       }
 
       $frontmatter += ('category: "{0}"' -f (Escape-YamlDouble $category))
@@ -1671,7 +1838,7 @@ $createBtn.Add_Click({
       $slug = if ($mappingSlug.Text.Trim()) { ConvertTo-Slug $mappingSlug.Text } else { ConvertTo-Slug $title }
       $game = $mappingGame.Text.Trim()
       $tagline = $mappingTagline.Text.Trim()
-      $thumb = $mappingThumb.Text.Trim().Replace('\\', '/')
+      $thumb = Normalize-ImageUrl $mappingThumb.Text
       $date = $mappingDate.Text.Trim()
 
       if ($title -eq '' -or $slug -eq '' -or $game -eq '' -or $tagline -eq '' -or $thumb -eq '' -or $date -eq '') {
@@ -1679,9 +1846,12 @@ $createBtn.Add_Click({
         return
       }
 
-      $images = Get-ListValues $mappingImages.Text
+      $images = Normalize-ImageUrlList (Get-ListValues $mappingImages.Text)
       $videos = Get-ListValues $mappingVideos.Text
       $tags = Get-ListValues $mappingTags.Text
+
+      $mappingThumb.Text = $thumb
+      $mappingImages.Text = ($images -join [Environment]::NewLine)
 
       $frontmatter = @(
         ('title: "{0}"' -f (Escape-YamlDouble $title)),
@@ -1756,7 +1926,8 @@ $createBtn.Add_Click({
 
       $tags = Get-ListValues $guidesTags.Text
       $category = if ([string]::IsNullOrWhiteSpace($guidesCategory.Text)) { 'General' } else { $guidesCategory.Text.Trim() }
-      $heroImage = if ([string]::IsNullOrWhiteSpace($guidesHero.Text)) { '' } else { $guidesHero.Text.Trim().Replace('\\', '/') }
+      $heroImage = if ([string]::IsNullOrWhiteSpace($guidesHero.Text)) { '' } else { Normalize-ImageUrl $guidesHero.Text }
+      $guidesHero.Text = $heroImage
 
       $astroContent = Build-GuideAstroContent `
         -TemplatePath $guideTemplatePath `

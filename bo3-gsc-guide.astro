@@ -1,0 +1,237 @@
+<!-- guide-meta: {"category":"","date":"Mar 2026","heroImage":"","tags":[],"featured":false} -->
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import SubNav from '../../components/SubNav.astro';
+import Footer from '../../components/Footer.astro';
+---
+
+<Layout
+  title="Black Ops 3 GSC Deep Dive - Boink Brands"
+  description="The definitive 2026 deep dive into Treyarch\'s Game Script Code for Black Ops III. Syntax reference, WaW migration, tutorials, ecosystem analysis, and toolchain evolution."
+>
+  <Header />
+  <SubNav activeTab="3D Art" />
+
+  <section class="bg-void relative overflow-hidden">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(230,0,18,0.16)_0%,transparent_65%)]"></div>
+    <div class="relative max-w-[var(--width-content)] mx-auto px-4 py-12 md:py-16">
+      <p class="text-[10px] font-bold uppercase tracking-[0.3em] text-accent mb-3">Interactive Guide</p>
+      <h1 class="font-display text-4xl md:text-6xl uppercase leading-none tracking-tight mb-4">
+        <span class="text-gradient">Black Ops 3 GSC Deep Dive</span>
+      </h1>
+      <p class="text-text-secondary text-sm md:text-base max-w-3xl leading-relaxed">
+        The definitive 2026 deep dive into Treyarch's Game Script Code for Black Ops III. Syntax reference, WaW migration, tutorials, ecosystem analysis, and toolchain evolution.
+      </p>
+    </div>
+    <div class="chrome-divider"></div>
+  </section>
+
+  <section class="bg-obsidian py-8 md:py-10">
+    <div class="max-w-[var(--width-content)] mx-auto px-4">
+      <div class="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6">
+        <aside class="surface-card rounded-sm p-3 lg:sticky lg:top-6 lg:self-start h-fit">
+          <p class="text-[10px] uppercase tracking-widest text-text-muted font-bold px-3 pb-2">Sections</p>
+          <nav id="guide-nav" class="space-y-1">
+            <a href="#game-script-code-architecture" class="guide-nav-link is-active">Game Script Code Architecture</a>
+            <a href="#full-gsc-syntax-reference" class="guide-nav-link">Full GSC Syntax Reference</a>
+            <a href="#what-still-works-100-from-waw" class="guide-nav-link">What Still Works 100% From WaW</a>
+            <a href="#what-changed-migration-guide" class="guide-nav-link">What Changed &amp; Migration Guide</a>
+            <a href="#best-tutorials-learning-roadmap" class="guide-nav-link">Best Tutorials &amp; Learning Roadmap</a>
+            <a href="#content-ecosystem-analysis" class="guide-nav-link">Content Ecosystem Analysis</a>
+            <a href="#resources-appendix" class="guide-nav-link">Resources Appendix</a>
+            <a href="#toolchain-evolution" class="guide-nav-link">Toolchain Evolution</a>
+          </nav>
+        </aside>
+
+        <main id="guide-content" class="space-y-6">
+          <section id="game-script-code-architecture" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">Game Script Code Architecture</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl mb-6">Game Script Code (GSC) is the foundational, server-side logic execution environment for Call of Duty: Black Ops III. Utilizing a syntax derivative of C/C++, it executes on a custom Virtual Machine tied directly to the engine's 20Hz tick rate. It excels at game-state manipulation, entity management, and event-driven architecture via a cooperative multitasking model.</p>
+
+            <div class="border-l-2 border-accent bg-accent/10 p-4 rounded-sm mb-4">
+              <h4 class="text-xs font-bold uppercase tracking-widest text-accent">Key Takeaway</h4>
+              <p class="text-xs text-text-secondary mt-2 leading-relaxed">GSC is not just code — it is the nervous system of the engine. Understanding its cooperative threading model and entity referencing system is essential before writing any custom zombies or multiplayer logic.</p>
+            </div>
+          </section>
+
+          <section id="full-gsc-syntax-reference" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">Full GSC Syntax Reference</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl mb-6">GSC is dynamically typed and relies heavily on implicit entity referencing and asynchronous threading. Below is the core lexical structure required for BO3.</p>
+
+            <div class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30 mb-4">
+              <h3 class="text-xs font-bold uppercase tracking-widest text-accent mb-3">Data Types &amp; Scoping</h3>
+              <p class="text-sm text-text-secondary mb-3 leading-relaxed">Fundamentals Data Types &amp; Scoping Int: 1, 52, 97 Float: 5.1754, 0.05 String: "shootable_teddy" Bool: true (1), false (0) Array: Zero-indexed dynamic lists Entity (ent): Pointers to 3D map objects Local: var = 1; (Confined to function) Global: level.var = 1; (Engine-wide) Entity Prop: self.var = 1; (Attached to self) Concurrency Threading &amp; Event Model GSC operates on cooperative threading. Scripts must manually yield control to the engine to prevent fatal crashes.</p>
+              <pre class="guide-code-block"><code>var = 1;</code></pre>
+            </div>
+          </section>
+
+          <section id="what-still-works-100-from-waw" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">What Still Works 100% From WaW</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl mb-6">The 85% compatibility rating means legacy scripts can often be copy-pasted directly into a BO3 environment, provided you add the function keyword prefix.</p>
+          </section>
+
+          <section id="what-changed-migration-guide" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">What Changed &amp; Migration Guide</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl mb-6">While core logic is identical, the structural paradigm of the engine evolved significantly. BO3 enforces strict compiler rules and networks visuals differently.</p>
+
+            <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30 mb-4">
+              <p class="text-sm text-text-secondary leading-relaxed"></p>
+            </article>
+
+            <p class="text-sm text-text-secondary leading-relaxed mb-4">WaW processed everything on the server. BO3 separates logic. Server-side scripts (.gsc) handle game logic. Client-side scripts (.csc) handle visual effects, sounds, and thermal states independently per player to save bandwidth.</p>
+
+            <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30 mb-4">
+              <p class="text-sm text-text-secondary leading-relaxed">The archaic .menu files from CoD5 have been completely deprecated. BO3 utilizes the modern Lua User Interface (LUI) frontend. GSC scripts update frontend HUDs, Custom Perks, and Easter Egg trackers by piping data into UIModels. Lua scripts continuously listen to these models and dynamically animate/update the UI widgets on the screen.</p>
+            </article>
+
+            <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30 mb-4">
+              <p class="text-sm text-text-secondary leading-relaxed">Caused by hitting the entity limit. Fix: You must strictly call ent delete(); on dynamic objects when done to prevent memory leaks.</p>
+            </article>
+
+            <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30 mb-4">
+              <p class="text-sm text-text-secondary leading-relaxed">Cannot find a function. Fix: BO3 requires explicit includes like #using scripts\zm\my_script; at the top of your file.</p>
+            </article>
+          </section>
+
+          <section id="best-tutorials-learning-roadmap" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">Best Tutorials &amp; Learning Roadmap</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl mb-6">The definitive, community-vetted path for a complete beginner to master BO3 GSC Mod Tools in 2026. Follow these ranked resources systematically.</p>
+
+            <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30 mb-4">
+              <p class="text-sm text-text-secondary leading-relaxed"></p>
+            </article>
+
+            <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30 mb-4">
+              <p class="text-sm text-text-secondary leading-relaxed"></p>
+            </article>
+
+            <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30 mb-4">
+              <p class="text-sm text-text-secondary leading-relaxed"></p>
+            </article>
+          </section>
+
+          <section id="content-ecosystem-analysis" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">Content Ecosystem Analysis</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl mb-6">The 2026 BO3 community landscape relies heavily on decentralized hubs. 90% of all online content is skewed towards Custom Zombies development rather than Multiplayer.</p>
+
+            <div class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30 mb-6">
+              <div class="chart-container">
+                <canvas id="ecosystemChart"></canvas>
+              </div>
+              <p class="text-[11px] text-text-muted text-center mt-3">Analysis of platform utility based on 2024-2026 data trends.</p>
+            </div>
+
+            <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30 mb-4">
+              <h3 class="font-display text-xl uppercase text-text-primary mb-3">Discord Servers</h3>
+              <p class="text-sm text-text-secondary leading-relaxed">Servers like Black Ops 3 Mod Tools (6k+ members) and Devraw discords are the ONLY places for real-time GSC debugging in 2026. Drawback: Knowledge is lost to chat history and unsearchable by Google.</p>
+            </article>
+
+            <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30 mb-4">
+              <h3 class="font-display text-xl uppercase text-text-primary mb-3">YouTube</h3>
+              <p class="text-sm text-text-secondary leading-relaxed">Dominant for visual, step-by-step setup guides (IceGrenade) and recent mod-menu injection bypass showcases (Scroptss). Drawback: UI injection vids from 2017 are heavily obsolete.</p>
+            </article>
+
+            <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30 mb-4">
+              <h3 class="font-display text-xl uppercase text-text-primary mb-3">GitHub &amp; Archived Wikis</h3>
+              <p class="text-sm text-text-secondary leading-relaxed">GitHub handles toolchain hosting (Cerberus, T7 compilers). Modme/UGX wikis act as the ancient sacred texts. Reddit's "Super Guide" is the universally pinned directory.</p>
+            </article>
+          </section>
+
+          <section id="resources-appendix" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">Resources Appendix</h2>
+
+            <div class="border-l-2 border-accent bg-accent/10 p-4 rounded-sm mb-4">
+              <h4 class="text-xs font-bold uppercase tracking-widest text-accent">Placeholder Links</h4>
+              <p class="text-xs text-text-secondary mt-2 leading-relaxed">Several resource links above are pending real URLs. The Cerberus Decompiler link is live. Remaining links will be updated once URLs are provided.</p>
+            </div>
+          </section>
+
+          <section id="toolchain-evolution" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">Toolchain Evolution</h2>
+
+            <div class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30 mb-4">
+              <h3 class="text-xs font-bold uppercase tracking-widest text-accent mb-3">The Cat-and-Mouse Security Game</h3>
+              <p class="text-sm text-text-secondary mb-3 leading-relaxed">Even a decade post-release, the engine modification scene is fiercely active. In February 2026, a major Steam update introduced Arxan re-compilations designed specifically to neutralize unauthorized GSC injections and split-block memory signatures used by legacy mod menus. 2026 CRC Bypasses The reverse-engineering community instantly adapted by mapping entirely new C++ CRC (Cyclic Redundancy Check) bypass gadgets. Instead of patching massive memory blocks, modern injectors intercept three specific assembly comparison logic blocks:</p>
+              <pre class="guide-code-block"><code>&lt;span class="gsc-comment"&gt;&gt; XOR Logic:&lt;/span&gt;    &lt;span class="gsc-literal"&gt;8B 0C 8B 33 0C 82&lt;/span&gt;
+&lt;span class="gsc-comment"&gt;&gt; NEG/ADD Logic:&lt;/span&gt; &lt;span class="gsc-literal"&gt;8B 0C 8B F7 D9 03 0C 82&lt;/span&gt;
+&lt;span class="gsc-comment"&gt;&gt; Direct CMP:&lt;/span&gt;    &lt;span class="gsc-literal"&gt;8B 04 82 8B 14 8B 3B C2&lt;/span&gt;</code></pre>
+            </div>
+          </section>
+
+        </main>
+      </div>
+    </div>
+  </section>
+
+  <Footer />
+
+  <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script is:inline>
+    const navLinks = Array.from(document.querySelectorAll(".guide-nav-link"));
+    const guideSections = Array.from(document.querySelectorAll("[data-guide-section]"));
+    if (navLinks.length && guideSections.length) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            navLinks.forEach((link) => {
+              const isMatch = link.getAttribute("href") === "#" + entry.target.id;
+              link.classList.toggle("is-active", isMatch);
+            });
+          });
+        },
+        { root: null, rootMargin: "-18% 0px -65% 0px", threshold: 0 }
+      );
+      guideSections.forEach((s) => observer.observe(s));
+    }
+  </script>
+
+<style>
+  .guide-nav-link {
+    display: block;
+    width: 100%;
+    text-align: left;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--color-text-secondary);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.7rem 0.8rem;
+    border-radius: var(--radius-sm);
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+  .guide-nav-link:hover {
+    color: var(--color-text-primary);
+    border-color: var(--color-border-light);
+    background: rgba(255, 255, 255, 0.02);
+  }
+  .guide-nav-link.is-active {
+    color: #ffffff;
+    border-color: var(--color-accent);
+    background: rgba(230, 0, 18, 0.15);
+    box-shadow: inset 3px 0 0 var(--color-accent);
+  }
+  .chart-container {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    margin-inline: auto;
+    height: 320px;
+  }
+  @media (min-width: 768px) {
+    .chart-container { height: 380px; }
+  }
+  .guide-code-block {
+    background: #0f0f0f;
+    border: 1px solid var(--color-border);
+    color: #d4d4d4;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    line-height: 1.5;
+    padding: 1rem;
+    overflow-x: auto;
+  }
+</style>
+</Layout>

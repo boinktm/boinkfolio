@@ -1,0 +1,403 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import SubNav from '../components/SubNav.astro';
+import Footer from '../components/Footer.astro';
+import { withBase } from '../lib/paths';
+
+type GuideSection = {
+  id: string;
+  nav: string;
+  kicker: string;
+  heading: string;
+  intro: string;
+};
+
+const guideTagsToken: string = '__GUIDE_TAGS__';
+const featuredToken: string = '__GUIDE_FEATURED__';
+const sectionOutlineToken: string = '__GUIDE_SECTIONS__';
+
+const guideMeta = {
+  title: '__GUIDE_TITLE__',
+  description: '__GUIDE_DESCRIPTION__',
+  category: '__GUIDE_CATEGORY__',
+  date: '__GUIDE_DATE__',
+  heroImage: '__GUIDE_HERO_IMAGE__',
+  tags: guideTagsToken,
+  featuredToken,
+};
+
+const guideTags = guideMeta.tags
+  .split('|')
+  .map((tag) => tag.trim())
+  .filter((tag) => tag !== '' && tag !== '__GUIDE_TAGS__');
+
+const isFeatured = guideMeta.featuredToken.toLowerCase() === 'true';
+
+const sectionOutlineRaw: string = sectionOutlineToken;
+const sectionTitlesFromToken = sectionOutlineRaw
+  .split('|')
+  .map((title) => title.trim())
+  .filter((title) => title !== '' && title !== '__GUIDE_SECTIONS__');
+
+const sectionTitles: string[] = sectionTitlesFromToken.length > 0
+  ? sectionTitlesFromToken
+  : ['Overview', 'Setup', 'Workflow', 'Examples', 'Curriculum', 'Common Mistakes'];
+
+const sections: GuideSection[] = sectionTitles.map((title, index) => {
+  const id = title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-') || `section-${index + 1}`;
+
+  return {
+    id,
+    nav: title,
+    kicker: `Section ${index + 1}`,
+    heading: title,
+    intro: 'Replace this section with task-specific guidance, examples, and verification steps.',
+  };
+});
+---
+
+<Layout
+  title={`${guideMeta.title} - Boink Brands`}
+  description={guideMeta.description}
+>
+  <Header />
+  <SubNav activeTab="3D Art" />
+
+  <section class="bg-void relative overflow-hidden">
+    {guideMeta.heroImage ? (
+      <img src={withBase(guideMeta.heroImage)} alt={guideMeta.title} class="absolute inset-0 w-full h-full object-cover opacity-30" loading="eager" />
+    ) : null}
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(230,0,18,0.18)_0%,transparent_62%)]"></div>
+    <div class="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:36px_36px] opacity-20"></div>
+    <div class="relative max-w-[var(--width-content)] mx-auto px-4 py-12 md:py-16">
+      <p class="text-[10px] font-bold uppercase tracking-[0.3em] text-accent mb-3">Interactive Guide</p>
+      <h1 class="font-display text-4xl md:text-6xl uppercase leading-none tracking-tight mb-4">
+        <span class="text-gradient">{guideMeta.title}</span>
+      </h1>
+      <p class="text-text-secondary text-sm md:text-base max-w-3xl leading-relaxed">
+        {guideMeta.description}
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-8 max-w-4xl">
+        <div class="guide-stat">
+          <p class="guide-stat-label">Category</p>
+          <p class="guide-stat-value">{guideMeta.category || 'General'}</p>
+        </div>
+        <div class="guide-stat">
+          <p class="guide-stat-label">Published</p>
+          <p class="guide-stat-value">{guideMeta.date}</p>
+        </div>
+        <div class="guide-stat">
+          <p class="guide-stat-label">Sections</p>
+          <p class="guide-stat-value">{sections.length} modules</p>
+        </div>
+      </div>
+    </div>
+    <div class="chrome-divider"></div>
+  </section>
+
+  <section class="bg-obsidian py-8 md:py-10">
+    <div class="max-w-[var(--width-content)] mx-auto px-4">
+      <div class="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6">
+        <aside class="surface-card rounded-sm p-3 lg:sticky lg:top-6 lg:self-start h-fit">
+          <p class="text-[10px] uppercase tracking-widest text-text-muted font-bold px-3 pb-2">Sections</p>
+          <nav id="guide-nav" class="space-y-1">
+            {sections.map((section, index) => (
+              <a href={`#${section.id}`} class={`guide-nav-link ${index === 0 ? 'is-active' : ''}`}>{section.nav}</a>
+            ))}
+          </nav>
+
+          <div class="mt-5 pt-4 border-t border-border space-y-3">
+            <div class="guide-side-note">
+              <p class="guide-side-note-label">Tags</p>
+              <p class="guide-side-note-copy">{guideTags.length > 0 ? guideTags.join(', ') : 'Add tags in the manager to improve discoverability.'}</p>
+            </div>
+            <div class="guide-side-note">
+              <p class="guide-side-note-label">Feature Flag</p>
+              <p class="guide-side-note-copy">{isFeatured ? 'Featured guide is enabled.' : 'Featured guide is disabled.'}</p>
+            </div>
+          </div>
+        </aside>
+
+        <main id="guide-content" class="space-y-6">
+          {sections.map((section) => (
+            <section id={section.id} data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+              <p class="section-kicker">{section.kicker}</p>
+              <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">{section.heading}</h2>
+              <p class="text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl mb-6">{section.intro}</p>
+
+              <div class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30 mb-4">
+                <h3 class="font-display text-xl uppercase text-text-primary mb-3">Implementation Notes</h3>
+                <ul class="space-y-3">
+                  <li class="checklist-item" data-checklist-item>
+                    <span class="checkmark">[ ]</span>
+                    <span>Replace this placeholder step with an actionable instruction.</span>
+                  </li>
+                  <li class="checklist-item" data-checklist-item>
+                    <span class="checkmark">[ ]</span>
+                    <span>Add expected results so readers can validate progress.</span>
+                  </li>
+                  <li class="checklist-item" data-checklist-item>
+                    <span class="checkmark">[ ]</span>
+                    <span>Document one failure case and its fix.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="border-l-2 border-accent bg-accent/10 p-4 rounded-sm">
+                <p class="text-sm text-text-secondary leading-relaxed">
+                  <strong class="text-text-primary">Checkpoint:</strong> Describe how a reader confirms this section is complete.
+                </p>
+              </div>
+            </section>
+          ))}
+
+          <section class="surface-card rounded-sm overflow-hidden bg-charcoal/20">
+            <button type="button" class="accordion-btn" data-accordion-btn>
+              <span>Optional Deep Dive Resources</span>
+              <span class="accordion-icon">+</span>
+            </button>
+            <div class="accordion-panel" data-accordion-panel>
+              <div class="space-y-2">
+                <p><strong>Recommended:</strong> Add links to official docs, tooling references, and trusted walkthroughs.</p>
+                <ul class="guide-list">
+                  <li>Official documentation for the stack used in this guide.</li>
+                  <li>Community examples with proven production patterns.</li>
+                  <li>Troubleshooting references for frequent setup errors.</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+  </section>
+
+  <Footer />
+
+  <script is:inline>
+    const initInteractiveGuideTemplate = () => {
+      const navLinks = Array.from(document.querySelectorAll('.guide-nav-link'));
+      const sections = Array.from(document.querySelectorAll('[data-guide-section]'));
+
+      if (navLinks.length && sections.length) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+
+              navLinks.forEach((link) => {
+                const isMatch = link.getAttribute('href') === `#${entry.target.id}`;
+                link.classList.toggle('is-active', isMatch);
+              });
+            });
+          },
+          {
+            root: null,
+            rootMargin: '-18% 0px -65% 0px',
+            threshold: 0,
+          }
+        );
+
+        sections.forEach((section) => observer.observe(section));
+      }
+
+      const accordionButtons = Array.from(document.querySelectorAll('[data-accordion-btn]'));
+      accordionButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const panel = button.nextElementSibling;
+          const icon = button.querySelector('.accordion-icon');
+          const isOpen = panel?.style.maxHeight;
+
+          if (panel && !isOpen) {
+            panel.style.maxHeight = `${panel.scrollHeight}px`;
+            button.classList.add('is-open');
+            if (icon) icon.textContent = '-';
+          } else if (panel) {
+            panel.style.maxHeight = null;
+            button.classList.remove('is-open');
+            if (icon) icon.textContent = '+';
+          }
+        });
+      });
+
+      const checklistItems = Array.from(document.querySelectorAll('[data-checklist-item]'));
+      checklistItems.forEach((item) => {
+        item.addEventListener('click', () => {
+          item.classList.toggle('checked');
+          const marker = item.querySelector('.checkmark');
+          if (!marker) return;
+          marker.textContent = item.classList.contains('checked') ? '[x]' : '[ ]';
+        });
+      });
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initInteractiveGuideTemplate, { once: true });
+    } else {
+      initInteractiveGuideTemplate();
+    }
+  </script>
+</Layout>
+
+<style>
+  .guide-stat {
+    border: 1px solid var(--color-border);
+    background: rgba(22, 22, 22, 0.8);
+    padding: 0.9rem 1rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .guide-stat-label,
+  .section-kicker,
+  .guide-side-note-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+  }
+
+  .guide-stat-label,
+  .section-kicker {
+    color: var(--color-accent);
+    margin-bottom: 0.45rem;
+  }
+
+  .guide-stat-value,
+  .guide-side-note-copy {
+    color: var(--color-text-secondary);
+    font-size: 0.8rem;
+    line-height: 1.6;
+  }
+
+  .guide-nav-link {
+    display: block;
+    width: 100%;
+    text-align: left;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--color-text-secondary);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.7rem 0.8rem;
+    border-radius: var(--radius-sm);
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+
+  .guide-nav-link:hover {
+    color: var(--color-text-primary);
+    border-color: var(--color-border-light);
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .guide-nav-link.is-active {
+    color: #ffffff;
+    border-color: var(--color-accent);
+    background: rgba(230, 0, 18, 0.15);
+    box-shadow: inset 3px 0 0 var(--color-accent);
+  }
+
+  .guide-side-note {
+    border: 1px solid var(--color-border);
+    background: rgba(255, 255, 255, 0.02);
+    padding: 0.85rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .guide-side-note-label {
+    color: var(--color-text-primary);
+    margin-bottom: 0.35rem;
+  }
+
+  .guide-list {
+    list-style: disc;
+    padding-left: 1.15rem;
+    color: var(--color-text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .guide-list li + li {
+    margin-top: 0.55rem;
+  }
+
+  .accordion-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.15rem;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--color-text-primary);
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border: 0;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  .accordion-btn:hover,
+  .accordion-btn.is-open {
+    background: rgba(230, 0, 18, 0.08);
+  }
+
+  .accordion-icon {
+    color: var(--color-accent);
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .accordion-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .accordion-panel > * {
+    padding: 0 1.15rem 1.15rem;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+  }
+
+  .checklist-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    color: var(--color-text-secondary);
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+
+  .checklist-item:hover {
+    border-color: var(--color-border-light);
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--color-text-primary);
+  }
+
+  .checklist-item.checked {
+    color: var(--color-text-muted);
+    text-decoration: line-through;
+  }
+
+  .checkmark {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--color-accent);
+    flex-shrink: 0;
+  }
+</style>

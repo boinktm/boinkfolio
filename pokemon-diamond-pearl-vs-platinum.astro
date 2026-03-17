@@ -1,0 +1,688 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import SubNav from '../../components/SubNav.astro';
+import Footer from '../../components/Footer.astro';
+---
+
+<Layout
+  title="Pokemon Diamond, Pearl, and Platinum Analysis - Boink Brands"
+  description="Interactive breakdown of how Pokemon Platinum revises Diamond and Pearl across engine behavior, progression, roster balance, audiovisual presentation, and regional revisions."
+>
+  <Header />
+  <SubNav activeTab="3D Art" />
+
+  <section class="bg-void relative overflow-hidden">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(230,0,18,0.18)_0%,transparent_62%)]"></div>
+    <div class="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:36px_36px] opacity-20"></div>
+    <div class="relative max-w-[var(--width-content)] mx-auto px-4 py-12 md:py-16">
+      <p class="text-[10px] font-bold uppercase tracking-[0.3em] text-accent mb-3">Interactive Guide</p>
+      <h1 class="font-display text-4xl md:text-6xl uppercase leading-none tracking-tight mb-4">
+        <span class="text-gradient">Sinnoh Revisited</span>
+        <br />
+        <span class="text-text-primary">Diamond, Pearl, and Platinum</span>
+      </h1>
+      <p class="text-text-secondary text-sm md:text-base max-w-3xl leading-relaxed">
+        A sectioned analysis of how Pokemon Platinum rebuilds the Sinnoh experience through engine fixes,
+        pacing changes, roster expansion, and region-specific revisions. The original one-page navigation,
+        accordion sections, charts, and tabbed comparisons are preserved inside the site&apos;s darker visual system.
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-8 max-w-4xl">
+        <div class="analysis-stat">
+          <p class="analysis-stat-label">Engine Delta</p>
+          <p class="analysis-stat-value">Faster battles, surfing, and saves</p>
+        </div>
+        <div class="analysis-stat">
+          <p class="analysis-stat-label">Roster Delta</p>
+          <p class="analysis-stat-value">151 to 210 in the regional dex</p>
+        </div>
+        <div class="analysis-stat">
+          <p class="analysis-stat-label">Structure Delta</p>
+          <p class="analysis-stat-value">New climax, frontier, and revisions</p>
+        </div>
+      </div>
+    </div>
+    <div class="chrome-divider"></div>
+  </section>
+
+  <section class="bg-obsidian py-8 md:py-10">
+    <div class="max-w-[var(--width-content)] mx-auto px-4">
+      <div class="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6">
+        <aside class="surface-card rounded-sm p-3 lg:sticky lg:top-6 lg:self-start h-fit">
+          <p class="text-[10px] uppercase tracking-widest text-text-muted font-bold px-3 pb-2">Sections</p>
+          <nav id="analysis-nav" class="space-y-1">
+            <a href="#overview" class="analysis-nav-link is-active">Executive Overview</a>
+            <a href="#engine" class="analysis-nav-link">Engine and QoL</a>
+            <a href="#content" class="analysis-nav-link">Story and Gameplay</a>
+            <a href="#boinkdex" class="analysis-nav-link">Boinkdex Expansion</a>
+            <a href="#audio" class="analysis-nav-link">Audiovisual Shifts</a>
+            <a href="#versions" class="analysis-nav-link">Revisions and Regions</a>
+          </nav>
+
+          <div class="mt-5 pt-4 border-t border-border space-y-3">
+            <div class="analysis-side-note">
+              <p class="analysis-side-note-label">Scope</p>
+              <p class="analysis-side-note-copy">Compares Diamond and Pearl against Platinum across structure, implementation, and release variants.</p>
+            </div>
+            <div class="analysis-side-note">
+              <p class="analysis-side-note-label">Format</p>
+              <p class="analysis-side-note-copy">Radar and bar charts, expandable notes, and tabbed regional and revision breakdowns.</p>
+            </div>
+          </div>
+        </aside>
+
+        <main id="analysis-content" class="space-y-6">
+          <section id="overview" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <p class="section-kicker">Executive Overview</p>
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">The Platinum Standard</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl mb-6">
+              Pokemon Platinum is a structural, technical, and narrative overhaul of the foundation established by
+              Diamond and Pearl. It addresses the DS-era Sinnoh games&apos; biggest friction points while broadening the
+              campaign, post-game, and available roster.
+            </p>
+
+            <div class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+              <h3 class="font-display text-xl uppercase text-text-primary mb-4">Qualitative Improvement Matrix</h3>
+              <div class="guide-chart-container">
+                <canvas id="overviewChart"></canvas>
+              </div>
+            </div>
+          </section>
+
+          <section id="engine" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <p class="section-kicker">Engine and QoL</p>
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">Code Revisions and Pace Fixes</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl mb-6">
+              Platinum directly addresses the most common complaints about Diamond and Pearl: sluggish pacing,
+              long save writes, and exploitable edge cases. The result is a version of Sinnoh that feels materially sharper.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+                <p class="mini-kicker">Traversal and Battles</p>
+                <h3 class="font-display text-xl uppercase text-text-primary mb-3">Engine Speed Optimization</h3>
+                <ul class="guide-list">
+                  <li><strong>Surfing speed:</strong> Platinum dramatically increases water-travel speed compared with Diamond and Pearl.</li>
+                  <li><strong>Battle flow:</strong> HP drain and text cadence are faster, which trims average battle downtime.</li>
+                </ul>
+              </article>
+
+              <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+                <p class="mini-kicker">Storage Handling</p>
+                <h3 class="font-display text-xl uppercase text-text-primary mb-3">Save Data Restructuring</h3>
+                <ul class="guide-list">
+                  <li><strong>PC box writes:</strong> The infamous &quot;Saving a lot of data...&quot; delay is drastically reduced.</li>
+                  <li><strong>Memory handling:</strong> Platinum streamlines the save path after storage changes, cutting long waits.</li>
+                </ul>
+              </article>
+
+              <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30 md:col-span-2">
+                <p class="mini-kicker">Stability</p>
+                <h3 class="font-display text-xl uppercase text-text-primary mb-3">Bug Fixes and Exploit Patches</h3>
+                <ul class="guide-list">
+                  <li><strong>Tweaking glitch:</strong> Platinum adds stronger bounds checking and map loading collision, shutting down the Void sequence used for out-of-bounds catches.</li>
+                  <li><strong>RNG behavior:</strong> Small PRNG changes alter how advanced players manipulate seeds for optimized competitive outcomes.</li>
+                </ul>
+              </article>
+            </div>
+          </section>
+
+          <section id="content" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <p class="section-kicker">Story and Gameplay</p>
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">Campaign Expansion and Reordered Progression</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl mb-6">
+              Platinum is not just a patch pass. It reshapes the game&apos;s climax, adds new narrative texture, changes gym flow,
+              and turns the post-game from a single facility into a much denser replay loop.
+            </p>
+
+            <div class="space-y-4">
+              <article class="surface-card rounded-sm overflow-hidden bg-charcoal/20">
+                <button type="button" class="accordion-btn" data-accordion-btn>
+                  <span>The Distortion World</span>
+                  <span class="accordion-icon">+</span>
+                </button>
+                <div class="accordion-panel" data-accordion-panel>
+                  <p>
+                    A new endgame space built around perspective shifts, inverted water, and altered gravity rules,
+                    culminating in the Origin Forme Giratina encounter. It implies custom camera and traversal logic not present in Diamond and Pearl.
+                  </p>
+                </div>
+              </article>
+
+              <article class="surface-card rounded-sm overflow-hidden bg-charcoal/20">
+                <button type="button" class="accordion-btn" data-accordion-btn>
+                  <span>New Characters and Lore</span>
+                  <span class="accordion-icon">+</span>
+                </button>
+                <div class="accordion-panel" data-accordion-panel>
+                  <ul class="guide-list">
+                    <li><strong>Looker:</strong> Adds an International Police thread that follows Team Galactic through the campaign.</li>
+                    <li><strong>Charon:</strong> Expands Galactic&apos;s scientific angle and reinforces post-game conflict.</li>
+                    <li><strong>Cyrus:</strong> Receives broader motivation and stronger contextual dialogue.</li>
+                  </ul>
+                </div>
+              </article>
+
+              <article class="surface-card rounded-sm overflow-hidden bg-charcoal/20">
+                <button type="button" class="accordion-btn" data-accordion-btn>
+                  <span>Gym Progression Reordered</span>
+                  <span class="accordion-icon">+</span>
+                </button>
+                <div class="accordion-panel" data-accordion-panel>
+                  <p>
+                    Fantina moves from the fifth gym slot in Diamond and Pearl to the third in Platinum. That change smooths the level curve,
+                    and several gym puzzles plus team compositions are adjusted around the new progression order.
+                  </p>
+                </div>
+              </article>
+
+              <article class="surface-card rounded-sm overflow-hidden bg-charcoal/20">
+                <button type="button" class="accordion-btn" data-accordion-btn>
+                  <span>Battle Frontier</span>
+                  <span class="accordion-icon">+</span>
+                </button>
+                <div class="accordion-panel" data-accordion-panel>
+                  <p>
+                    Platinum replaces Diamond and Pearl&apos;s Battle Tower-only post-game with a full Battle Frontier,
+                    adding Tower, Factory, Arcade, Castle, and Hall for a broader high-skill endgame loop.
+                  </p>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <section id="boinkdex" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <p class="section-kicker">Boinkdex Expansion</p>
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">Roster Balance and Encounter Variety</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl mb-6">
+              Diamond and Pearl had a narrow regional roster, with especially visible type imbalance before the post-game.
+              Platinum fixes that by enlarging the regional dex and reworking encounter access.
+            </p>
+
+            <div class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30 mb-6">
+              <h3 class="font-display text-xl uppercase text-text-primary mb-4">Regional Boinkdex Size Comparison</h3>
+              <div class="guide-chart-container">
+                <canvas id="dexChart"></canvas>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30 border-border-light">
+                <p class="mini-kicker">Trade Required</p>
+                <h3 class="font-display text-xl uppercase text-text-primary mb-3">Missing in Platinum</h3>
+                <ul class="guide-list text-sm">
+                  <li>Murkrow and Honchkrow</li>
+                  <li>Misdreavus and Mismagius</li>
+                  <li>Glameow and Purugly</li>
+                  <li>Stunky and Skuntank</li>
+                  <li>Trapinch, Vibrava, and Flygon</li>
+                  <li>Clamperl, Huntail, and Gorebyss</li>
+                </ul>
+              </article>
+
+              <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30 border-accent/35">
+                <p class="mini-kicker">Form Additions</p>
+                <h3 class="font-display text-xl uppercase text-text-primary mb-3">New Forms in Platinum</h3>
+                <ul class="guide-list text-sm">
+                  <li>Giratina: Origin Forme</li>
+                  <li>Shaymin: Sky Forme</li>
+                  <li>Rotom: five appliance forms</li>
+                </ul>
+              </article>
+            </div>
+          </section>
+
+          <section id="audio" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <p class="section-kicker">Audiovisual Shifts</p>
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">Colder Presentation, Sharper Identity</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl mb-6">
+              Platinum makes Sinnoh feel colder and more severe through winter styling, updated UI chrome, and targeted soundtrack revisions.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <article class="surface-card rounded-sm p-5 md:p-6 bg-[linear-gradient(180deg,rgba(230,0,18,0.12)_0%,rgba(20,20,20,0.7)_100%)] border-accent/30">
+                <p class="mini-kicker text-accent">Audio Enhancements</p>
+                <h3 class="font-display text-xl uppercase text-text-primary mb-3">Battle and Encounter Audio</h3>
+                <ul class="guide-list">
+                  <li><strong>New battle themes:</strong> Giratina, Frontier Brains, and the Regis get their own high-intensity tracks.</li>
+                  <li><strong>Remixed themes:</strong> Cyrus and the dual legendary encounter receive altered arrangements.</li>
+                  <li><strong>Sound design:</strong> Some battle effects gain a deeper, heavier low-end impact.</li>
+                </ul>
+              </article>
+
+              <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+                <p class="mini-kicker">Visual Redesign</p>
+                <h3 class="font-display text-xl uppercase text-text-primary mb-3">UI and World Tone</h3>
+                <ul class="guide-list">
+                  <li><strong>Climate shift:</strong> Early routes and Twinleaf pick up snow to reinforce a colder Sinnoh identity.</li>
+                  <li><strong>Wardrobe:</strong> Dawn, Lucas, and the rival all receive winter-themed outfits.</li>
+                  <li><strong>Pokech changes:</strong> The interface is sleeker, darker, and adds a back button.</li>
+                  <li><strong>Battle HUD:</strong> HP boxes move from bright white-blue styling toward darker gray-black framing.</li>
+                </ul>
+              </article>
+            </div>
+          </section>
+
+          <section id="versions" data-guide-section class="surface-card rounded-sm p-6 md:p-8 scroll-mt-24">
+            <p class="section-kicker">Revisions and Regions</p>
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">Regional Rules and Cartridge Revisions</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed max-w-3xl mb-6">
+              Localization policy and post-launch fixes produced materially different Platinum builds. The major split is gambling regulation,
+              followed by the North American revision pass that patched GTS issues.
+            </p>
+
+            <div class="border-b border-border mb-6">
+              <nav class="flex flex-wrap gap-4 -mb-px" aria-label="Version comparison tabs">
+                <button type="button" class="version-tab is-active" data-tab-btn data-target="regional">Regional Variations</button>
+                <button type="button" class="version-tab" data-tab-btn data-target="revision">US Revisions</button>
+              </nav>
+            </div>
+
+            <div id="regional" class="tab-panel space-y-4">
+              <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+                <p class="mini-kicker">Japanese Launch Version</p>
+                <p class="text-sm text-text-secondary leading-relaxed">Acts as the baseline release and retains fully playable slot machines in Veilstone Game Corner.</p>
+              </article>
+              <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+                <p class="mini-kicker">North American Version</p>
+                <p class="text-sm text-text-secondary leading-relaxed">Keeps the playable slot machines from the Japanese release with smaller localization adjustments.</p>
+              </article>
+              <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30 border-accent/25">
+                <p class="mini-kicker">European and Australian Version</p>
+                <p class="text-sm text-text-secondary leading-relaxed">Removes playable slots to satisfy PEGI gambling restrictions. Machines instead dispense free coins on interaction.</p>
+              </article>
+              <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+                <p class="mini-kicker">Korean Version</p>
+                <p class="text-sm text-text-secondary leading-relaxed">Also removes slot machine play and includes region-specific character rendering support.</p>
+              </article>
+            </div>
+
+            <div id="revision" class="tab-panel hidden">
+              <div class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+                <p class="mini-kicker">North American Cartridge Revisions</p>
+                <h3 class="font-display text-xl uppercase text-text-primary mb-4">Rev 0 vs Rev 1</h3>
+                <p class="text-sm text-text-secondary leading-relaxed mb-5 max-w-3xl">
+                  Nintendo shipped a later North American cartridge batch with internal revision changes. This is the standard offline patch model for DS-era carts.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <article class="surface-card rounded-sm p-5 bg-charcoal/40 border-border-light">
+                    <p class="mini-kicker">Rev 0</p>
+                    <ul class="guide-list text-sm">
+                      <li>Includes a GTS connection bug that can produce graphical issues or a softlock.</li>
+                      <li>Leaves a few small dialogue typos intact.</li>
+                    </ul>
+                  </article>
+
+                  <article class="surface-card rounded-sm p-5 bg-charcoal/40 border-accent/35">
+                    <p class="mini-kicker text-accent">Rev 1</p>
+                    <ul class="guide-list text-sm">
+                      <li>Patches the GTS softlock anomaly.</li>
+                      <li>Fixes the minor typographical issues.</li>
+                      <li>Changes memory addressing enough to break some Rev 0-targeted Action Replay codes.</li>
+                    </ul>
+                  </article>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+  </section>
+
+  <Footer />
+
+  <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script is:inline>
+    const initPokemonAnalysis = () => {
+      const navLinks = Array.from(document.querySelectorAll('.analysis-nav-link'));
+      const sections = Array.from(document.querySelectorAll('[data-guide-section]'));
+
+      if (navLinks.length && sections.length) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+
+              navLinks.forEach((link) => {
+                const isMatch = link.getAttribute('href') === `#${entry.target.id}`;
+                link.classList.toggle('is-active', isMatch);
+              });
+            });
+          },
+          {
+            root: null,
+            rootMargin: '-18% 0px -65% 0px',
+            threshold: 0,
+          }
+        );
+
+        sections.forEach((section) => observer.observe(section));
+      }
+
+      const accordionButtons = Array.from(document.querySelectorAll('[data-accordion-btn]'));
+      accordionButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const panel = button.nextElementSibling;
+          const icon = button.querySelector('.accordion-icon');
+          const isOpen = panel?.style.maxHeight;
+
+          accordionButtons.forEach((otherButton) => {
+            const otherPanel = otherButton.nextElementSibling;
+            const otherIcon = otherButton.querySelector('.accordion-icon');
+            if (otherPanel) {
+              otherPanel.style.maxHeight = null;
+            }
+            if (otherIcon) {
+              otherIcon.textContent = '+';
+            }
+            otherButton.classList.remove('is-open');
+          });
+
+          if (panel && !isOpen) {
+            panel.style.maxHeight = `${panel.scrollHeight}px`;
+            button.classList.add('is-open');
+            if (icon) icon.textContent = '-';
+          }
+        });
+      });
+
+      const tabButtons = Array.from(document.querySelectorAll('[data-tab-btn]'));
+      const tabPanels = Array.from(document.querySelectorAll('.tab-panel'));
+      tabButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const targetId = button.getAttribute('data-target');
+          if (!targetId) return;
+
+          tabButtons.forEach((otherButton) => {
+            otherButton.classList.remove('is-active');
+          });
+          button.classList.add('is-active');
+
+          tabPanels.forEach((panel) => {
+            panel.classList.toggle('hidden', panel.id !== targetId);
+          });
+        });
+      });
+
+      const overviewCanvas = document.getElementById('overviewChart');
+      if (overviewCanvas && window.Chart) {
+        new window.Chart(overviewCanvas, {
+          type: 'radar',
+          data: {
+            labels: ['Engine Speed', 'Story Content', 'Post-Game', 'Roster Balance', 'UI and UX', 'Difficulty Curve'],
+            datasets: [
+              {
+                label: 'Diamond and Pearl',
+                data: [40, 60, 50, 45, 65, 70],
+                backgroundColor: 'rgba(120, 120, 120, 0.18)',
+                borderColor: '#888888',
+                borderWidth: 2,
+                pointBackgroundColor: '#aaaaaa',
+              },
+              {
+                label: 'Platinum',
+                data: [90, 85, 95, 90, 85, 85],
+                backgroundColor: 'rgba(230, 0, 18, 0.18)',
+                borderColor: '#e60012',
+                borderWidth: 2,
+                pointBackgroundColor: '#ff1a2e',
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: { color: '#aaaaaa' },
+              },
+              tooltip: {
+                callbacks: {
+                  label(context) {
+                    return `${context.dataset.label}: ${context.formattedValue}/100`;
+                  },
+                },
+              },
+            },
+            scales: {
+              r: {
+                suggestedMin: 0,
+                suggestedMax: 100,
+                ticks: { display: false },
+                angleLines: { color: 'rgba(85, 85, 85, 0.4)' },
+                grid: { color: 'rgba(85, 85, 85, 0.4)' },
+                pointLabels: { color: '#aaaaaa' },
+              },
+            },
+          },
+        });
+      }
+
+      const dexCanvas = document.getElementById('dexChart');
+      if (dexCanvas && window.Chart) {
+        new window.Chart(dexCanvas, {
+          type: 'bar',
+          data: {
+            labels: ['Diamond and Pearl', 'Platinum'],
+            datasets: [
+              {
+                label: 'Regional dex size',
+                data: [151, 210],
+                backgroundColor: ['#555555', '#e60012'],
+                borderColor: ['#888888', '#ff1a2e'],
+                borderWidth: 1,
+                borderRadius: 4,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label(context) {
+                    return `${context.dataset.label}: ${context.parsed.y}`;
+                  },
+                },
+              },
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 250,
+                ticks: { color: '#aaaaaa' },
+                grid: { color: 'rgba(85, 85, 85, 0.4)' },
+                title: {
+                  display: true,
+                  text: 'Total count',
+                  color: '#aaaaaa',
+                },
+              },
+              x: {
+                ticks: { color: '#aaaaaa' },
+                grid: { color: 'rgba(85, 85, 85, 0.2)' },
+              },
+            },
+          },
+        });
+      }
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initPokemonAnalysis, { once: true });
+    } else {
+      initPokemonAnalysis();
+    }
+  </script>
+</Layout>
+
+<style>
+  .analysis-stat {
+    border: 1px solid var(--color-border);
+    background: rgba(22, 22, 22, 0.8);
+    padding: 0.9rem 1rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .analysis-stat-label,
+  .section-kicker,
+  .mini-kicker,
+  .analysis-side-note-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+  }
+
+  .analysis-stat-label,
+  .section-kicker,
+  .mini-kicker {
+    color: var(--color-accent);
+    margin-bottom: 0.45rem;
+  }
+
+  .analysis-stat-value,
+  .analysis-side-note-copy {
+    color: var(--color-text-secondary);
+    font-size: 0.8rem;
+    line-height: 1.6;
+  }
+
+  .analysis-nav-link {
+    display: block;
+    width: 100%;
+    text-align: left;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--color-text-secondary);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.7rem 0.8rem;
+    border-radius: var(--radius-sm);
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+
+  .analysis-nav-link:hover {
+    color: var(--color-text-primary);
+    border-color: var(--color-border-light);
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .analysis-nav-link.is-active {
+    color: #ffffff;
+    border-color: var(--color-accent);
+    background: rgba(230, 0, 18, 0.15);
+    box-shadow: inset 3px 0 0 var(--color-accent);
+  }
+
+  .analysis-side-note {
+    border: 1px solid var(--color-border);
+    background: rgba(255, 255, 255, 0.02);
+    padding: 0.85rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .analysis-side-note-label {
+    color: var(--color-text-primary);
+    margin-bottom: 0.35rem;
+  }
+
+  .guide-list {
+    list-style: disc;
+    padding-left: 1.15rem;
+    color: var(--color-text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .guide-list li + li {
+    margin-top: 0.55rem;
+  }
+
+  .accordion-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.15rem;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--color-text-primary);
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border: 0;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  .accordion-btn:hover,
+  .accordion-btn.is-open {
+    background: rgba(230, 0, 18, 0.08);
+  }
+
+  .accordion-icon {
+    color: var(--color-accent);
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .accordion-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .accordion-panel > * {
+    padding: 0 1.15rem 1.15rem;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+  }
+
+  .guide-chart-container {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    margin-inline: auto;
+    height: 320px;
+  }
+
+  .version-tab {
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    color: var(--color-text-muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.85rem 0;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .version-tab:hover {
+    color: var(--color-text-secondary);
+  }
+
+  .version-tab.is-active {
+    color: var(--color-text-primary);
+    border-bottom-color: var(--color-accent);
+  }
+
+  @media (min-width: 768px) {
+    .guide-chart-container {
+      height: 390px;
+    }
+  }
+</style>

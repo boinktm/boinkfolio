@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "game": {
+      "type": "string"
+    },
+    "tagline": {
+      "type": "string"
+    },
+    "thumbnail": {
+      "type": "string"
+    },
+    "images": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "videos": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "workshopUrl": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string"
+    },
+    "tags": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "featured": {
+      "default": false,
+      "type": "boolean"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "title",
+    "game",
+    "tagline",
+    "thumbnail",
+    "images",
+    "videos",
+    "date",
+    "tags",
+    "featured"
+  ],
+  "additionalProperties": false
+}

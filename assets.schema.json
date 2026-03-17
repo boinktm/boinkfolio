@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "filePath": {
+      "type": "string"
+    },
+    "previewImage": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string"
+    },
+    "sourceType": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string"
+    },
+    "tags": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "isPublic": {
+      "default": false,
+      "type": "boolean"
+    },
+    "relatedArtSlug": {
+      "type": "string"
+    },
+    "featured": {
+      "default": false,
+      "type": "boolean"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "title",
+    "summary",
+    "filePath",
+    "category",
+    "sourceType",
+    "date",
+    "tags",
+    "isPublic",
+    "featured"
+  ],
+  "additionalProperties": false
+}

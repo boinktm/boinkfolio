@@ -1,0 +1,470 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import SubNav from '../../components/SubNav.astro';
+import Footer from '../../components/Footer.astro';
+---
+
+<Layout
+  title="Breath of the Wild 60 FPS Optimization Guide - Boink Brands"
+  description="Interactive setup guide for running Breath of the Wild at 60 FPS on a modded Nintendo Switch, including prerequisites, installation, overclock targets, and realistic performance expectations."
+>
+  <Header />
+  <SubNav activeTab="3D Art" />
+
+  <section class="bg-void relative overflow-hidden">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(230,0,18,0.16)_0%,transparent_65%)]"></div>
+    <div class="relative max-w-[var(--width-content)] mx-auto px-4 py-12 md:py-16">
+      <p class="text-[10px] font-bold uppercase tracking-[0.3em] text-accent mb-3">Interactive Guide</p>
+      <h1 class="font-display text-4xl md:text-6xl uppercase leading-none tracking-tight mb-4">
+        <span class="text-gradient">Breath of the Wild</span>
+        <br />
+        <span class="text-text-primary">60 FPS Optimization</span>
+      </h1>
+      <p class="text-text-secondary text-sm md:text-base max-w-3xl leading-relaxed">
+        Step-by-step dashboard for setup, plugin install, overclock targets, and realistic performance expectations.
+        This page preserves the original interactive checklist, section navigation, and chart behavior.
+      </p>
+    </div>
+    <div class="chrome-divider"></div>
+  </section>
+
+  <section class="bg-obsidian py-8 md:py-10">
+    <div class="max-w-[var(--width-content)] mx-auto px-4">
+      <div class="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6">
+        <aside class="surface-card rounded-sm p-3 lg:sticky lg:top-6 lg:self-start h-fit">
+          <p class="text-[10px] uppercase tracking-widest text-text-muted font-bold px-3 pb-2">Sections</p>
+          <ul class="space-y-1" id="nav-menu">
+            <li>
+              <button data-target="section-overview" class="guide-nav-btn is-active">1. Overview</button>
+            </li>
+            <li>
+              <button data-target="section-prereqs" class="guide-nav-btn">2. Prerequisites</button>
+            </li>
+            <li>
+              <button data-target="section-install" class="guide-nav-btn">3. Installation</button>
+            </li>
+            <li>
+              <button data-target="section-overclock" class="guide-nav-btn">4. Overclocking</button>
+            </li>
+            <li>
+              <button data-target="section-performance" class="guide-nav-btn">5. Expectations</button>
+            </li>
+          </ul>
+        </aside>
+
+        <main class="space-y-6">
+          <section id="section-overview" class="content-section block surface-card rounded-sm p-6 md:p-8">
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">Pushing the Limits of Hyrule</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed mb-6 max-w-3xl">
+              This guide distills the process of unlocking a 60 FPS cap in The Legend of Zelda: Breath of the Wild on a modified Nintendo Switch.
+              It covers requirements, setup order, and risks involved in pushing the console beyond stock specs.
+            </p>
+
+            <div class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+              <h3 class="font-display text-xl uppercase text-text-primary mb-3">How It Works</h3>
+              <p class="text-sm text-text-secondary leading-relaxed">
+                Breath of the Wild is hard-capped at 30 FPS by default. To reach 60 FPS, background plugins remove the cap while sys-clk provides the extra CPU/GPU/MEM headroom required to actually render more frames.
+              </p>
+
+              <div class="mt-6 border-l-2 border-accent bg-accent/10 p-4">
+                <h4 class="text-xs font-bold uppercase tracking-widest text-accent">Critical Warning</h4>
+                <p class="text-xs text-text-secondary mt-2 leading-relaxed">
+                  Overclocking increases heat and battery wear. Modern homebrew tooling includes safety limits, but sustained high clocks still stress battery health faster than normal use.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section id="section-prereqs" class="content-section hidden surface-card rounded-sm p-6 md:p-8">
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">Pre-Flight Checklist</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed mb-6 max-w-3xl">
+              Click items as you prepare your SD card. This keeps dependencies in order and prevents setup failures later.
+            </p>
+
+            <div class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+              <h3 class="font-display text-xl uppercase text-text-primary mb-4">Required Apps and Plugins</h3>
+              <ul id="checklist" class="space-y-3">
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span>A hacked Switch running <strong>Atmosphere CFW</strong></span>
+                </li>
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span><strong>Tesla Menu</strong> and <strong>nx-ovlloader</strong></span>
+                </li>
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span><strong>SaltyNX</strong> background interceptor</span>
+                </li>
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span><strong>FPSLocker</strong> plugin for uncapping</span>
+                </li>
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span><strong>Sys-clk</strong> overclocking utility</span>
+                </li>
+                <li class="checklist-item" data-checklist-item>
+                  <span class="checkmark">[ ]</span>
+                  <span>Breath of the Wild updated to <strong>v1.6.0</strong></span>
+                </li>
+              </ul>
+            </div>
+          </section>
+
+          <section id="section-install" class="content-section hidden surface-card rounded-sm p-6 md:p-8">
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">Installation Process</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed mb-6 max-w-3xl">
+              After collecting prerequisites, place files correctly on the SD card and verify overlays load in-game.
+            </p>
+
+            <div class="space-y-4">
+              <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+                <h3 class="text-xs font-bold uppercase tracking-widest text-accent mb-3">Step 1: SD Card Placement</h3>
+                <p class="text-sm text-text-secondary mb-3 leading-relaxed">
+                  Extract SaltyNX, FPSLocker, Tesla Menu, and Sys-clk archives to the SD root so they merge into existing folders.
+                </p>
+                <pre class="guide-code-block"><code>SD_Root/
+|-- atmosphere/
+|   `-- contents/
+|       |-- 0100000000000034 (nx-ovlloader)
+|       `-- 0000000000534C56 (SaltyNX)
+`-- switch/
+    `-- .overlays/
+        |-- FPSLocker.ovl
+        |-- sys-clk-overlay.ovl
+        `-- ovlmenu.ovl</code></pre>
+              </article>
+
+              <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+                <h3 class="text-xs font-bold uppercase tracking-widest text-accent mb-3">Step 2: Reboot and Verify</h3>
+                <p class="text-sm text-text-secondary leading-relaxed">
+                  Reboot into Atmosphere and open Tesla Menu from HOME (usually <strong>L + D-Pad Down + Right Stick Click</strong>) to confirm overlays are present.
+                </p>
+              </article>
+
+              <article class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+                <h3 class="text-xs font-bold uppercase tracking-widest text-accent mb-3">Step 3: Uncap the Game</h3>
+                <p class="text-sm text-text-secondary leading-relaxed">
+                  Launch BotW, open Tesla Menu, select <strong>FPSLocker</strong>, and set target FPS to <strong>60</strong>. Without overclocking, you will usually still sit around 30-40 FPS.
+                </p>
+              </article>
+            </div>
+          </section>
+
+          <section id="section-overclock" class="content-section hidden surface-card rounded-sm p-6 md:p-8">
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">Configuring the Overclock</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed mb-6 max-w-3xl">
+              Uncapping FPS alone is not enough. These target clocks illustrate the gap between stock and practical 60 FPS settings.
+            </p>
+
+            <div class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30 mb-6">
+              <div class="chart-container">
+                <canvas id="overclockChart"></canvas>
+              </div>
+              <p class="text-[11px] text-text-muted text-center mt-3">Clock speeds in MHz. Higher clocks increase thermal and battery load.</p>
+            </div>
+
+            <div class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30">
+              <h3 class="font-display text-xl uppercase text-text-primary mb-4">Apply In Sys-clk</h3>
+              <ol class="list-decimal pl-5 space-y-2 text-sm text-text-secondary">
+                <li>Open Tesla Menu while BotW is running.</li>
+                <li>Select <strong>sys-clk overlay</strong>.</li>
+                <li>Select <strong>Edit app profile</strong>.</li>
+                <li>Set CPU to <strong>1581 MHz</strong> (or higher if your setup supports it).</li>
+                <li>Set GPU to <strong>768 MHz</strong> (handheld) or <strong>921 MHz</strong> (docked).</li>
+                <li>Set MEM to <strong>1600 MHz</strong>.</li>
+                <li>Use a reliable charger, especially in handheld mode.</li>
+              </ol>
+            </div>
+          </section>
+
+          <section id="section-performance" class="content-section hidden surface-card rounded-sm p-6 md:p-8">
+            <h2 class="font-display text-3xl md:text-4xl uppercase text-text-primary leading-none mb-4">Performance Expectations</h2>
+            <p class="text-sm md:text-base text-text-secondary leading-relaxed mb-6 max-w-3xl">
+              Even max overclock cannot hold 60 FPS in every area. Expect strong gains overall with dips in known CPU-heavy zones.
+            </p>
+
+            <div class="surface-card rounded-sm p-5 md:p-6 bg-charcoal/30 mb-6">
+              <div class="chart-container">
+                <canvas id="fpsChart"></canvas>
+              </div>
+              <p class="text-[11px] text-text-muted text-center mt-3">Expected FPS with 1581 CPU / 921 GPU / 1600 MEM.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <article class="surface-card rounded-sm p-5 bg-charcoal/40 border-accent/35">
+                <h4 class="text-xs font-bold uppercase tracking-widest text-accent mb-2">The Good</h4>
+                <ul class="text-sm text-text-secondary space-y-1">
+                  <li>- Shrines can hold close to 60 FPS.</li>
+                  <li>- Open fields and deserts are often 50-60 FPS.</li>
+                  <li>- Input responsiveness in combat improves significantly.</li>
+                </ul>
+              </article>
+              <article class="surface-card rounded-sm p-5 bg-charcoal/40 border-border-light">
+                <h4 class="text-xs font-bold uppercase tracking-widest text-text-primary mb-2">The Reality</h4>
+                <ul class="text-sm text-text-secondary space-y-1">
+                  <li>- Villages can drop to 35-45 FPS due to CPU load.</li>
+                  <li>- Korok Forest still dips hard in many scenes.</li>
+                  <li>- Heavy physics moments can create temporary stutter.</li>
+                </ul>
+              </article>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+  </section>
+
+  <Footer />
+
+  <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script is:inline>
+    const navButtons = document.querySelectorAll('#nav-menu button');
+    const sections = document.querySelectorAll('.content-section');
+
+    navButtons.forEach((button) => {
+      button.addEventListener('click', (event) => {
+        const target = event.currentTarget;
+        const targetId = target?.getAttribute('data-target');
+
+        if (!targetId) return;
+
+        navButtons.forEach((btn) => {
+          btn.classList.remove('is-active');
+        });
+
+        target.classList.add('is-active');
+
+        sections.forEach((section) => {
+          if (section.id === targetId) {
+            section.classList.remove('hidden');
+            section.classList.add('block');
+          } else {
+            section.classList.remove('block');
+            section.classList.add('hidden');
+          }
+        });
+      });
+    });
+
+    const checklistItems = document.querySelectorAll('[data-checklist-item]');
+    checklistItems.forEach((item) => {
+      item.addEventListener('click', () => {
+        item.classList.toggle('checked');
+        const marker = item.querySelector('.checkmark');
+        if (!marker) return;
+        marker.textContent = item.classList.contains('checked') ? '[x]' : '[ ]';
+      });
+    });
+
+    const overclockCanvas = document.getElementById('overclockChart');
+    if (overclockCanvas && window.Chart) {
+      new window.Chart(overclockCanvas, {
+        type: 'bar',
+        data: {
+          labels: ['CPU', 'GPU (Docked)', 'RAM (Memory)'],
+          datasets: [
+            {
+              label: 'Stock Switch Speed',
+              data: [1020, 768, 1331],
+              backgroundColor: '#3a3a3a',
+              borderColor: '#555555',
+              borderWidth: 1,
+            },
+            {
+              label: 'Required Overclock',
+              data: [1581, 921, 1600],
+              backgroundColor: '#e60012',
+              borderColor: '#ff1a2e',
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Stock vs Overclock Speeds (MHz)',
+              color: '#f0f0f0',
+              font: { size: 14 },
+            },
+            legend: {
+              labels: {
+                color: '#aaaaaa',
+              },
+            },
+            tooltip: {
+              callbacks: {
+                label(context) {
+                  return `${context.dataset.label}: ${context.parsed.y} MHz`;
+                },
+              },
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { color: '#aaaaaa' },
+              grid: { color: 'rgba(85, 85, 85, 0.4)' },
+              title: {
+                display: true,
+                text: 'Megahertz (MHz)',
+                color: '#aaaaaa',
+              },
+            },
+            x: {
+              ticks: { color: '#aaaaaa' },
+              grid: { color: 'rgba(85, 85, 85, 0.2)' },
+            },
+          },
+        },
+      });
+    }
+
+    const fpsCanvas = document.getElementById('fpsChart');
+    if (fpsCanvas && window.Chart) {
+      new window.Chart(fpsCanvas, {
+        type: 'bar',
+        data: {
+          labels: ['Shrines', 'Open Fields', 'Combat (Light)', 'Villages', 'Korok Forest'],
+          datasets: [
+            {
+              label: 'Expected FPS',
+              data: [60, 52, 45, 38, 32],
+              backgroundColor: ['#ff1a2e', '#e60012', '#991018', '#555555', '#3a3a3a'],
+              borderWidth: 0,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          indexAxis: 'y',
+          plugins: {
+            title: {
+              display: true,
+              text: 'Average FPS by Location',
+              color: '#f0f0f0',
+              font: { size: 14 },
+            },
+            legend: {
+              display: false,
+            },
+            tooltip: {
+              callbacks: {
+                label(context) {
+                  return `Approx. ${context.parsed.x} FPS`;
+                },
+              },
+            },
+          },
+          scales: {
+            x: {
+              beginAtZero: true,
+              max: 60,
+              ticks: { color: '#aaaaaa' },
+              grid: { color: 'rgba(85, 85, 85, 0.4)' },
+              title: {
+                display: true,
+                text: 'Frames Per Second',
+                color: '#aaaaaa',
+              },
+            },
+            y: {
+              ticks: { color: '#aaaaaa' },
+              grid: { color: 'rgba(85, 85, 85, 0.2)' },
+            },
+          },
+        },
+      });
+    }
+  </script>
+</Layout>
+
+<style>
+  .guide-nav-btn {
+    width: 100%;
+    text-align: left;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--color-text-secondary);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.7rem 0.8rem;
+    border-radius: var(--radius-sm);
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+
+  .guide-nav-btn:hover {
+    color: var(--color-text-primary);
+    border-color: var(--color-border-light);
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .guide-nav-btn.is-active {
+    color: #ffffff;
+    border-color: var(--color-accent);
+    background: rgba(230, 0, 18, 0.15);
+    box-shadow: inset 3px 0 0 var(--color-accent);
+  }
+
+  .checklist-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    color: var(--color-text-secondary);
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+
+  .checklist-item:hover {
+    border-color: var(--color-border-light);
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--color-text-primary);
+  }
+
+  .checklist-item.checked {
+    color: var(--color-text-muted);
+    text-decoration: line-through;
+  }
+
+  .checkmark {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--color-accent);
+    flex-shrink: 0;
+  }
+
+  .chart-container {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    margin-inline: auto;
+    height: 320px;
+  }
+
+  .guide-code-block {
+    background: #0f0f0f;
+    border: 1px solid var(--color-border);
+    color: #d4d4d4;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    line-height: 1.5;
+    padding: 1rem;
+    overflow-x: auto;
+  }
+
+  @media (min-width: 768px) {
+    .chart-container {
+      height: 380px;
+    }
+  }
+</style>

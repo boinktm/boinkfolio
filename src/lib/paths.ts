@@ -38,6 +38,44 @@ export function musingPath(slug: string): string {
   return withBase(`musings/${normalizedSlug}`);
 }
 
+export function getGoogleDriveFileId(url: string): string | null {
+  if (!url) return null;
+
+  const trimmed = url.trim();
+  if (!trimmed) return null;
+
+  try {
+    const parsed = new URL(trimmed);
+    const host = parsed.hostname;
+
+    if (host === 'drive.google.com') {
+      const idFromSearch = parsed.searchParams.get('id');
+      if (idFromSearch) return idFromSearch;
+
+      const filePathMatch = parsed.pathname.match(/\/file\/d\/([^/]+)/);
+      if (filePathMatch) return filePathMatch[1];
+    }
+
+    if (host === 'drive.usercontent.google.com') {
+      return parsed.searchParams.get('id');
+    }
+
+    if (host === 'lh3.googleusercontent.com') {
+      const drivePathMatch = parsed.pathname.match(/\/d\/([^/]+)/);
+      if (drivePathMatch) return drivePathMatch[1];
+    }
+  } catch {
+    return null;
+  }
+
+  return null;
+}
+
+export function toGoogleDrivePreviewUrl(url: string): string {
+  const fileId = getGoogleDriveFileId(url);
+  return fileId ? `https://drive.google.com/file/d/${fileId}/preview` : url;
+}
+
 /**
  * Extract a Google Drive file ID from any Drive URL variant and return
  * the direct-embeddable lh3 URL.  Returns the original string if it
@@ -50,25 +88,7 @@ export function normalizeGoogleDriveUrl(url: string): string {
   // Already in the correct format
   if (trimmed.startsWith('https://lh3.googleusercontent.com/')) return trimmed;
 
-  let fileId: string | null = null;
-  try {
-    const parsed = new URL(trimmed);
-    const host = parsed.hostname;
-
-    if (host === 'drive.google.com') {
-      // /thumbnail?id=ID  or  /uc?...&id=ID
-      fileId = parsed.searchParams.get('id');
-      if (!fileId) {
-        // /file/d/ID/...
-        const m = parsed.pathname.match(/\/file\/d\/([^/]+)/);
-        if (m) fileId = m[1];
-      }
-    } else if (host === 'drive.usercontent.google.com') {
-      fileId = parsed.searchParams.get('id');
-    }
-  } catch {
-    return trimmed;
-  }
+  const fileId = getGoogleDriveFileId(trimmed);
 
   return fileId ? `https://lh3.googleusercontent.com/d/${fileId}` : trimmed;
 }

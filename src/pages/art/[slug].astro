@@ -4,7 +4,13 @@ import Header from '../../components/Header.astro';
 import SubNav from '../../components/SubNav.astro';
 import ImageLightbox from '../../components/ImageLightbox.astro';
 import Footer from '../../components/Footer.astro';
-import { artPath, withBase, normalizeGoogleDriveUrl } from '../../lib/paths';
+import {
+  artPath,
+  withBase,
+  normalizeGoogleDriveUrl,
+  getGoogleDriveFileId,
+  toGoogleDrivePreviewUrl,
+} from '../../lib/paths';
 import { getCollection, render } from 'astro:content';
 import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
 
@@ -27,22 +33,6 @@ const resolveMediaUrl = (url: string) => {
   if (!url) return '';
   return /^https?:\/\//i.test(url) ? url : withBase(url.replace(/^\/+/, ''));
 };
-const getGoogleDriveId = (url: string): string | null => {
-  try {
-    const parsed = new URL(url);
-    if (!parsed.hostname.includes('drive.google.com')) return null;
-
-    const idFromSearch = parsed.searchParams.get('id');
-    if (idFromSearch) return idFromSearch;
-
-    const filePathMatch = parsed.pathname.match(/\/file\/d\/([^/]+)/);
-    if (filePathMatch) return filePathMatch[1];
-  } catch {
-    return null;
-  }
-
-  return null;
-};
 const toEmbedUrl = (url: string) => {
   if (url.includes('youtube.com/watch')) {
     const parsed = new URL(url);
@@ -61,34 +51,32 @@ const toEmbedUrl = (url: string) => {
 };
 
 const normalizedVideos = piece.videos.map(url => {
-  const driveId = getGoogleDriveId(url);
+  const resolvedUrl = resolveMediaUrl(url);
+  const driveId = getGoogleDriveFileId(resolvedUrl);
 
   if (driveId) {
     return {
-      source: url,
-      isDirect: true,
-      playUrl: `https://lh3.googleusercontent.com/d/${driveId}`,
-      fallbackUrl: `https://drive.google.com/file/d/${driveId}/preview`,
-      embedUrl: '',
+      source: resolvedUrl,
+      isDirect: false,
+      playUrl: '',
+      embedUrl: toGoogleDrivePreviewUrl(resolvedUrl),
     };
   }
 
-  if (isDirectVideo(url)) {
+  if (isDirectVideo(resolvedUrl)) {
     return {
-      source: url,
+      source: resolvedUrl,
       isDirect: true,
-      playUrl: resolveMediaUrl(url),
-      fallbackUrl: resolveMediaUrl(url),
+      playUrl: resolvedUrl,
       embedUrl: '',
     };
   }
 
   return {
-    source: url,
+    source: resolvedUrl,
     isDirect: false,
     playUrl: '',
-    fallbackUrl: url,
-    embedUrl: toEmbedUrl(url),
+    embedUrl: toEmbedUrl(resolvedUrl),
   };
 });
 

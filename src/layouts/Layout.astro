@@ -5,11 +5,13 @@ import { withBase } from '../lib/paths';
 interface Props {
   title?: string;
   description?: string;
+  bodyClass?: string;
 }
 
 const {
   title = 'Boink Brands',
-  description = 'Music, 3D Art & Musings'
+  description = 'Music, 3D Art & Musings',
+  bodyClass = ''
 } = Astro.props;
 
 ---
@@ -32,7 +34,7 @@ const {
 
     <title>{title}</title>
   </head>
-  <body class="min-h-screen flex flex-col">
+  <body class={`min-h-screen flex flex-col ${bodyClass}`.trim()}>
     <slot />
   </body>
 </html>

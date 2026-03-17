@@ -37,7 +37,7 @@
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
   /* Spacing & sizing */
-  --width-content: min(2400px, calc(100vw - 0.5rem));
+  --width-content: min(2400px, calc(100vw - clamp(4rem, 8vw, 10rem)));
   --radius-sm: 2px;
   --radius-md: 4px;
   --radius-lg: 8px;
@@ -57,6 +57,10 @@
   body {
     min-height: 100vh;
     background: linear-gradient(180deg, var(--color-obsidian) 0%, var(--color-void) 100%);
+  }
+
+  body.page-pokedex {
+    --width-content: min(2400px, calc(100vw - 0.5rem));
   }
 
   ::selection {

@@ -4,7 +4,13 @@ import Header from '../../components/Header.astro';
 import SubNav from '../../components/SubNav.astro';
 import ImageLightbox from '../../components/ImageLightbox.astro';
 import Footer from '../../components/Footer.astro';
-import { artPath, withBase, normalizeGoogleDriveUrl } from '../../lib/paths';
+import {
+  artPath,
+  withBase,
+  normalizeGoogleDriveUrl,
+  getGoogleDriveFileId,
+  toGoogleDrivePreviewUrl,
+} from '../../lib/paths';
 import { getCollection } from 'astro:content';
 
 const entries = await getCollection('art');
@@ -39,11 +45,17 @@ const toEmbedUrl = (url: string) => {
 
 const isVideoOnlyWork = (work: (typeof works)[number]) => work.videos.length > 0 && work.images.length === 0 && !work.fullres;
 const getPrimaryVideo = (work: (typeof works)[number]) => work.videos[0] ?? '';
+const isInlineDirectVideo = (url: string) => isDirectVideo(url) && !getGoogleDriveFileId(url);
 const getInlineVideoSource = (work: (typeof works)[number]) => {
   const source = getPrimaryVideo(work);
-  return isDirectVideo(source) ? withBase(source) : source;
+  if (!source) return '';
+  return isInlineDirectVideo(source) ? withBase(source) : toGoogleDrivePreviewUrl(source);
 };
-const getInlineVideoEmbed = (work: (typeof works)[number]) => toEmbedUrl(getPrimaryVideo(work));
+const getInlineVideoEmbed = (work: (typeof works)[number]) => {
+  const source = getPrimaryVideo(work);
+  if (!source) return '';
+  return toEmbedUrl(toGoogleDrivePreviewUrl(source));
+};
 ---
 
 <Layout title="3D Art — Boink Brands" description="A dedicated gallery of 3D art studies, environment work, and character-focused experiments from Boink Brands.">
@@ -108,7 +120,7 @@ const getInlineVideoEmbed = (work: (typeof works)[number]) => toEmbedUrl(getPrim
                     class="inline-video-trigger absolute inset-0 z-[15] flex items-center justify-center"
                     data-video-source={getInlineVideoSource(featuredWork)}
                     data-video-embed={getInlineVideoEmbed(featuredWork)}
-                    data-video-direct={String(isDirectVideo(getPrimaryVideo(featuredWork)))}
+                    data-video-direct={String(isInlineDirectVideo(getPrimaryVideo(featuredWork)))}
                     aria-label={`Play ${featuredWork.title}`}
                   >
                     <span class="w-12 h-12 rounded-full bg-void/70 border border-border-light text-text-primary flex items-center justify-center">
@@ -215,7 +227,7 @@ const getInlineVideoEmbed = (work: (typeof works)[number]) => toEmbedUrl(getPrim
                           class="inline-video-trigger absolute inset-0 z-30 flex items-center justify-center"
                           data-video-source={getInlineVideoSource(work)}
                           data-video-embed={getInlineVideoEmbed(work)}
-                          data-video-direct={String(isDirectVideo(getPrimaryVideo(work)))}
+                          data-video-direct={String(isInlineDirectVideo(getPrimaryVideo(work)))}
                           aria-label={`Play ${work.title}`}
                         >
                           <span class="w-12 h-12 rounded-full bg-void/70 border border-border-light text-text-primary flex items-center justify-center">

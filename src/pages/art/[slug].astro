@@ -4,7 +4,7 @@ import Header from '../../components/Header.astro';
 import SubNav from '../../components/SubNav.astro';
 import ImageLightbox from '../../components/ImageLightbox.astro';
 import Footer from '../../components/Footer.astro';
-import { artPath, withBase } from '../../lib/paths';
+import { artPath, withBase, normalizeGoogleDriveUrl } from '../../lib/paths';
 import { getCollection, render } from 'astro:content';
 import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
 
@@ -67,7 +67,7 @@ const normalizedVideos = piece.videos.map(url => {
     return {
       source: url,
       isDirect: true,
-      playUrl: `https://drive.google.com/uc?export=view&id=${driveId}`,
+      playUrl: `https://lh3.googleusercontent.com/d/${driveId}`,
       fallbackUrl: `https://drive.google.com/file/d/${driveId}/preview`,
       embedUrl: '',
     };
@@ -111,10 +111,11 @@ const otherPieces = allEntries
 
   <section class="relative overflow-hidden bg-void">
     <img
-      src={withBase(piece.thumbnail)}
+      src={normalizeGoogleDriveUrl(withBase(piece.thumbnail))}
       alt={piece.title}
       class="absolute inset-0 w-full h-full object-cover"
       loading="eager"
+      referrerpolicy="no-referrer"
     />
     <div class="absolute inset-0 bg-gradient-to-t from-void via-void/80 to-charcoal/50"></div>
     <div class="absolute inset-0 bg-gradient-to-r from-void/70 to-transparent"></div>
@@ -225,10 +226,11 @@ const otherPieces = allEntries
                 data-start="0"
               >
                 <img
-                  src={galleryImageUrls[0]}
+                  src={normalizeGoogleDriveUrl(galleryImageUrls[0])}
                   alt={`${piece.title} featured render`}
                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   loading="lazy"
+                  referrerpolicy="no-referrer"
                 />
                 <div class="absolute inset-0 bg-void/0 group-hover:bg-void/30 transition-colors flex items-center justify-center">
                   <svg xmlns="http://www.w3.org/2000/svg"
@@ -248,9 +250,10 @@ const otherPieces = allEntries
                   data-title={piece.title}
                   data-start={i}
                 >
-                  <img src={withBase(img)} alt={`${piece.title} image ${i + 1}`}
+                  <img src={normalizeGoogleDriveUrl(withBase(img))} alt={`${piece.title} image ${i + 1}`}
                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                       loading="lazy" />
+                       loading="lazy"
+                       referrerpolicy="no-referrer" />
                   <div class="absolute inset-0 bg-void/0 group-hover:bg-void/30 transition-colors flex items-center justify-center">
                     <svg xmlns="http://www.w3.org/2000/svg"
                          class="w-8 h-8 text-white opacity-0 group-hover:opacity-80 transition-opacity"
@@ -337,9 +340,10 @@ const otherPieces = allEntries
             <div class="space-y-3">
               {otherPieces.map(other => (
                 <a href={artPath(other.slug)} class="flex items-center gap-3 group">
-                  <img src={withBase(other.thumbnail)} alt={other.title}
+                  <img src={normalizeGoogleDriveUrl(withBase(other.thumbnail))} alt={other.title}
                        class="w-14 h-10 object-cover rounded-sm border border-border group-hover:border-border-light transition-colors flex-shrink-0"
-                       loading="lazy" />
+                       loading="lazy"
+                       referrerpolicy="no-referrer" />
                   <div class="min-w-0">
                     <p class="text-xs font-semibold text-text-primary truncate group-hover:text-accent transition-colors">
                       {other.title}

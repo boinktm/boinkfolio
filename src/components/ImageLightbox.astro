@@ -45,7 +45,8 @@
 
       <!-- Image -->
       <img id="lightbox-image" src="" alt=""
-           class="max-h-full max-w-full object-contain rounded-sm border border-border shadow-2xl transition-opacity duration-200" />
+           class="max-h-full max-w-full object-contain rounded-sm border border-border shadow-2xl transition-opacity duration-200"
+           referrerpolicy="no-referrer" />
 
       <!-- Next -->
       <button id="lightbox-next"
@@ -110,6 +111,7 @@
         const thumb = document.createElement('img');
         thumb.src = src;
         thumb.alt = `Thumbnail ${i + 1}`;
+        thumb.referrerPolicy = 'no-referrer';
         thumb.className = 'w-14 h-14 md:w-16 md:h-10 object-cover rounded-sm border cursor-pointer transition-all hover:opacity-80 flex-shrink-0';
         thumb.addEventListener('click', () => show(i));
         thumbStrip.appendChild(thumb);

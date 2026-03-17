@@ -4,7 +4,7 @@ import Header from '../../components/Header.astro';
 import SubNav from '../../components/SubNav.astro';
 import ImageLightbox from '../../components/ImageLightbox.astro';
 import Footer from '../../components/Footer.astro';
-import { artPath, withBase } from '../../lib/paths';
+import { artPath, withBase, normalizeGoogleDriveUrl } from '../../lib/paths';
 import { getCollection } from 'astro:content';
 
 const entries = await getCollection('art');
@@ -94,10 +94,11 @@ const getInlineVideoEmbed = (work: (typeof works)[number]) => toEmbedUrl(getPrim
               {isVideoOnlyWork(featuredWork) ? (
                 <>
                   <img
-                    src={withBase(featuredWork.thumbnail)}
+                    src={normalizeGoogleDriveUrl(withBase(featuredWork.thumbnail))}
                     alt={featuredWork.title}
                     class="inline-video-poster absolute inset-0 w-full h-full object-cover"
                     loading="eager"
+                    referrerpolicy="no-referrer"
                   />
                   <div class="inline-video-overlay absolute inset-0 bg-gradient-to-t from-void via-void/70 to-transparent"></div>
                   <div class="inline-video-overlay absolute inset-0 bg-gradient-to-r from-void/70 to-transparent"></div>
@@ -121,10 +122,11 @@ const getInlineVideoEmbed = (work: (typeof works)[number]) => toEmbedUrl(getPrim
                 <>
                   <a href={artPath(featuredWork.slug)} class="absolute inset-0">
                     <img
-                      src={withBase(featuredWork.thumbnail)}
+                      src={normalizeGoogleDriveUrl(withBase(featuredWork.thumbnail))}
                       alt={featuredWork.title}
                       class="absolute inset-0 w-full h-full object-cover"
                       loading="eager"
+                      referrerpolicy="no-referrer"
                     />
                   </a>
                   <div class="absolute inset-0 bg-gradient-to-t from-void via-void/70 to-transparent"></div>
@@ -200,10 +202,11 @@ const getInlineVideoEmbed = (work: (typeof works)[number]) => toEmbedUrl(getPrim
                     {isVideoOnlyWork(work) ? (
                       <>
                         <img
-                          src={withBase(work.thumbnail)}
+                          src={normalizeGoogleDriveUrl(withBase(work.thumbnail))}
                           alt={work.title}
                           class="inline-video-poster w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                           loading="lazy"
+                          referrerpolicy="no-referrer"
                         />
                         <div class="inline-video-overlay absolute inset-0 bg-gradient-to-t from-void/80 to-transparent"></div>
                         <div class="inline-video-player hidden absolute inset-0 z-20"></div>
@@ -226,10 +229,11 @@ const getInlineVideoEmbed = (work: (typeof works)[number]) => toEmbedUrl(getPrim
                       <>
                         <a href={artPath(work.slug)} class="absolute inset-0 z-10" aria-label={`View ${work.title}`}></a>
                         <img
-                          src={withBase(work.thumbnail)}
+                          src={normalizeGoogleDriveUrl(withBase(work.thumbnail))}
                           alt={work.title}
                           class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                           loading="lazy"
+                          referrerpolicy="no-referrer"
                         />
                         <div class="absolute inset-0 bg-gradient-to-t from-void/80 to-transparent"></div>
                       </>

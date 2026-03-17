@@ -22,7 +22,7 @@ interface Props {
   projects: MappingProjectView[];
 }
 
-import { mappingPath } from '../lib/paths';
+import { mappingPath, normalizeGoogleDriveUrl } from '../lib/paths';
 
 const { projects } = Astro.props;
 const featured = projects.filter(p => p.featured);
@@ -36,10 +36,11 @@ const rest = projects.filter(p => !p.featured);
       <a href={mappingPath(project.slug)}
          class="surface-card group relative overflow-hidden rounded-sm block aspect-[21/9] md:aspect-[3/1]">
         <img
-          src={project.thumbnail}
+          src={normalizeGoogleDriveUrl(project.thumbnail)}
           alt={project.title}
           class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           loading="eager"
+          referrerpolicy="no-referrer"
         />
         <div class="absolute inset-0 bg-gradient-to-t from-void via-void/70 to-transparent z-10"></div>
         <div class="absolute inset-0 bg-gradient-to-r from-void/60 to-transparent z-10"></div>
@@ -99,10 +100,11 @@ const rest = projects.filter(p => !p.featured);
       <div class="relative aspect-[16/9] overflow-hidden">
         <a href={mappingPath(project.slug)}>
           <img
-            src={project.thumbnail}
+            src={normalizeGoogleDriveUrl(project.thumbnail)}
             alt={project.title}
             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             loading="lazy"
+            referrerpolicy="no-referrer"
           />
           <div class="absolute inset-0 bg-gradient-to-t from-void/80 to-transparent"></div>
         </a>

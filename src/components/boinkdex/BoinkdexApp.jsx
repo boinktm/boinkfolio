@@ -59,7 +59,6 @@ const gameGroups = [
   { id: 'kanto', name: 'RED/BLUE/YEL', dexId: 2, versions: ['red', 'blue', 'yellow'], icon: BookOpen, gen: 'generation-i', ver: 'red-blue' },
   { id: 'johto', name: 'GOLD/SIL/CRY', dexId: 3, versions: ['gold', 'silver', 'crystal'], icon: Sparkles, gen: 'generation-ii', ver: 'gold' },
   { id: 'hoenn', name: 'RUBY/SAPH/EME', dexId: 4, versions: ['ruby', 'sapphire', 'emerald'], icon: Zap, gen: 'generation-iii', ver: 'emerald' },
-  { id: 'kanto-remake', name: 'FIRE/LEAF', dexId: 2, versions: ['fire-red', 'leaf-green'], icon: Flame, gen: 'generation-iii', ver: 'firered-leafgreen' },
   { id: 'sinnoh', name: 'DIA/PEA/PLA', dexId: 5, versions: ['diamond', 'pearl', 'platinum'], icon: Globe, gen: 'generation-iv', ver: 'platinum' },
   { id: 'unova', name: 'BLACK / WHITE', dexId: 8, versions: ['black', 'white'], icon: Layers, gen: 'generation-v', ver: 'black-white' },
   { id: 'kalos', name: 'X / Y', dexId: 12, versions: ['x', 'y'], icon: Activity, gen: 'generation-vi', ver: 'x-y' },
@@ -78,8 +77,6 @@ const versionColors = {
   ruby:     { hex: '#dc2626', rgb: '220,38,38' },
   sapphire: { hex: '#2563eb', rgb: '37,99,235' },
   emerald:  { hex: '#10b981', rgb: '16,185,129' },
-  'fire-red': { hex: '#b91c1c', rgb: '185,28,28' },
-  'leaf-green': { hex: '#16a34a', rgb: '22,163,74' },
   diamond:  { hex: '#60a5fa', rgb: '96,165,250' },
   pearl:    { hex: '#f9a8d4', rgb: '249,168,212' },
   platinum: { hex: '#a1a1aa', rgb: '161,161,170' },
@@ -683,7 +680,7 @@ const App = () => {
               </div>
               <div className="hidden shrink-0 text-right lg:block">
                 <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500">LIVING&nbsp;DEX&nbsp;TRACKER&nbsp;//&nbsp;BROWSE,&nbsp;SEARCH&nbsp;&&nbsp;MARK&nbsp;POKÉMON&nbsp;AS&nbsp;CAUGHT&nbsp;ACROSS&nbsp;EVERY&nbsp;GENERATION</p>
-                <p className="text-[10px] leading-relaxed tracking-wide text-slate-600">Presented by: <span style={{ color: 'var(--accent)' }}>Boink!</span></p>
+                <p className="text-[10px] leading-relaxed tracking-wide text-slate-600">Presented by: <a href="https://x.com/boinkbranded" target="_blank" rel="noopener noreferrer" className="hover:underline transition-opacity hover:opacity-80" style={{ color: 'var(--accent)' }}>Boink!</a></p>
               </div>
             </div>
           </div>

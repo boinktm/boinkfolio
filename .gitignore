@@ -1,5 +1,8 @@
 # build output
 dist/
+desktop-app/
+guide-builder/
+
 # generated types
 .astro/
 
@@ -7,10 +10,21 @@ dist/
 node_modules/
 
 # logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+
+# temporary files
+tmp-*.txt
+*.tmp
+*.temp
+
+# generated local tools
+scripts/BoinkfolioContentManager.exe
+scripts/build-content-manager-exe.ps1
+scripts/build-guide-builder-shortcut.ps1
 
 
 # environment variables

@@ -5,7 +5,7 @@
  */
 import { fetchSoundCloudTracks } from '../lib/soundcloud';
 import { getCollection } from 'astro:content';
-import { withBase } from '../lib/paths';
+import { withBase, normalizeGoogleDriveUrl } from '../lib/paths';
 
 const SOUNDCLOUD_USER_ID = import.meta.env.SOUNDCLOUD_USER_ID || '70328358';
 const tracks = await fetchSoundCloudTracks(SOUNDCLOUD_USER_ID, 1);
@@ -35,7 +35,8 @@ const featuredArtTagline = featuredArt?.tagline || 'Enter the gallery';
       {latestArtwork && (
         <img src={latestArtwork}
           alt={`${latestTitle} artwork`}
-          class="absolute inset-0 w-full h-full object-cover" />
+          class="absolute inset-0 w-full h-full object-cover"
+          referrerpolicy="no-referrer" />
       )}
 
       <div class="relative z-20">
@@ -56,9 +57,10 @@ const featuredArtTagline = featuredArt?.tagline || 'Enter the gallery';
     <a href={withBase('art')} class="surface-card group relative overflow-hidden rounded-sm aspect-[16/9] flex flex-col justify-end p-6">
       {featuredArtThumbnail && (
         <img
-          src={featuredArtThumbnail}
+          src={normalizeGoogleDriveUrl(featuredArtThumbnail)}
           alt={featuredArt?.title || 'Featured 3D art'}
           class="absolute inset-0 w-full h-full object-cover"
+          referrerpolicy="no-referrer"
         />
       )}
       <div class="absolute inset-0 bg-gradient-to-t from-void via-void/60 to-transparent z-10"></div>

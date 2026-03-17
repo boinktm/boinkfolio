@@ -65,7 +65,18 @@ if ($LASTEXITCODE -ne 0 -or $inRepo -ne 'true') {
 }
 
 $status = git status --porcelain
-if (-not $status) {
+$upstreamRef = git rev-parse --abbrev-ref --symbolic-full-name '@{u}' 2>$null
+$hasUpstream = ($LASTEXITCODE -eq 0 -and -not [string]::IsNullOrWhiteSpace($upstreamRef))
+$aheadCount = 0
+
+if ($hasUpstream) {
+  $aheadText = git rev-list --count '@{u}..HEAD' 2>$null
+  if ($LASTEXITCODE -eq 0 -and -not [string]::IsNullOrWhiteSpace($aheadText)) {
+    $aheadCount = [int]$aheadText.Trim()
+  }
+}
+
+if (-not $status -and $aheadCount -eq 0) {
   Write-Host 'No changes detected. Nothing to push.'
   exit 0
 }
@@ -85,8 +96,13 @@ if ([string]::IsNullOrWhiteSpace($Message)) {
   $Message = "Update site $(Get-Date -Format 'yyyy-MM-dd HH:mm')"
 }
 
-Invoke-GitCommand -Arguments @('add', '-A') -DisplayText 'add -A'
-Invoke-GitCommand -Arguments @('commit', '-m', $Message) -DisplayText ("commit -m `"{0}`"" -f $Message)
+if ($status) {
+  Invoke-GitCommand -Arguments @('add', '-A') -DisplayText 'add -A'
+  Invoke-GitCommand -Arguments @('commit', '-m', $Message) -DisplayText ("commit -m `"{0}`"" -f $Message)
+} else {
+  Write-Host ("No working tree changes. Pushing {0} existing local commit(s)." -f $aheadCount)
+}
+
 Invoke-GitCommand -Arguments @('push') -DisplayText 'push'
 
 if ($DryRun) {

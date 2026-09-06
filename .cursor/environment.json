@@ -1,0 +1,17 @@
+{
+  "name": "boinkfolio",
+  "install": "npm ci",
+  "terminals": [
+    {
+      "name": "astro-dev",
+      "command": "npm run dev -- --host 0.0.0.0 --port 4321",
+      "description": "Astro dev server for the boinkfolio site. Serves at http://localhost:4321/boinkfolio/ (the site uses the '/boinkfolio/' base path)."
+    }
+  ],
+  "ports": [
+    {
+      "name": "astro-dev",
+      "port": 4321
+    }
+  ]
+}

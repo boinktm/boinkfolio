@@ -1,25 +1,6 @@
 {
-  "name": "boinkfolio",
-  "type": "module",
-  "version": "0.0.1",
-  "scripts": {
-    "dev": "astro dev",
-    "dev:vscode": "powershell -ExecutionPolicy Bypass -File ./scripts/dev-vscode.ps1",
-    "build": "astro build",
-    "preview": "astro preview",
-    "astro": "astro",
-    "push:update:ui": "powershell -ExecutionPolicy Bypass -File ./scripts/push-update-ui.ps1",
-    "push:update": "powershell -ExecutionPolicy Bypass -File ./scripts/push-update.ps1",
-    "push:update:dry": "powershell -ExecutionPolicy Bypass -File ./scripts/push-update.ps1 -DryRun"
-  },
-  "dependencies": {
-    "@astrojs/react": "^4.4.1",
-    "@tailwindcss/vite": "^4.2.1",
-    "astro": "^6.0.4",
-    "fast-xml-parser": "^5.4.1",
-    "lucide-react": "^0.511.0",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
-    "tailwindcss": "^4.2.1"
-  }
+  "name": "memory-card-portfolio", "version": "1.0.0", "private": true, "type": "module",
+  "scripts": { "dev": "vite --host 127.0.0.1", "build": "tsc -b && vite build", "preview": "vite preview --host 127.0.0.1", "test": "vitest run" },
+  "dependencies": { "react": "^19.1.0", "react-dom": "^19.1.0", "three": "^0.180.0", "@react-three/fiber": "^9.3.0", "@react-three/drei": "^10.7.0", "@react-three/postprocessing": "^3.0.4", "postprocessing": "^6.37.8", "lucide-react": "^0.468.0" },
+  "devDependencies": { "typescript": "~5.9.2", "vite": "^7.1.0", "@vitejs/plugin-react": "^5.0.0", "@types/react": "^19.1.0", "@types/react-dom": "^19.1.0", "@types/three": "^0.180.0", "vitest": "^3.2.4" }
 }

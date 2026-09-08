@@ -1,15 +1,9 @@
-# Deploy to GitHub Pages with scheduled rebuilds
-# Automatically fetches latest SoundCloud tracks at build time
-
 name: Deploy to GitHub Pages
 
 on:
   push:
     branches: [main]
-  schedule:
-    # Rebuild daily at midnight UTC to pick up new SoundCloud uploads
-    - cron: '0 0 * * *'
-  workflow_dispatch: # Allow manual trigger from Actions tab
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -37,9 +31,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build Astro site
-        env:
-          SOUNDCLOUD_USER_ID: ${{ secrets.SOUNDCLOUD_USER_ID }}
+      - name: Build Memory System
         run: npm run build
 
       - name: Disable Jekyll processing

@@ -1,0 +1,35 @@
+[[permission]]
+identifier = "allow-write-portfolio-files"
+description = "Write files under public/content in the selected portfolio folder."
+commands.allow = ["write_portfolio_files"]
+
+[[permission]]
+identifier = "allow-read-portfolio-file"
+description = "Read a UTF-8 file under public/content."
+commands.allow = ["read_portfolio_file"]
+
+[[permission]]
+identifier = "allow-list-portfolio-media"
+description = "List files in public/content/media."
+commands.allow = ["list_portfolio_media"]
+
+[[permission]]
+identifier = "allow-run-portfolio-build"
+description = "Run npm run build in the selected portfolio folder."
+commands.allow = ["run_portfolio_build"]
+
+[[permission]]
+identifier = "allow-resolve-portfolio-root"
+description = "Find the Memory System folder next to this app."
+commands.allow = ["resolve_portfolio_root"]
+
+[[set]]
+identifier = "content"
+description = "Local portfolio content writes, reads, and builds."
+permissions = [
+  "allow-write-portfolio-files",
+  "allow-read-portfolio-file",
+  "allow-list-portfolio-media",
+  "allow-run-portfolio-build",
+  "allow-resolve-portfolio-root"
+]

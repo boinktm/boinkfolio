@@ -1,38 +1,31 @@
-# build output
-dist/
-desktop-app/
-guide-builder/
-
-# generated types
-.astro/
-
-# dependencies
+# Dependencies and builds
 node_modules/
+dist/
+dist-ssr/
+*.local
 
-# logs
+# CMS / Tauri
+cms/node_modules/
+cms/dist/
+cms/src-tauri/target/
+cms/src-tauri/gen/schemas/
+*.exe
+*.dll
+
+# Token store and secrets — never commit
+manager.json
+.env
+.env.*
+!.env.example
+
+# Logs and OS
 *.log
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# temporary files
-tmp-*.txt
-*.tmp
-*.temp
-
-# generated local tools
-scripts/BoinkfolioContentManager.exe
-scripts/build-content-manager-exe.ps1
-scripts/build-guide-builder-shortcut.ps1
-
-
-# environment variables
-.env
-.env.production
-
-# macOS-specific files
 .DS_Store
+Thumbs.db
+Desktop.ini
 
-# jetbrains setting folder
+# Editors
 .idea/
+.vscode/*
+!.vscode/extensions.json

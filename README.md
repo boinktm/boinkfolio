@@ -114,3 +114,4 @@ Only supplied keys replace synthesis. `load()` fetches and decodes the batch bef
 The 3D module is lazy-loaded, keeping the UI in a separate chunk. Three.js and post-processing still carry a substantial first-use download; use HTTP compression on the host. Styling is plain CSS for this bounded engine preview; Tailwind and the Phase 2 window system are not required by this core.
 
 References: [Fiber/React version pairing](https://r3f.docs.pmnd.rs/getting-started/installation), [Web Audio gesture and autoplay guidance](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Best_practices).
+
